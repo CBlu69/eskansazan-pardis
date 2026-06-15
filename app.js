@@ -180,3 +180,34 @@ if ("serviceWorker" in navigator) {
     .then(() => console.log("SW registered"))
     .catch(err => console.log(err));
 }
+function updateClock() {
+    const now = new Date();
+
+    const time = now.toLocaleTimeString("fa-IR", {
+        timeZone: "Asia/Tehran",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    const date = now.toLocaleDateString("fa-IR-u-ca-persian", {
+        timeZone: "Asia/Tehran",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+
+    document.getElementById("live-time").textContent = time;
+    document.getElementById("live-date").textContent = date;
+
+    document.getElementById("live-status").textContent =
+        navigator.onLine ? "🟢 آنلاین" : "🔴 آفلاین";
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+window.addEventListener("online", updateClock);
+window.addEventListener("offline", updateClock);
+
