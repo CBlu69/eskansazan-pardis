@@ -133,8 +133,9 @@ window.deleteMission=function(i){
 
 /* STAFF */
 let staff = [
-    {name:"علی", lastname:"احمدی", meli:"123", phone:"0912"},
-    {name:"رضا", lastname:"کریمی", meli:"456", phone:"0935"}
+    {name:"سید طاهر", lastname:"علوی", meli:"123", phone:"09121192271"},
+    {name:"اکبر", lastname:"کندی داینی", meli:"456", phone:"09121044458"},
+    {name:"سید امین", lastname:"امینی", meli:"456", phone:"09122307045"}
 ];
 
 function renderStaff(){
