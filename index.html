@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>اسکان سازان پردیس</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+    <img src="logo.png" class="splash-logo">
+</div>
+
+<header class="header">
+    <img src="logo.png" class="logo">
+</header>
+
+<main>
+
+<!-- DASH -->
+<section id="dashboard-page" class="page active">
+    <h2>داشبورد</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3 id="projects-count">0</h3>
+            <p>پروژه</p>
+        </div>
+
+        <div class="card">
+            <h3 id="missions-count">0</h3>
+            <p>ماموریت</p>
+        </div>
+
+        <div class="card">
+            <h3 id="staff-count">0</h3>
+            <p>پرسنل</p>
+        </div>
+    </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects-page" class="page">
+    <h2>پروژه‌ها</h2>
+
+    <button id="open-project">+ افزودن پروژه</button>
+
+    <div id="project-modal" class="modal">
+        <div class="modal-box">
+            <h3>پروژه جدید</h3>
+
+            <input id="p-name" placeholder="نام پروژه">
+            <input id="p-manager" placeholder="مدیر">
+            <input id="p-progress" placeholder="پیشرفت">
+
+            <button id="add-project">ثبت</button>
+            <button id="close-project">بستن</button>
+        </div>
+    </div>
+
+    <div id="projects-list"></div>
+</section>
+
+<!-- MISSIONS -->
+<section id="missions-page" class="page">
+    <h2>ماموریت‌ها</h2>
+
+    <button id="open-mission">+ افزودن ماموریت</button>
+
+    <div id="mission-modal" class="modal">
+        <div class="modal-box">
+            <h3>ماموریت جدید</h3>
+
+            <input id="m-name" placeholder="نام ماموریت">
+            <input id="m-manager" placeholder="مسئول">
+            <input id="m-progress" placeholder="پیشرفت">
+
+            <button id="add-mission">ثبت</button>
+            <button id="close-mission">بستن</button>
+        </div>
+    </div>
+
+    <div id="missions-list"></div>
+</section>
+
+<!-- STAFF -->
+<section id="staff-page" class="page">
+    <h2>پرسنل</h2>
+    <div id="staff-list"></div>
+</section>
+
+</main>
+
+<!-- NAV -->
+<nav class="bottom-nav">
+    <button data-page="dashboard-page">خانه</button>
+    <button data-page="projects-page">پروژه</button>
+    <button data-page="missions-page">ماموریت</button>
+    <button data-page="staff-page">پرسنل</button>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+/* SPLASH */
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        const s = document.getElementById("splash");
+        if (s) s.style.display = "none";
+    }, 1200);
+});
+
+/* NAV */
+const pages = document.querySelectorAll(".page");
+const nav = document.querySelectorAll(".bottom-nav button");
+
+nav.forEach(b => {
+    b.onclick = () => {
+        pages.forEach(p => p.classList.remove("active"));
+        document.getElementById(b.dataset.page).classList.add("active");
+
+        nav.forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+    };
+});
+
+/* STORAGE */
+const get = k => JSON.parse(localStorage.getItem(k) || "[]");
+const set = (k,v)=>localStorage.setItem(k,JSON.stringify(v));
+
+/* PROJECTS */
+let projects = get("projects");
+
+const pModal = document.getElementById("project-modal");
+const pName = document.getElementById("p-name");
+const pManager = document.getElementById("p-manager");
+const pProgress = document.getElementById("p-progress");
+
+document.getElementById("open-project").onclick=()=>pModal.style.display="flex";
+document.getElementById("close-project").onclick=()=>pModal.style.display="none";
+
+document.getElementById("add-project").onclick=()=>{
+    if(!pName.value) return;
+
+    projects.push({
+        name:pName.value,
+        manager:pManager.value,
+        progress:pProgress.value
+    });
+
+    set("projects",projects);
+    renderProjects();
+    pModal.style.display="none";
+};
+
+function renderProjects(){
+    const list=document.getElementById("projects-list");
+    list.innerHTML="";
+
+    projects.forEach((p,i)=>{
+        list.innerHTML+=`
+        <div class="item">
+            <b>${p.name}</b><br>
+            ${p.manager}<br>
+            ${p.progress}%
+
+            <button class="del-btn" onclick="deleteProject(${i})">
+                حذف پروژه
+            </button>
+        </div>`;
+    });
+
+    update();
+}
+
+window.deleteProject=function(i){
+    if(confirm("حذف پروژه؟")){
+        projects.splice(i,1);
+        set("projects",projects);
+        renderProjects();
+    }
+};
+
+/* MISSIONS (COPY PROJECTS) */
+let missions = get("missions");
+
+const mModal = document.getElementById("mission-modal");
+const mName = document.getElementById("m-name");
+const mManager = document.getElementById("m-manager");
+const mProgress = document.getElementById("m-progress");
+
+document.getElementById("open-mission").onclick=()=>mModal.style.display="flex";
+document.getElementById("close-mission").onclick=()=>mModal.style.display="none";
+
+document.getElementById("add-mission").onclick=()=>{
+    if(!mName.value) return;
+
+    missions.push({
+        name:mName.value,
+        manager:mManager.value,
+        progress:mProgress.value
+    });
+
+    set("missions",missions);
+    renderMissions();
+    mModal.style.display="none";
+};
+
+function renderMissions(){
+    const list=document.getElementById("missions-list");
+    list.innerHTML="";
+
+    missions.forEach((m,i)=>{
+        list.innerHTML+=`
+        <div class="item">
+            <b>${m.name}</b><br>
+            ${m.manager}<br>
+            ${m.progress}%
+
+            <button class="del-btn" onclick="deleteMission(${i})">
+                حذف ماموریت
+            </button>
+        </div>`;
+    });
+
+    update();
+}
+
+window.deleteMission=function(i){
+    if(confirm("حذف ماموریت؟")){
+        missions.splice(i,1);
+        set("missions",missions);
+        renderMissions();
+    }
+};
+
+
+/* STAFF */
+let staff = [
+    {name:"علی", lastname:"احمدی", meli:"123", phone:"0912"},
+    {name:"رضا", lastname:"کریمی", meli:"456", phone:"0935"}
+];
+
+function renderStaff(){
+    const list=document.getElementById("staff-list");
+    list.innerHTML="";
+
+    staff.forEach(s=>{
+        list.innerHTML+=`
+        <div class="staff-card">
+
+            <b>${s.name} ${s.lastname}</b>
+
+            <small>کد ملی: ${s.meli}</small>
+            <small>شماره: ${s.phone}</small>
+
+            <a class="call-btn" href="tel:${s.phone}">
+                📞 تماس مستقیم
+            </a>
+
+        </div>`;
+    });
+
+    update();
+}
+
+/* DASH */
+function update(){
+    document.getElementById("projects-count").textContent=projects.length;
+    document.getElementById("missions-count").textContent=missions.length;
+    document.getElementById("staff-count").textContent=staff.length;
+}
+
+/* INIT */
+renderProjects();
+renderMissions();
+renderStaff();
+update();
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js")
+    .then(() => console.log("SW registered"))
+    .catch(err => console.log(err));
+}
