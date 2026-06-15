@@ -1,10 +1,12 @@
 body{
-margin:0;
-font-family:tahoma;
-background:#0b1220;
-color:white;
-padding-bottom:80px;
--webkit-tap-highlight-color: transparent;
+    margin:0;
+    font-family:tahoma;
+    color:white;
+    background:
+        radial-gradient(circle at top right,#1e3a8a,#0b1220 40%),
+        radial-gradient(circle at bottom left,#0f766e,#0b1220 35%);
+    min-height:100vh;
+    padding-bottom:80px;
 }
 
 #splash{
@@ -55,10 +57,26 @@ gap:12px;
 }
 
 .card{
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(14px);
-    border:1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow:
+        0 8px 32px rgba(0,0,0,0.35),
+        inset 0 1px 1px rgba(255,255,255,0.08);
+}
+.card{
+    transition:0.25s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.card:active{
+    transform:scale(0.97);
 }
 
 button{
