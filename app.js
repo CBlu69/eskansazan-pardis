@@ -135,6 +135,7 @@ window.deleteMission=function(i){
 let staff = [
     {name:"سید طاهر", lastname:"علوی", meli:"123", phone:"09121192271"},
     {name:"اکبر", lastname:"کندی داینی", meli:"456", phone:"09121044458"},
+    {name:"علیرضا", lastname:"علوی", meli:"456", phone:"09123173681"},
     {name:"سید امین", lastname:"امینی", meli:"456", phone:"09122307045"}
 ];
 
