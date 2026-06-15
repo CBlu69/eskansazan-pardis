@@ -1,6 +1,6 @@
 /* SPLASH */
 window.addEventListener("load", () => {
-    setTimeout(() => {
+    setTimeout(() => { 
         const s = document.getElementById("splash");
         if (s) s.style.display = "none";
     }, 1200);
