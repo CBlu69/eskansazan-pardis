@@ -227,3 +227,9 @@ function update() {
 
 /* ================= INIT ================= */
 checkSession();
+async function debugAuth(){
+    const session = await client.auth.getSession();
+    console.log("SESSION CHECK:", session);
+}
+
+debugAuth();
