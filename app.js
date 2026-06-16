@@ -6,8 +6,8 @@ const client = supabase.createClient(supabaseUrl, supabaseKey);
 /* ================= STATE ================= */
 let currentUser = null;
 let userRole = "user";
-
 /* ================= AUTH ELEMENTS ================= */
+const loginUI = document.getElementById("login-ui");
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
 const emailInput = document.getElementById("email");
