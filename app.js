@@ -1,12 +1,17 @@
-/* SPLASH */
+/* ================= SUPABASE ================= */
+const supabaseUrl = "https://zaesmxrlwqjapbkbrnmn.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZXNteHJsd3FqYXBia2Jybm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1ODIwNzgsImV4cCI6MjA5NzE1ODA3OH0.FQu84hluK74Ze85p4spve_WGbwGvToiRwCs3ALP0GE0";
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+/* ================= SPLASH ================= */
 window.addEventListener("load", () => {
-    setTimeout(() => { 
+    setTimeout(() => {
         const s = document.getElementById("splash");
         if (s) s.style.display = "none";
     }, 1200);
 });
 
-/* NAV */
+/* ================= NAV ================= */
 const pages = document.querySelectorAll(".page");
 const nav = document.querySelectorAll(".bottom-nav button");
 
@@ -20,11 +25,9 @@ nav.forEach(b => {
     };
 });
 
-/* STORAGE */
-const get = k => JSON.parse(localStorage.getItem(k) || "[]");
-const set = (k,v)=>localStorage.setItem(k,JSON.stringify(v));
-
-let projects = get("projects");
+/* ================= PROJECTS ================= */
+let projects = [];
+let editProjectIndex = null;
 
 const pModal = document.getElementById("project-modal");
 const pName = document.getElementById("p-name");
@@ -34,23 +37,15 @@ const pBuildStatus = document.getElementById("p-build-status");
 const pAdjustment = document.getElementById("p-adjustment");
 const pDescription = document.getElementById("p-description");
 
-/* auto resize textarea */
-pDescription.addEventListener("input", function () {
-    this.style.height = "auto";
-    this.style.height = this.scrollHeight + "px";
-});
-
-/* open / close modal */
+/* modal */
 document.getElementById("open-project").onclick = () =>
     pModal.style.display = "flex";
 
 document.getElementById("close-project").onclick = () =>
     pModal.style.display = "none";
 
-/* ADD / UPDATE PROJECT */
-let editProjectIndex = null;
-
-document.getElementById("add-project").onclick = () => {
+/* ADD / UPDATE */
+document.getElementById("add-project").onclick = async () => {
 
     if (!pName.value.trim()) {
         alert("نام پروژه الزامی است");
@@ -67,16 +62,15 @@ document.getElementById("add-project").onclick = () => {
     };
 
     if (editProjectIndex === null) {
-        projects.push(data);
+        await client.from("projects").insert([data]);
     } else {
-        projects[editProjectIndex] = data;
+        const id = projects[editProjectIndex].id;
+        await client.from("projects").update(data).eq("id", id);
         editProjectIndex = null;
     }
 
-    set("projects", projects);
-    renderProjects();
-
     clearProjectForm();
+    loadProjects();
     pModal.style.display = "none";
 };
 
@@ -87,6 +81,17 @@ function clearProjectForm() {
     pBuildStatus.value = "";
     pAdjustment.value = "";
     pDescription.value = "";
+}
+
+/* LOAD */
+async function loadProjects() {
+    let { data } = await client
+        .from("projects")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    projects = data || [];
+    renderProjects();
 }
 
 /* RENDER */
@@ -100,14 +105,14 @@ function renderProjects() {
 
             <b>🏗 ${p.name}</b><br>
 
-            ${p.supervisor ? `👷 سرپرست: ${p.supervisor}<br>` : ""}
-            ${p.progress ? `📈 پیشرفت: ${p.progress}%<br>` : ""}
-            ${p.buildStatus ? `🏢 ساخت: ${p.buildStatus}<br>` : ""}
-            ${p.adjustment ? `💰 تعدیل: ${p.adjustment}<br>` : ""}
+            ${p.supervisor ? `👷 ${p.supervisor}<br>` : ""}
+            ${p.progress ? `📈 ${p.progress}%<br>` : ""}
+            ${p.buildStatus ? `🏢 ${p.buildStatus}<br>` : ""}
+            ${p.adjustment ? `💰 ${p.adjustment}<br>` : ""}
             ${p.description ? `📝 ${p.description}<br>` : ""}
 
             <button class="del-btn" onclick="editProject(${i})">✏️ اصلاح</button>
-            <button class="del-btn" onclick="deleteProject(${i})">🗑 حذف</button>
+            <button class="del-btn" onclick="deleteProject('${p.id}')">🗑 حذف</button>
 
         </div>`;
     });
@@ -131,22 +136,23 @@ window.editProject = function (i) {
 };
 
 /* DELETE */
-window.deleteProject = function (i) {
+window.deleteProject = async function (id) {
     if (confirm("حذف پروژه؟")) {
-        projects.splice(i, 1);
-        set("projects", projects);
-        renderProjects();
+        await client.from("projects").delete().eq("id", id);
+        loadProjects();
     }
 };
-/* mission*/
-let missions = get("missions");
+
+/* ================= MISSIONS ================= */
+let missions = [];
+let editMissionIndex = null;
 
 const mModal = document.getElementById("mission-modal");
 const mName = document.getElementById("m-name");
 const mManager = document.getElementById("m-manager");
 const mStatus = document.getElementById("m-status");
 
-/* open / close */
+/* modal */
 document.getElementById("open-mission").onclick = () =>
     mModal.style.display = "flex";
 
@@ -154,9 +160,7 @@ document.getElementById("close-mission").onclick = () =>
     mModal.style.display = "none";
 
 /* ADD / UPDATE */
-let editMissionIndex = null;
-
-document.getElementById("add-mission").onclick = () => {
+document.getElementById("add-mission").onclick = async () => {
 
     if (!mName.value.trim()) {
         alert("نام ماموریت الزامی است");
@@ -170,16 +174,15 @@ document.getElementById("add-mission").onclick = () => {
     };
 
     if (editMissionIndex === null) {
-        missions.push(data);
+        await client.from("missions").insert([data]);
     } else {
-        missions[editMissionIndex] = data;
+        const id = missions[editMissionIndex].id;
+        await client.from("missions").update(data).eq("id", id);
         editMissionIndex = null;
     }
 
-    set("missions", missions);
-    renderMissions();
-
     clearMissionForm();
+    loadMissions();
     mModal.style.display = "none";
 };
 
@@ -187,6 +190,17 @@ function clearMissionForm() {
     mName.value = "";
     mManager.value = "";
     mStatus.value = "";
+}
+
+/* LOAD */
+async function loadMissions() {
+    let { data } = await client
+        .from("missions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    missions = data || [];
+    renderMissions();
 }
 
 /* RENDER */
@@ -200,11 +214,11 @@ function renderMissions() {
 
             <b>📋 ${m.name}</b><br>
 
-            ${m.manager ? `👤 مسئول: ${m.manager}<br>` : ""}
-            ${m.status ? `📌 وضعیت: ${m.status}<br>` : ""}
+            ${m.manager ? `👤 ${m.manager}<br>` : ""}
+            ${m.status ? `📌 ${m.status}<br>` : ""}
 
             <button class="del-btn" onclick="editMission(${i})">✏️ اصلاح</button>
-            <button class="del-btn" onclick="deleteMission(${i})">🗑 حذف</button>
+            <button class="del-btn" onclick="deleteMission('${m.id}')">🗑 حذف</button>
 
         </div>`;
     });
@@ -225,14 +239,14 @@ window.editMission = function (i) {
 };
 
 /* DELETE */
-window.deleteMission = function (i) {
+window.deleteMission = async function (id) {
     if (confirm("حذف ماموریت؟")) {
-        missions.splice(i, 1);
-        set("missions", missions);
-        renderMissions();
+        await client.from("missions").delete().eq("id", id);
+        loadMissions();
     }
 };
-/* STAFF */
+
+/* ================= STAFF (STATIC) ================= */
 let staff = [
     {name:"سید طاهر", lastname:"علوی", meli:"123", phone:"09121192271"},
     {name:"اکبر", lastname:"کندی داینی", meli:"456", phone:"09121044458"},
@@ -263,44 +277,33 @@ function renderStaff(){
     update();
 }
 
-/* DASH */
+/* ================= DASH ================= */
 function update(){
-    document.getElementById("projects-count").textContent=projects.length;
-    document.getElementById("missions-count").textContent=missions.length;
-    document.getElementById("staff-count").textContent=staff.length;
+    document.getElementById("projects-count").textContent = projects.length;
+    document.getElementById("missions-count").textContent = missions.length;
+    document.getElementById("staff-count").textContent = staff.length;
 }
 
-/* INIT */
-renderProjects();
-renderMissions();
+/* ================= INIT ================= */
 renderStaff();
+loadProjects();
+loadMissions();
 update();
 
+/* ================= SW ================= */
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js")
-    .then(() => console.log("SW registered"))
-    .catch(err => console.log(err));
+    navigator.serviceWorker.register("/sw.js");
 }
+
+/* ================= CLOCK ================= */
 function updateClock() {
     const now = new Date();
 
-    const time = now.toLocaleTimeString("fa-IR", {
-        timeZone: "Asia/Tehran",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-    });
+    document.getElementById("live-time").textContent =
+        now.toLocaleTimeString("fa-IR", { timeZone: "Asia/Tehran" });
 
-    const date = now.toLocaleDateString("fa-IR-u-ca-persian", {
-        timeZone: "Asia/Tehran",
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-    });
-
-    document.getElementById("live-time").textContent = time;
-    document.getElementById("live-date").textContent = date;
+    document.getElementById("live-date").textContent =
+        now.toLocaleDateString("fa-IR", { timeZone: "Asia/Tehran" });
 
     document.getElementById("live-status").textContent =
         navigator.onLine ? "🟢 آنلاین" : "🔴 آفلاین";
@@ -308,7 +311,5 @@ function updateClock() {
 
 updateClock();
 setInterval(updateClock, 1000);
-
 window.addEventListener("online", updateClock);
 window.addEventListener("offline", updateClock);
-
