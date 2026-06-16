@@ -8,6 +8,7 @@ let currentUser = null;
 let userRole = "user";
 let editingProjectId = null;
 let editingMissionId = null;
+let map = null;
 
 /* ================= DATA ================= */
 let projects = [];
@@ -78,7 +79,33 @@ function startClock() {
     tick();
     setInterval(tick, 1000);
 }
+/* map*/
+function initMap() {
+    if (map) return;
 
+    const el = document.getElementById("map");
+    if (!el) return;
+
+    map = L.map("map").setView([35.6892, 51.3890], 6);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap"
+    }).addTo(map);
+}
+function renderMarkers() {
+    if (!map) return;
+
+    projects.forEach(p => {
+        if (!p.latitude || !p.longitude) return;
+
+        L.marker([p.latitude, p.longitude])
+            .addTo(map)
+            .bindPopup(`
+                <b>${p.name}</b><br>
+                📊 ${p.progress || 0}%
+            `);
+    });
+}
 /* ================= NAV ================= */
 function initNav() {
     const buttons = document.querySelectorAll(".bottom-nav button");
@@ -211,6 +238,8 @@ async function signup() {
 function startApp() {
     if (loginUI) loginUI.style.display = "none";
 
+    initMap(); // 🗺️ مهم
+
     loadProjects();
     loadMissions();
     renderStaff();
@@ -323,14 +352,18 @@ document.getElementById("add-mission")?.addEventListener("click", async () => {
 async function loadProjects() {
     if (!currentUser) return;
 
-    const { data } = await client
+    const { data, error } = await client
         .from("projects")
         .select("*")
         .eq("owner_id", currentUser.id)
         .order("created_at", { ascending: false });
 
+    if (error) return console.warn(error.message);
+
     projects = data || [];
+
     renderProjects();
+    renderMarkers(); // 🗺️ نقشه اینجا
 }
 
 function renderProjects() {
@@ -390,6 +423,20 @@ window.deleteProject = async (id) => {
 };
 
 
+function renderMarkers() {
+    if (!map) return;
+
+    projects.forEach(p => {
+        if (!p.latitude || !p.longitude) return;
+
+        L.marker([p.latitude, p.longitude])
+            .addTo(map)
+            .bindPopup(`
+                <b>${p.name}</b><br>
+                📊 ${p.progress || 0}%
+            `);
+    });
+}
 /* ================= MISSIONS ================= */
 async function loadMissions() {
     if (!currentUser) return;
