@@ -301,3 +301,95 @@ width:max-content;
 min-width:0;
 white-space:nowrap;
 }
+#login-ui{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: radial-gradient(circle at top,#1e3a8a,#0b1220 60%);
+    z-index:99999;
+}
+
+/* کارت شیشه‌ای */
+.login-card{
+    width:280px;
+    padding:20px;
+    border-radius:18px;
+
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 0 20px rgba(56,189,248,0.3),
+        0 0 60px rgba(59,130,246,0.2);
+
+    text-align:center;
+    animation: pop .4s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(0.8); opacity:0}
+    to{transform:scale(1); opacity:1}
+}
+
+.login-card h2{
+    color:#38bdf8;
+    margin-bottom:15px;
+    text-shadow:0 0 10px rgba(56,189,248,0.6);
+}
+
+/* input ها */
+.login-card input{
+    width:100%;
+    padding:10px;
+    margin:6px 0;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.15);
+    background:rgba(0,0,0,0.2);
+    color:white;
+    outline:none;
+    transition:0.2s;
+}
+
+.login-card input:focus{
+    border-color:#38bdf8;
+    box-shadow:0 0 10px rgba(56,189,248,0.5);
+}
+
+/* دکمه‌ها */
+.login-card button{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+/* دکمه ورود */
+#loginBtn{
+    background: linear-gradient(135deg,#38bdf8,#2563eb);
+    color:white;
+    box-shadow:0 0 15px rgba(56,189,248,0.4);
+}
+
+#loginBtn:hover{
+    transform:translateY(-2px);
+}
+
+/* دکمه ثبت نام */
+#signupBtn{
+    background:rgba(255,255,255,0.08);
+    color:white;
+    border:1px solid rgba(255,255,255,0.15);
+}
+
+#signupBtn:hover{
+    background:rgba(255,255,255,0.15);
+}
