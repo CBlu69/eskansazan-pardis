@@ -313,3 +313,12 @@ updateClock();
 setInterval(updateClock, 1000);
 window.addEventListener("online", updateClock);
 window.addEventListener("offline", updateClock);
+
+function clearProjectForm() {
+    pName.value = "";
+    pSupervisor.value = "";
+    pProgress.value = "";
+    pBuildStatus.value = "";
+    pAdjustment.value = "";
+    pDescription.value = "";
+}
