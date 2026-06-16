@@ -3,38 +3,173 @@ const supabaseUrl = "https://zaesmxrlwqjapbkbrnmn.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZXNteHJsd3FqYXBia2Jybm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1ODIwNzgsImV4cCI6MjA5NzE1ODA3OH0.FQu84hluK74Ze85p4spve_WGbwGvToiRwCs3ALP0GE0";
 const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* ================= AUTH STATE ================= */
+/* ================= STATE ================= */
 let currentUser = null;
+let userRole = "user";
 
-/* ================= LOGIN UI ================= */
-const loginUI = document.createElement("div");
-loginUI.id = "login-ui";
-loginUI.style = `
-position:fixed;
-inset:0;
-display:flex;
-justify-content:center;
-align-items:center;
-background:
-    radial-gradient(circle at top right,#1e3a8a,#0b1220 40%),
-    radial-gradient(circle at bottom left,#0f766e,#0b1220 35%);
-z-index:99999;
-padding:20px;
-`;
+/* ================= AUTH UI ================= */
+const loginUI = document.getElementById("login-ui");
 
-loginUI.innerHTML = `
-<div class="login-box">
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("password");
 
-    <img src="logo.png" class="login-logo">
+/* ================= SESSION ================= */
+async function checkSession() {
+    const { data } = await client.auth.getSession();
 
-    <h2>اسکان سازان پردیس</h2>
+    if (data.session?.user) {
+        currentUser = data.session.user;
+        await loadUserRole();
+        startApp();
+    } else {
+        showLogin();
+    }
+}
 
-    <p class="login-text">
-        ورود به سامانه مدیریت شرکت
-    </p>
+function showLogin() {
+    loginUI.style.display = "flex";
+}
 
-    <input
-        id="email"
+/* ================= ROLE SYSTEM ================= */
+async function loadUserRole() {
+    const { data } = await client
+        .from("profiles")
+        .select("role")
+        .eq("id", currentUser.id)
+        .single();
+
+    userRole = data?.role || "user";
+}
+
+/* ================= LOGIN ================= */
+loginBtn.onclick = async () => {
+    const email = emailInput.value.trim();
+    const password = passInput.value;
+
+    const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error) return alert(error.message);
+
+    currentUser = data.user;
+    await loadUserRole();
+
+    startApp();
+};
+
+/* ================= SIGNUP (WITH EMAIL VERIFY) ================= */
+signupBtn.onclick = async () => {
+    const email = emailInput.value.trim();
+    const password = passInput.value;
+
+    const { error } = await client.auth.signUp({
+        email,
+        password
+    });
+
+    if (error) return alert(error.message);
+
+    alert("ایمیل تأیید ارسال شد. لطفاً تایید کنید.");
+};
+
+/* ================= START APP ================= */
+function startApp() {
+    if (!currentUser) return;
+
+    loginUI.style.display = "none";
+
+    loadProjects();
+    loadMissions();
+    renderStaff();
+    update();
+
+    console.log("USER ROLE:", userRole);
+}
+
+/* ================= PROJECT INSERT FIXED ================= */
+document.getElementById("add-project").onclick = async () => {
+
+    if (!currentUser) return alert("لاگین نیستی");
+
+    const { data: userData } = await client.auth.getUser();
+    const userId = userData?.user?.id;
+
+    const payload = {
+        name: pName.value.trim(),
+        supervisor: pSupervisor.value.trim(),
+        progress: pProgress.value,
+        buildStatus: pBuildStatus.value.trim(),
+        adjustment: pAdjustment.value.trim(),
+        description: pDescription.value.trim(),
+        owner_id: userId
+    };
+
+    const { error } = await client.from("projects").insert([payload]);
+
+    if (error) {
+        console.log(error);
+        alert(error.message);
+        return;
+    }
+
+    clearProjectForm();
+    loadProjects();
+    pModal.style.display = "none";
+};
+
+/* ================= LOAD PROJECTS ================= */
+async function loadProjects() {
+    if (!currentUser) return;
+
+    const { data, error } = await client
+        .from("projects")
+        .select("*")
+        .eq("owner_id", currentUser.id);
+
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+    projects = data || [];
+    renderProjects();
+}
+
+/* ================= DELETE FIX ================= */
+window.deleteProject = async function (id) {
+
+    if (userRole !== "admin") {
+        return alert("فقط مدیر می‌تواند حذف کند");
+    }
+
+    await client.from("projects").delete().eq("id", id);
+    loadProjects();
+};
+
+/* ================= MISSIONS ================= */
+function loadMissions() {
+    if (!currentUser) return;
+
+    client.from("missions")
+        .select("*")
+        .eq("owner_id", currentUser.id)
+        .then(({ data }) => {
+            missions = data || [];
+            renderMissions();
+        });
+}
+
+/* ================= ROLE PROTECTION ================= */
+function canEdit() {
+    return userRole === "admin" || userRole === "manager";
+}
+
+/* ================= INIT ================= */
+checkSession();        id="email"
         type="email"
         placeholder="📧 ایمیل">
 
