@@ -11,7 +11,7 @@ let userRole = "user";
 let projects = [];
 let missions = [];
 let staff = [
-    { name: "سید طاهر", lastname: "علوی", phone: "0912" }
+    { name: "سید طاهر", lastname: "علوی", phone: "0912", nationalId: "1234567890" }
 ];
 
 /* ================= DOM ELEMENTS ================= */
@@ -321,8 +321,16 @@ function renderStaff() {
     staff.forEach(s => {
         list.innerHTML += `
         <div class="staff-card">
+
             <b>${s.name} ${s.lastname}</b>
-            <small>${s.phone}</small>
+
+            <small>📱 ${s.phone}</small>
+            <small>🆔 ${s.nationalId || "-"}</small>
+
+            <a class="call-btn" href="tel:${s.phone}">
+                📞 تماس مستقیم
+            </a>
+
         </div>`;
     });
 
