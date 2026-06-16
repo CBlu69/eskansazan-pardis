@@ -128,8 +128,18 @@ document.getElementById("close-project").onclick = () =>
 /* ADD / UPDATE */
 document.getElementById("add-project").onclick = async () => {
 
-    if (!currentUser) return alert("ابتدا وارد شوید");
-    if (!pName.value.trim()) return alert("نام پروژه الزامی است");
+    if (!pName.value.trim()) {
+        alert("نام پروژه الزامی است");
+        return;
+    }
+
+    const { data: userData } = await client.auth.getUser();
+    const userId = userData?.user?.id;
+
+    if (!userId) {
+        alert("کاربر لاگین نیست");
+        return;
+    }
 
     const data = {
         name: pName.value.trim(),
@@ -138,20 +148,16 @@ document.getElementById("add-project").onclick = async () => {
         buildStatus: pBuildStatus.value.trim(),
         adjustment: pAdjustment.value.trim(),
         description: pDescription.value.trim(),
-        owner_id: currentUser.id
+        owner_id: userId
     };
 
-    let result;
+    const { error } = await client.from("projects").insert([data]);
 
-    if (editProjectIndex === null) {
-        result = await client.from("projects").insert([data]).select();
-    } else {
-        const id = projects[editProjectIndex].id;
-        result = await client.from("projects").update(data).eq("id", id).select();
-        editProjectIndex = null;
+    if (error) {
+        alert("خطا: " + error.message);
+        console.log(error);
+        return;
     }
-
-    if (result.error) return alert(result.error.message);
 
     clearProjectForm();
     loadProjects();
