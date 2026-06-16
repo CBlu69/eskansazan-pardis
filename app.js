@@ -10,18 +10,48 @@ let currentUser = null;
 const loginUI = document.createElement("div");
 loginUI.id = "login-ui";
 loginUI.style = `
-position:fixed;inset:0;
-display:flex;flex-direction:column;
-justify-content:center;align-items:center;
-background:#0b1220;z-index:99999;gap:10px;
+position:fixed;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+    radial-gradient(circle at top right,#1e3a8a,#0b1220 40%),
+    radial-gradient(circle at bottom left,#0f766e,#0b1220 35%);
+z-index:99999;
+padding:20px;
 `;
 
 loginUI.innerHTML = `
-<h2>ورود</h2>
-<input id="email" placeholder="ایمیل" style="padding:10px">
-<input id="password" type="password" placeholder="رمز" style="padding:10px">
-<button id="loginBtn">ورود</button>
-<button id="signupBtn">ثبت نام</button>
+<div class="login-box">
+
+    <img src="logo.png" class="login-logo">
+
+    <h2>اسکان سازان پردیس</h2>
+
+    <p class="login-text">
+        ورود به سامانه مدیریت شرکت
+    </p>
+
+    <input
+        id="email"
+        type="email"
+        placeholder="📧 ایمیل">
+
+    <input
+        id="password"
+        type="password"
+        placeholder="🔒 رمز عبور">
+
+    <button id="loginBtn">
+        ورود
+    </button>
+
+    <button id="signupBtn">
+        ثبت نام
+    </button>
+
+</div>
 `;
 
 document.body.appendChild(loginUI);
