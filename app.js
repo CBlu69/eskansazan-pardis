@@ -207,43 +207,101 @@ function bindEvents() {
     loginBtn?.addEventListener("click", login);
     signupBtn?.addEventListener("click", signup);
 
-    document.getElementById("add-project")?.addEventListener("click", async () => {
-        const name = pName.value.trim();
-        if (!name) return alert("نام پروژه لازم است");
 
-        const { error } = await client.from("projects").insert([{
-            name,
-            supervisor: pSupervisor.value,
-            progress: pProgress.value,
-            buildStatus: pBuildStatus.value,
-            adjustment: pAdjustment.value,
-            description: pDescription.value,
-            owner_id: currentUser.id
-        }]);
+document.getElementById("add-project")?.addEventListener("click", async () => {
 
-        if (error) return alert(error.message);
+    const name = pName.value.trim();
+    if (!name) return alert("نام پروژه لازم است");
 
-        document.getElementById("project-modal").style.display = "none";
-        loadProjects();
-    });
+    let error;
 
-    document.getElementById("add-mission")?.addEventListener("click", async () => {
-        const name = mName.value.trim();
-        if (!name) return alert("نام ماموریت لازم است");
+    if (editingProjectId) {
+        ({ error } = await client
+            .from("projects")
+            .update({
+                name,
+                supervisor: pSupervisor.value,
+                progress: pProgress.value,
+                buildStatus: pBuildStatus.value,
+                adjustment: pAdjustment.value,
+                description: pDescription.value
+            })
+            .eq("id", editingProjectId));
 
-        const { error } = await client.from("missions").insert([{
-            name,
-            manager: mManager.value,
-            status: mStatus.value,
-            owner_id: currentUser.id
-        }]);
+        editingProjectId = null;
 
-        if (error) return alert(error.message);
+        document.getElementById("add-project").textContent = "ثبت";
+    } else {
+        ({ error } = await client
+            .from("projects")
+            .insert([{
+                name,
+                supervisor: pSupervisor.value,
+                progress: pProgress.value,
+                buildStatus: pBuildStatus.value,
+                adjustment: pAdjustment.value,
+                description: pDescription.value,
+                owner_id: currentUser.id
+            }]));
+    }
 
-        document.getElementById("mission-modal").style.display = "none";
-        loadMissions();
-    });
-}
+    if (error) return alert(error.message);
+
+    pName.value = "";
+    pSupervisor.value = "";
+    pProgress.value = "";
+    pBuildStatus.value = "";
+    pAdjustment.value = "";
+    pDescription.value = "";
+
+    document.getElementById("project-modal").style.display = "none";
+
+    loadProjects();
+});
+
+
+
+document.getElementById("add-mission")?.addEventListener("click", async () => {
+
+    const name = mName.value.trim();
+    if (!name) return alert("نام ماموریت لازم است");
+
+    let error;
+
+    if (editingMissionId) {
+        ({ error } = await client
+            .from("missions")
+            .update({
+                name,
+                manager: mManager.value,
+                status: mStatus.value
+            })
+            .eq("id", editingMissionId));
+
+        editingMissionId = null;
+
+        document.getElementById("add-mission").textContent = "ثبت";
+    } else {
+        ({ error } = await client
+            .from("missions")
+            .insert([{
+                name,
+                manager: mManager.value,
+                status: mStatus.value,
+                owner_id: currentUser.id
+            }]));
+    }
+
+    if (error) return alert(error.message);
+
+    mName.value = "";
+    mManager.value = "";
+    mStatus.value = "";
+
+    document.getElementById("mission-modal").style.display = "none";
+
+    loadMissions();
+});
 
 /* ================= PROJECTS ================= */
 async function loadProjects() {
