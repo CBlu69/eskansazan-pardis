@@ -25,54 +25,99 @@ const get = k => JSON.parse(localStorage.getItem(k) || "[]");
 const set = (k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
 /* PROJECTS */
+/* PROJECTS */
 let projects = get("projects");
 
 const pModal = document.getElementById("project-modal");
 const pName = document.getElementById("p-name");
-const pManager = document.getElementById("p-manager");
 const pProgress = document.getElementById("p-progress");
+const pSupervisor = document.getElementById("p-supervisor");
+const pBuildStatus = document.getElementById("p-build-status");
+const pAdjustment = document.getElementById("p-adjustment");
+const pDescription = document.getElementById("p-description");
 
-document.getElementById("open-project").onclick=()=>pModal.style.display="flex";
-document.getElementById("close-project").onclick=()=>pModal.style.display="none";
+document.getElementById("open-project").onclick = () =>
+    pModal.style.display = "flex";
 
-document.getElementById("add-project").onclick=()=>{
-    if(!pName.value) return;
+document.getElementById("close-project").onclick = () =>
+    pModal.style.display = "none";
+
+document.getElementById("add-project").onclick = () => {
+
+    if (!pName.value.trim()) {
+        alert("نام پروژه الزامی است");
+        return;
+    }
 
     projects.push({
-        name:pName.value,
-        manager:pManager.value,
-        progress:pProgress.value
+        name: pName.value.trim(),
+        supervisor: pSupervisor.value.trim(),
+        progress: pProgress.value,
+        buildStatus: pBuildStatus.value.trim(),
+        adjustment: pAdjustment.value.trim(),
+        description: pDescription.value.trim()
     });
 
-    set("projects",projects);
+    set("projects", projects);
     renderProjects();
-    pModal.style.display="none";
+
+    /* خالی کردن فرم */
+    pName.value = "";
+    pSupervisor.value = "";
+    pProgress.value = "";
+    pBuildStatus.value = "";
+    pAdjustment.value = "";
+    pDescription.value = "";
+
+    pModal.style.display = "none";
 };
 
-function renderProjects(){
-    const list=document.getElementById("projects-list");
-    list.innerHTML="";
+function renderProjects() {
+    const list = document.getElementById("projects-list");
+    list.innerHTML = "";
 
-    projects.forEach((p,i)=>{
-        list.innerHTML+=`
+    projects.forEach((p, i) => {
+
+        list.innerHTML += `
         <div class="item">
-            <b>${p.name}</b><br>
-            ${p.manager}<br>
-            ${p.progress}%
+
+            <b>🏗 ${p.name}</b><br>
+
+            ${p.supervisor ?
+                `👷 سرپرست کارگاه: ${p.supervisor}<br>`
+                : ""}
+
+            ${p.progress ?
+                `📈 درصد پیشرفت: ${p.progress}%<br>`
+                : ""}
+
+            ${p.buildStatus ?
+                `🏢 آخرین وضعیت ساخت: ${p.buildStatus}<br>`
+                : ""}
+
+            ${p.adjustment ?
+                `💰 آخرین وضعیت تعدیل: ${p.adjustment}<br>`
+                : ""}
+
+            ${p.description ?
+                `📝 توضیحات: ${p.description}<br>`
+                : ""}
 
             <button class="del-btn" onclick="deleteProject(${i})">
                 حذف پروژه
             </button>
-        </div>`;
+
+        </div>
+        `;
     });
 
     update();
 }
 
-window.deleteProject=function(i){
-    if(confirm("حذف پروژه؟")){
-        projects.splice(i,1);
-        set("projects",projects);
+window.deleteProject = function(i) {
+    if (confirm("حذف پروژه؟")) {
+        projects.splice(i, 1);
+        set("projects", projects);
         renderProjects();
     }
 };
