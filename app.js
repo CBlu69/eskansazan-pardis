@@ -171,9 +171,17 @@ async function login() {
     const email = emailInput.value.trim();
     const password = passInput.value;
 
-    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password
+    });
 
-    if (error) return alert(error.message);
+    console.log("LOGIN:", data, error);
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
 
     currentUser = data.user;
     await loadUserRole();
@@ -302,6 +310,7 @@ document.getElementById("add-mission")?.addEventListener("click", async () => {
 
     loadMissions();
 });
+}
 
 /* ================= PROJECTS ================= */
 async function loadProjects() {
