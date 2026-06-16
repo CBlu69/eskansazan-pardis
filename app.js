@@ -6,6 +6,8 @@ const client = supabase.createClient(supabaseUrl, supabaseKey);
 /* ================= STATE ================= */
 let currentUser = null;
 let userRole = "user";
+let editingProjectId = null;
+let editingMissionId = null;
 
 /* ================= DATA ================= */
 let projects = [];
@@ -265,19 +267,54 @@ function renderProjects() {
         list.innerHTML += `
         <div class="item">
             <b>${p.name}</b><br>
-            ${p.supervisor || ""}<br>
-            ${p.progress || ""}%
-            <button class="del-btn" onclick="deleteProject('${p.id}')">حذف</button>
+            👷 ${p.supervisor || "-"}<br>
+            📈 ${p.progress || 0}%
+
+            <div class="action-buttons">
+                <button class="edit-btn"
+                    onclick="editProject('${p.id}')">
+                    ✏️ اصلاح
+                </button>
+
+                <button class="del-btn"
+                    onclick="deleteProject('${p.id}')">
+                    🗑 حذف
+                </button>
+            </div>
         </div>`;
     });
 
     update();
 }
 
+window.editProject = function(id) {
+    const project = projects.find(p => p.id === id);
+    if (!project) return;
+
+    editingProjectId = id;
+
+    pName.value = project.name || "";
+    pSupervisor.value = project.supervisor || "";
+    pProgress.value = project.progress || "";
+    pBuildStatus.value = project.buildStatus || "";
+    pAdjustment.value = project.adjustment || "";
+    pDescription.value = project.description || "";
+
+    document.getElementById("add-project").textContent =
+        "💾 ذخیره تغییرات";
+
+    document.getElementById("project-modal").style.display =
+        "flex";
+};
+
 window.deleteProject = async (id) => {
-    await client.from("projects").delete().eq("id", id);
+    await client.from("projects")
+        .delete()
+        .eq("id", id);
+
     loadProjects();
 };
+
 
 /* ================= MISSIONS ================= */
 async function loadMissions() {
@@ -300,16 +337,47 @@ function renderMissions() {
         list.innerHTML += `
         <div class="item">
             <b>${m.name}</b><br>
-            ${m.status || ""}
-            <button class="del-btn" onclick="deleteMission('${m.id}')">حذف</button>
+            📌 ${m.status || "-"}
+
+            <div class="action-buttons">
+                <button class="edit-btn"
+                    onclick="editMission('${m.id}')">
+                    ✏️ اصلاح
+                </button>
+
+                <button class="del-btn"
+                    onclick="deleteMission('${m.id}')">
+                    🗑 حذف
+                </button>
+            </div>
         </div>`;
     });
 
     update();
 }
 
+window.editMission = function(id) {
+    const mission = missions.find(m => m.id === id);
+    if (!mission) return;
+
+    editingMissionId = id;
+
+    mName.value = mission.name || "";
+    mManager.value = mission.manager || "";
+    mStatus.value = mission.status || "";
+
+    document.getElementById("add-mission").textContent =
+        "💾 ذخیره تغییرات";
+
+    document.getElementById("mission-modal").style.display =
+        "flex";
+};
+
 window.deleteMission = async (id) => {
-    await client.from("missions").delete().eq("id", id);
+    await client.from("missions")
+        .delete()
+        .eq("id", id);
+
     loadMissions();
 };
 
