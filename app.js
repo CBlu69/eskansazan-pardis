@@ -24,8 +24,6 @@ nav.forEach(b => {
 const get = k => JSON.parse(localStorage.getItem(k) || "[]");
 const set = (k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
-/* PROJECTS */
-/* PROJECTS */
 let projects = get("projects");
 
 const pModal = document.getElementById("project-modal");
@@ -35,16 +33,22 @@ const pSupervisor = document.getElementById("p-supervisor");
 const pBuildStatus = document.getElementById("p-build-status");
 const pAdjustment = document.getElementById("p-adjustment");
 const pDescription = document.getElementById("p-description");
+
+/* auto resize textarea */
 pDescription.addEventListener("input", function () {
     this.style.height = "auto";
     this.style.height = this.scrollHeight + "px";
 });
 
+/* open / close modal */
 document.getElementById("open-project").onclick = () =>
     pModal.style.display = "flex";
 
 document.getElementById("close-project").onclick = () =>
     pModal.style.display = "none";
+
+/* ADD / UPDATE PROJECT */
+let editProjectIndex = null;
 
 document.getElementById("add-project").onclick = () => {
 
@@ -53,80 +57,87 @@ document.getElementById("add-project").onclick = () => {
         return;
     }
 
-    projects.push({
+    const data = {
         name: pName.value.trim(),
         supervisor: pSupervisor.value.trim(),
         progress: pProgress.value,
         buildStatus: pBuildStatus.value.trim(),
         adjustment: pAdjustment.value.trim(),
         description: pDescription.value.trim()
-    });
+    };
+
+    if (editProjectIndex === null) {
+        projects.push(data);
+    } else {
+        projects[editProjectIndex] = data;
+        editProjectIndex = null;
+    }
 
     set("projects", projects);
     renderProjects();
 
-    /* خالی کردن فرم */
+    clearProjectForm();
+    pModal.style.display = "none";
+};
+
+function clearProjectForm() {
     pName.value = "";
     pSupervisor.value = "";
     pProgress.value = "";
     pBuildStatus.value = "";
     pAdjustment.value = "";
     pDescription.value = "";
+}
 
-    pModal.style.display = "none";
-};
-
+/* RENDER */
 function renderProjects() {
     const list = document.getElementById("projects-list");
     list.innerHTML = "";
 
     projects.forEach((p, i) => {
-
         list.innerHTML += `
         <div class="item">
 
             <b>🏗 ${p.name}</b><br>
 
-            ${p.supervisor ?
-                `👷 سرپرست کارگاه: ${p.supervisor}<br>`
-                : ""}
+            ${p.supervisor ? `👷 سرپرست: ${p.supervisor}<br>` : ""}
+            ${p.progress ? `📈 پیشرفت: ${p.progress}%<br>` : ""}
+            ${p.buildStatus ? `🏢 ساخت: ${p.buildStatus}<br>` : ""}
+            ${p.adjustment ? `💰 تعدیل: ${p.adjustment}<br>` : ""}
+            ${p.description ? `📝 ${p.description}<br>` : ""}
 
-            ${p.progress ?
-                `📈 درصد پیشرفت: ${p.progress}%<br>`
-                : ""}
+            <button class="del-btn" onclick="editProject(${i})">✏️ اصلاح</button>
+            <button class="del-btn" onclick="deleteProject(${i})">🗑 حذف</button>
 
-            ${p.buildStatus ?
-                `🏢 آخرین وضعیت ساخت: ${p.buildStatus}<br>`
-                : ""}
-
-            ${p.adjustment ?
-                `💰 آخرین وضعیت تعدیل: ${p.adjustment}<br>`
-                : ""}
-
-            ${p.description ?
-                `📝 توضیحات: ${p.description}<br>`
-                : ""}
-
-            <button class="del-btn" onclick="deleteProject(${i})">
-                حذف پروژه
-            </button>
-
-        </div>
-        `;
+        </div>`;
     });
 
     update();
 }
 
-window.deleteProject = function(i) {
+/* EDIT */
+window.editProject = function (i) {
+    const p = projects[i];
+
+    pName.value = p.name || "";
+    pSupervisor.value = p.supervisor || "";
+    pProgress.value = p.progress || "";
+    pBuildStatus.value = p.buildStatus || "";
+    pAdjustment.value = p.adjustment || "";
+    pDescription.value = p.description || "";
+
+    editProjectIndex = i;
+    pModal.style.display = "flex";
+};
+
+/* DELETE */
+window.deleteProject = function (i) {
     if (confirm("حذف پروژه؟")) {
         projects.splice(i, 1);
         set("projects", projects);
         renderProjects();
     }
 };
-
-/* MISSIONS (COPY PROJECTS) */
 let missions = get("missions");
 
 const mModal = document.getElementById("mission-modal");
@@ -134,51 +145,88 @@ const mName = document.getElementById("m-name");
 const mManager = document.getElementById("m-manager");
 const mProgress = document.getElementById("m-progress");
 
-document.getElementById("open-mission").onclick=()=>mModal.style.display="flex";
-document.getElementById("close-mission").onclick=()=>mModal.style.display="none";
+/* open / close */
+document.getElementById("open-mission").onclick = () =>
+    mModal.style.display = "flex";
 
-document.getElementById("add-mission").onclick=()=>{
-    if(!mName.value) return;
+document.getElementById("close-mission").onclick = () =>
+    mModal.style.display = "none";
 
-    missions.push({
-        name:mName.value,
-        manager:mManager.value,
-        progress:mProgress.value
-    });
+/* ADD / UPDATE */
+let editMissionIndex = null;
 
-    set("missions",missions);
+document.getElementById("add-mission").onclick = () => {
+
+    if (!mName.value.trim()) return;
+
+    const data = {
+        name: mName.value.trim(),
+        manager: mManager.value.trim(),
+        progress: mProgress.value
+    };
+
+    if (editMissionIndex === null) {
+        missions.push(data);
+    } else {
+        missions[editMissionIndex] = data;
+        editMissionIndex = null;
+    }
+
+    set("missions", missions);
     renderMissions();
-    mModal.style.display="none";
+
+    clearMissionForm();
+    mModal.style.display = "none";
 };
 
-function renderMissions(){
-    const list=document.getElementById("missions-list");
-    list.innerHTML="";
+function clearMissionForm() {
+    mName.value = "";
+    mManager.value = "";
+    mProgress.value = "";
+}
 
-    missions.forEach((m,i)=>{
-        list.innerHTML+=`
+/* RENDER */
+function renderMissions() {
+    const list = document.getElementById("missions-list");
+    list.innerHTML = "";
+
+    missions.forEach((m, i) => {
+        list.innerHTML += `
         <div class="item">
-            <b>${m.name}</b><br>
-            ${m.manager}<br>
-            ${m.progress}%
 
-            <button class="del-btn" onclick="deleteMission(${i})">
-                حذف ماموریت
-            </button>
+            <b>${m.name}</b><br>
+            ${m.manager ? m.manager + "<br>" : ""}
+            ${m.progress ? m.progress + "%<br>" : ""}
+
+            <button class="del-btn" onclick="editMission(${i})">✏️ اصلاح</button>
+            <button class="del-btn" onclick="deleteMission(${i})">🗑 حذف</button>
+
         </div>`;
     });
 
     update();
 }
 
-window.deleteMission=function(i){
-    if(confirm("حذف ماموریت؟")){
-        missions.splice(i,1);
-        set("missions",missions);
+/* EDIT */
+window.editMission = function (i) {
+    const m = missions[i];
+
+    mName.value = m.name || "";
+    mManager.value = m.manager || "";
+    mProgress.value = m.progress || "";
+
+    editMissionIndex = i;
+    mModal.style.display = "flex";
+};
+
+/* DELETE */
+window.deleteMission = function (i) {
+    if (confirm("حذف ماموریت؟")) {
+        missions.splice(i, 1);
+        set("missions", missions);
         renderMissions();
     }
 };
-
 
 /* STAFF */
 let staff = [
