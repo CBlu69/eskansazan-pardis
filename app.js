@@ -1,8 +1,83 @@
 /* ================= SUPABASE ================= */
 const supabaseUrl = "https://zaesmxrlwqjapbkbrnmn.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZXNteHJsd3FqYXBia2Jybm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1ODIwNzgsImV4cCI6MjA5NzE1ODA3OH0.FQu84hluK74Ze85p4spve_WGbwGvToiRwCs3ALP0GE0";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZXNteHJsd3FqYXBia2Jybm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1ODIwNzgsImV4cCI6MjA5NzE";
 
 const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+/* ================= AUTH UI (بدون تغییر ظاهر اصلی) ================= */
+const loginUI = document.createElement("div");
+loginUI.id = "login-ui";
+loginUI.style = `
+position:fixed;inset:0;
+display:flex;flex-direction:column;
+justify-content:center;align-items:center;
+background:#0b1220;z-index:99999;gap:10px;
+`;
+
+loginUI.innerHTML = `
+<h2>ورود</h2>
+<input id="email" placeholder="ایمیل" style="padding:10px">
+<input id="password" type="password" placeholder="رمز" style="padding:10px">
+<button id="loginBtn">ورود</button>
+<button id="signupBtn">ثبت نام</button>
+`;
+
+document.body.appendChild(loginUI);
+
+/* ================= APP STATE ================= */
+let currentUser = null;
+
+/* ================= LOGIN ================= */
+document.getElementById("loginBtn").onclick = async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error) return alert(error.message);
+
+    currentUser = data.user;
+    initApp();
+};
+
+document.getElementById("signupBtn").onclick = async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { error } = await client.auth.signUp({
+        email,
+        password
+    });
+
+    if (error) return alert(error.message);
+
+    alert("ثبت نام شد، حالا وارد شو");
+};
+
+/* ================= INIT SESSION ================= */
+async function checkSession() {
+    const { data } = await client.auth.getSession();
+
+    if (data.session) {
+        currentUser = data.session.user;
+        initApp();
+    }
+}
+
+checkSession();
+
+/* ================= START APP ================= */
+function initApp() {
+    loginUI.style.display = "none";
+    document.getElementById("dashboard-page").style.display = "block";
+
+    loadProjects();
+    loadMissions();
+}
+
 /* ================= SPLASH ================= */
 window.addEventListener("load", () => {
     setTimeout(() => {
@@ -37,7 +112,6 @@ const pBuildStatus = document.getElementById("p-build-status");
 const pAdjustment = document.getElementById("p-adjustment");
 const pDescription = document.getElementById("p-description");
 
-/* modal */
 document.getElementById("open-project").onclick = () =>
     pModal.style.display = "flex";
 
@@ -47,10 +121,7 @@ document.getElementById("close-project").onclick = () =>
 /* ADD / UPDATE */
 document.getElementById("add-project").onclick = async () => {
 
-    if (!pName.value.trim()) {
-        alert("نام پروژه الزامی است");
-        return;
-    }
+    if (!pName.value.trim()) return alert("نام پروژه الزامی است");
 
     const data = {
         name: pName.value.trim(),
@@ -58,24 +129,16 @@ document.getElementById("add-project").onclick = async () => {
         progress: pProgress.value,
         buildStatus: pBuildStatus.value.trim(),
         adjustment: pAdjustment.value.trim(),
-        description: pDescription.value.trim()
+        description: pDescription.value.trim(),
+        owner_id: currentUser.id
     };
 
-    let result;
-
     if (editProjectIndex === null) {
-        result = await client.from("projects").insert([data]).select();
+        await client.from("projects").insert([data]);
     } else {
         const id = projects[editProjectIndex].id;
-        result = await client.from("projects").update(data).eq("id", id).select();
+        await client.from("projects").update(data).eq("id", id);
         editProjectIndex = null;
-    }
-
-    console.log("SUPABASE RESULT:", result);
-
-    if (result.error) {
-        alert("خطا: " + result.error.message);
-        return;
     }
 
     clearProjectForm();
@@ -83,11 +146,12 @@ document.getElementById("add-project").onclick = async () => {
     pModal.style.display = "none";
 };
 
-/* LOAD */
+/* LOAD (فقط مال این کاربر) */
 async function loadProjects() {
     let { data } = await client
         .from("projects")
         .select("*")
+        .eq("owner_id", currentUser.id)
         .order("created_at", { ascending: false });
 
     projects = data || [];
@@ -120,7 +184,6 @@ function renderProjects() {
     update();
 }
 
-/* EDIT */
 window.editProject = function (i) {
     const p = projects[i];
 
@@ -135,12 +198,9 @@ window.editProject = function (i) {
     pModal.style.display = "flex";
 };
 
-/* DELETE */
 window.deleteProject = async function (id) {
-    if (confirm("حذف پروژه؟")) {
-        await client.from("projects").delete().eq("id", id);
-        loadProjects();
-    }
+    await client.from("projects").delete().eq("id", id);
+    loadProjects();
 };
 
 /* ================= MISSIONS ================= */
@@ -152,25 +212,21 @@ const mName = document.getElementById("m-name");
 const mManager = document.getElementById("m-manager");
 const mStatus = document.getElementById("m-status");
 
-/* modal */
 document.getElementById("open-mission").onclick = () =>
     mModal.style.display = "flex";
 
 document.getElementById("close-mission").onclick = () =>
     mModal.style.display = "none";
 
-/* ADD / UPDATE */
 document.getElementById("add-mission").onclick = async () => {
 
-    if (!mName.value.trim()) {
-        alert("نام ماموریت الزامی است");
-        return;
-    }
+    if (!mName.value.trim()) return alert("نام ماموریت الزامی است");
 
     const data = {
         name: mName.value.trim(),
         manager: mManager.value.trim(),
-        status: mStatus.value.trim()
+        status: mStatus.value.trim(),
+        owner_id: currentUser.id
     };
 
     if (editMissionIndex === null) {
@@ -186,24 +242,16 @@ document.getElementById("add-mission").onclick = async () => {
     mModal.style.display = "none";
 };
 
-function clearMissionForm() {
-    mName.value = "";
-    mManager.value = "";
-    mStatus.value = "";
-}
-
-/* LOAD */
-async function loadMissions() {
-    let { data } = await client
-        .from("missions")
+function loadMissions() {
+    client.from("missions")
         .select("*")
-        .order("created_at", { ascending: false });
-
-    missions = data || [];
-    renderMissions();
+        .eq("owner_id", currentUser.id)
+        .then(({ data }) => {
+            missions = data || [];
+            renderMissions();
+        });
 }
 
-/* RENDER */
 function renderMissions() {
     const list = document.getElementById("missions-list");
     list.innerHTML = "";
@@ -211,22 +259,18 @@ function renderMissions() {
     missions.forEach((m, i) => {
         list.innerHTML += `
         <div class="item">
-
             <b>📋 ${m.name}</b><br>
-
             ${m.manager ? `👤 ${m.manager}<br>` : ""}
             ${m.status ? `📌 ${m.status}<br>` : ""}
 
             <button class="del-btn" onclick="editMission(${i})">✏️ اصلاح</button>
             <button class="del-btn" onclick="deleteMission('${m.id}')">🗑 حذف</button>
-
         </div>`;
     });
 
     update();
 }
 
-/* EDIT */
 window.editMission = function (i) {
     const m = missions[i];
 
@@ -238,15 +282,12 @@ window.editMission = function (i) {
     mModal.style.display = "flex";
 };
 
-/* DELETE */
 window.deleteMission = async function (id) {
-    if (confirm("حذف ماموریت؟")) {
-        await client.from("missions").delete().eq("id", id);
-        loadMissions();
-    }
+    await client.from("missions").delete().eq("id", id);
+    loadMissions();
 };
 
-/* ================= STAFF (STATIC) ================= */
+/* ================= STAFF ================= */
 let staff = [
     {name:"سید طاهر", lastname:"علوی", meli:"123", phone:"09121192271"},
     {name:"اکبر", lastname:"کندی داینی", meli:"456", phone:"09121044458"},
@@ -261,16 +302,9 @@ function renderStaff(){
     staff.forEach(s=>{
         list.innerHTML+=`
         <div class="staff-card">
-
             <b>${s.name} ${s.lastname}</b>
-
-            <small>کد ملی: ${s.meli}</small>
-            <small>شماره: ${s.phone}</small>
-
-            <a class="call-btn" href="tel:${s.phone}">
-                📞 تماس مستقیم
-            </a>
-
+            <small>${s.phone}</small>
+            <a class="call-btn" href="tel:${s.phone}">تماس</a>
         </div>`;
     });
 
@@ -286,39 +320,19 @@ function update(){
 
 /* ================= INIT ================= */
 renderStaff();
-loadProjects();
-loadMissions();
-update();
 
-/* ================= SW ================= */
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js");
+/* ================= CLEAR ================= */
+function clearProjectForm(){
+    pName.value="";
+    pSupervisor.value="";
+    pProgress.value="";
+    pBuildStatus.value="";
+    pAdjustment.value="";
+    pDescription.value="";
 }
 
-/* ================= CLOCK ================= */
-function updateClock() {
-    const now = new Date();
-
-    document.getElementById("live-time").textContent =
-        now.toLocaleTimeString("fa-IR", { timeZone: "Asia/Tehran" });
-
-    document.getElementById("live-date").textContent =
-        now.toLocaleDateString("fa-IR", { timeZone: "Asia/Tehran" });
-
-    document.getElementById("live-status").textContent =
-        navigator.onLine ? "🟢 آنلاین" : "🔴 آفلاین";
-}
-
-updateClock();
-setInterval(updateClock, 1000);
-window.addEventListener("online", updateClock);
-window.addEventListener("offline", updateClock);
-
-function clearProjectForm() {
-    pName.value = "";
-    pSupervisor.value = "";
-    pProgress.value = "";
-    pBuildStatus.value = "";
-    pAdjustment.value = "";
-    pDescription.value = "";
+function clearMissionForm(){
+    mName.value="";
+    mManager.value="";
+    mStatus.value="";
 }
