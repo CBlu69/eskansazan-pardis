@@ -12,6 +12,8 @@
 </head>
 
 <body>
+
+<!-- LOGIN -->
 <div id="login-ui">
     <div class="login-box">
 
@@ -29,6 +31,7 @@
 
     </div>
 </div>
+
 <!-- SPLASH -->
 <div id="splash">
     <img src="logo.png" class="splash-logo">
@@ -61,52 +64,44 @@
         </div>
 
         <div class="card">
-    <h3 id="live-time">--:--:--</h3>
-    <p id="live-date">----</p>
-    <small id="live-status">🟢 آنلاین</small>
+            <h3 id="live-time">--:--:--</h3>
+            <p id="live-date">----</p>
+            <small id="live-status">🟢 آنلاین</small>
         </div>
     </div>
 </section>
 
 <!-- PROJECTS -->
 <section id="projects-page" class="page">
+
     <h2>پروژه‌ها</h2>
 
     <button id="open-project">+ افزودن پروژه</button>
 
     <div id="project-modal" class="modal">
-    <div class="modal-box">
-        <h3>پروژه جدید</h3>
+        <div class="modal-box">
+            <h3>پروژه جدید</h3>
 
-        <input id="p-name" placeholder="نام پروژه *">
+            <input id="p-name" placeholder="نام پروژه *">
+            <input id="p-supervisor" placeholder="سرپرست کارگاه">
 
-        <input id="p-supervisor" placeholder="سرپرست کارگاه">
+            <input id="p-progress" type="number" min="0" max="100" placeholder="درصد پیشرفت">
+            <input id="p-build-status" placeholder="آخرین وضعیت ساخت">
+            <input id="p-adjustment" placeholder="آخرین وضعیت تعدیل">
 
-        <input id="p-progress"
-               type="number"
-               min="0"
-               max="100"
-               placeholder="درصد پیشرفت">
+            <textarea id="p-description" placeholder="توضیحات کلی"></textarea>
 
-        <input id="p-build-status"
-               placeholder="آخرین وضعیت ساخت">
-
-        <input id="p-adjustment"
-               placeholder="آخرین وضعیت تعدیل">
-
-        <textarea id="p-description"
-                  placeholder="توضیحات کلی"></textarea>
-
-        <button id="add-project">ثبت</button>
-        <button id="close-project">بستن</button>
+            <button id="add-project">ثبت</button>
+            <button id="close-project">بستن</button>
+        </div>
     </div>
-</div>
 
-<div id="projects-list"></div>
+    <div id="projects-list"></div>
 </section>
-    
+
 <!-- MISSIONS -->
 <section id="missions-page" class="page">
+
     <h2>ماموریت‌ها</h2>
 
     <button id="open-mission">+ افزودن ماموریت</button>
@@ -114,10 +109,10 @@
     <div id="mission-modal" class="modal">
         <div class="modal-box">
             <h3>ماموریت جدید</h3>
-            
-<input id="m-name" placeholder="نام ماموریت">
-<input id="m-manager" placeholder="مسئول">
-<input id="m-status" placeholder="وضعیت">
+
+            <input id="m-name" placeholder="نام ماموریت">
+            <input id="m-manager" placeholder="مسئول">
+            <input id="m-status" placeholder="وضعیت">
 
             <button id="add-mission">ثبت</button>
             <button id="close-mission">بستن</button>
@@ -143,7 +138,9 @@
     <button data-page="staff-page">پرسنل</button>
 </nav>
 
+<!-- IMPORTANT: defer load -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
+<script src="app.js" defer></script>
+
 </body>
 </html>
