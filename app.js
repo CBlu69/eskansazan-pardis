@@ -56,28 +56,59 @@ function hideSplash() {
 
 /* ================= CLOCK ================= */
 function startClock() {
-    function tick() {
+    const canvas = document.getElementById("clock");
+    const ctx = canvas.getContext("2d");
+
+    function draw() {
         const now = new Date();
 
-        const timeEl = document.getElementById("live-time");
-        const dateEl = document.getElementById("live-date");
+        const r = canvas.width / 2;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        if (timeEl) {
-            timeEl.textContent = now.toLocaleTimeString("fa-IR");
-        }
+        ctx.save();
+        ctx.translate(r,r);
 
-        if (dateEl) {
-            dateEl.textContent = now.toLocaleDateString("fa-IR", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric"
+        // پس‌زمینه
+        ctx.beginPath();
+        ctx.arc(0,0,r-5,0,Math.PI*2);
+        ctx.fillStyle="#0f172a";
+        ctx.fill();
+
+        const h = now.getHours()%12;
+        const m = now.getMinutes();
+        const s = now.getSeconds();
+
+        drawHand((h*Math.PI/6)+(m*Math.PI/360), r*0.5, 4, "#fff");
+        drawHand(m*Math.PI/30, r*0.7, 3, "#fff");
+        drawHand(s*Math.PI/30, r*0.8, 2, "red");
+
+        ctx.restore();
+
+        document.getElementById("live-date").textContent =
+            now.toLocaleDateString("fa-IR", {
+                weekday:"long",
+                year:"numeric",
+                month:"long",
+                day:"numeric"
             });
-        }
     }
 
-    tick();
-    setInterval(tick, 1000);
+    function drawHand(angle, length, width, color){
+        ctx.beginPath();
+        ctx.strokeStyle=color;
+        ctx.lineWidth=width;
+        ctx.lineCap="round";
+
+        ctx.save();
+        ctx.rotate(angle);
+        ctx.moveTo(0,0);
+        ctx.lineTo(0,-length);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    draw();
+    setInterval(draw,1000);
 }
 /* map*/
 function initMap() {
