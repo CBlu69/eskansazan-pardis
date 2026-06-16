@@ -6,44 +6,67 @@ const client = supabase.createClient(supabaseUrl, supabaseKey);
 /* ================= STATE ================= */
 let currentUser = null;
 let userRole = "user";
-/* ================= AUTH ELEMENTS ================= */
-const loginUI = document.getElementById("login-ui");
-const loginBtn = document.getElementById("loginBtn");
-const signupBtn = document.getElementById("signupBtn");
-const emailInput = document.getElementById("email");
-const passInput = document.getElementById("password");
 
-/* ================= SESSION CHECK ================= */
+/* ================= DOM ELEMENTS ================= */
+let loginUI, loginBtn, signupBtn, emailInput, passInput;
+
+let pName, pSupervisor, pProgress, pBuildStatus, pAdjustment, pDescription;
+let mName, mManager, mStatus;
+
+/* ================= INIT DOM ================= */
+function initDOM() {
+    loginUI = document.getElementById("login-ui");
+
+    loginBtn = document.getElementById("loginBtn");
+    signupBtn = document.getElementById("signupBtn");
+
+    emailInput = document.getElementById("email");
+    passInput = document.getElementById("password");
+
+    pName = document.getElementById("p-name");
+    pSupervisor = document.getElementById("p-supervisor");
+    pProgress = document.getElementById("p-progress");
+    pBuildStatus = document.getElementById("p-build-status");
+    pAdjustment = document.getElementById("p-adjustment");
+    pDescription = document.getElementById("p-description");
+
+    mName = document.getElementById("m-name");
+    mManager = document.getElementById("m-manager");
+    mStatus = document.getElementById("m-status");
+}
+
+/* ================= SESSION ================= */
 async function checkSession() {
     const { data } = await client.auth.getSession();
 
-    const session = data?.session;
-
-    if (!session?.user) {
-        document.getElementById("login-ui").style.display = "flex";
+    if (!data.session?.user) {
+        showLogin();
         return;
     }
 
-    currentUser = session.user;
+    currentUser = data.session.user;
 
-    document.getElementById("login-ui").style.display = "none";
-
+    await loadUserRole();
     startApp();
 }
 
-/* ================= ROLE SYSTEM ================= */
+function showLogin() {
+    if (loginUI) loginUI.style.display = "flex";
+}
+
+/* ================= ROLE ================= */
 async function loadUserRole() {
     const { data } = await client
         .from("profiles")
         .select("role")
         .eq("id", currentUser.id)
-        .single();
+        .maybeSingle();
 
     userRole = data?.role || "user";
 }
 
 /* ================= LOGIN ================= */
-loginBtn.onclick = async () => {
+async function login() {
     const email = emailInput.value.trim();
     const password = passInput.value;
 
@@ -58,10 +81,10 @@ loginBtn.onclick = async () => {
 
     await loadUserRole();
     startApp();
-};
+}
 
 /* ================= SIGNUP ================= */
-signupBtn.onclick = async () => {
+async function signup() {
     const email = emailInput.value.trim();
     const password = passInput.value;
 
@@ -72,20 +95,12 @@ signupBtn.onclick = async () => {
 
     if (error) return alert(error.message);
 
-    // ساخت پروفایل پیشفرض
-    await client.from("profiles").insert([
-        {
-            id: data.user.id,
-            role: "user"
-        }
-    ]);
-
-    alert("ثبت نام شد - ایمیل را تایید کنید");
-};
+    alert("ایمیل تایید ارسال شد");
+}
 
 /* ================= START APP ================= */
 function startApp() {
-    document.getElementById("login-ui").style.display = "none";
+    if (loginUI) loginUI.style.display = "none";
 
     loadProjects();
     loadMissions();
@@ -93,8 +108,27 @@ function startApp() {
     update();
 }
 
+/* ================= EVENTS ================= */
+function bindEvents() {
+    loginBtn?.addEventListener("click", login);
+    signupBtn?.addEventListener("click", signup);
+}
+
 /* ================= PROJECTS ================= */
 let projects = [];
+
+async function loadProjects() {
+    if (!currentUser) return;
+
+    const { data } = await client
+        .from("projects")
+        .select("*")
+        .eq("owner_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+    projects = data || [];
+    renderProjects();
+}
 
 document.getElementById("add-project").onclick = async () => {
 
@@ -115,17 +149,6 @@ document.getElementById("add-project").onclick = async () => {
 
     loadProjects();
 };
-
-async function loadProjects() {
-    const { data } = await client
-        .from("projects")
-        .select("*")
-        .eq("owner_id", currentUser.id)
-        .order("created_at", { ascending: false });
-
-    projects = data || [];
-    renderProjects();
-}
 
 function renderProjects() {
     const list = document.getElementById("projects-list");
@@ -153,30 +176,34 @@ window.deleteProject = async (id) => {
 /* ================= MISSIONS ================= */
 let missions = [];
 
+async function loadMissions() {
+    if (!currentUser) return;
+
+    const { data } = await client
+        .from("missions")
+        .select("*")
+        .eq("owner_id", currentUser.id);
+
+    missions = data || [];
+    renderMissions();
+}
+
 document.getElementById("add-mission").onclick = async () => {
 
     const name = mName.value.trim();
     if (!name) return alert("نام ماموریت لازم است");
 
-    await client.from("missions").insert([{
+    const { error } = await client.from("missions").insert([{
         name,
         manager: mManager.value,
         status: mStatus.value,
         owner_id: currentUser.id
     }]);
 
+    if (error) return alert(error.message);
+
     loadMissions();
 };
-
-function loadMissions() {
-    client.from("missions")
-        .select("*")
-        .eq("owner_id", currentUser.id)
-        .then(({ data }) => {
-            missions = data || [];
-            renderMissions();
-        });
-}
 
 function renderMissions() {
     const list = document.getElementById("missions-list");
@@ -187,6 +214,7 @@ function renderMissions() {
         <div class="item">
             <b>${m.name}</b><br>
             ${m.status || ""}
+
             <button onclick="deleteMission('${m.id}')">حذف</button>
         </div>`;
     });
@@ -227,10 +255,8 @@ function update() {
 }
 
 /* ================= INIT ================= */
-checkSession();
-async function debugAuth(){
-    const session = await client.auth.getSession();
-    console.log("SESSION CHECK:", session);
-}
-
-debugAuth();
+window.addEventListener("DOMContentLoaded", async () => {
+    initDOM();
+    bindEvents();
+    await checkSession();
+});
