@@ -73,7 +73,7 @@ function showLogin() {
 }
 
 /* ================= LOGIN ================= */
-dodocument.getElementById("loginBtn").addEventListener("click", async () => {
+document.getElementById("loginBtn").addEventListener("click", async () => {
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
