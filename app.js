@@ -105,18 +105,24 @@ function initModals() {
         document.getElementById("project-modal").style.display = "flex";
     });
 
-    document.getElementById("close-project")?.addEventListener("click", () => {
-        document.getElementById("project-modal").style.display = "none";
-    });
+   document.getElementById("close-project")?.addEventListener("click", () => {
+    document.getElementById("project-modal").style.display = "none";
+
+    editingProjectId = null;
+    document.getElementById("add-project").textContent = "ثبت";
+});
 
     // mission modal
     document.getElementById("open-mission")?.addEventListener("click", () => {
         document.getElementById("mission-modal").style.display = "flex";
     });
 
-    document.getElementById("close-mission")?.addEventListener("click", () => {
-        document.getElementById("mission-modal").style.display = "none";
-    });
+   document.getElementById("close-mission")?.addEventListener("click", () => {
+    document.getElementById("mission-modal").style.display = "none";
+
+    editingMissionId = null;
+    document.getElementById("add-mission").textContent = "ثبت";
+});
 
     // بستن با کلیک بیرون از modal
     document.querySelectorAll(".modal").forEach(modal => {
@@ -124,6 +130,7 @@ function initModals() {
             if (e.target === modal) modal.style.display = "none";
         });
     });
+    
 }
 
 /* ================= SESSION ================= */
@@ -183,7 +190,7 @@ async function login() {
         return;
     }
 
-    currentUser = data.user;
+    currentUser = data.session.user;
     await loadUserRole();
     startApp();
 }
