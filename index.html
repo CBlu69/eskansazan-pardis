@@ -9,6 +9,10 @@
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
+
+<!-- MAP CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 </head>
 
 <body>
@@ -20,7 +24,6 @@
         <img src="logo.png" class="login-logo">
 
         <h2>اسکان سازان پردیس</h2>
-
         <p class="login-text">ورود به سامانه مدیریت</p>
 
         <input id="email" type="email" placeholder="ایمیل">
@@ -43,19 +46,20 @@
 
 <main>
 
-<!-- DASH -->
+<!-- DASHBOARD -->
 <section id="dashboard-page" class="page active">
     <h2>داشبورد</h2>
 
     <div class="cards">
+
         <div class="card">
             <h3 id="projects-count">0</h3>
-            <p>پروژه</p>
+            <p>پروژه‌ها</p>
         </div>
 
         <div class="card">
             <h3 id="missions-count">0</h3>
-            <p>ماموریت</p>
+            <p>ماموریت‌ها</p>
         </div>
 
         <div class="card">
@@ -68,7 +72,12 @@
             <p id="live-date">----</p>
             <small id="live-status">🟢 آنلاین</small>
         </div>
+
     </div>
+
+    <!-- MAP -->
+    <div id="map" style="height: 320px; border-radius: 12px; margin-top: 15px;"></div>
+
 </section>
 
 <!-- PROJECTS -->
@@ -78,25 +87,33 @@
 
     <button id="open-project">+ افزودن پروژه</button>
 
+    <!-- MODAL -->
     <div id="project-modal" class="modal">
         <div class="modal-box">
+
             <h3>پروژه جدید</h3>
 
             <input id="p-name" placeholder="نام پروژه *">
             <input id="p-supervisor" placeholder="سرپرست کارگاه">
 
             <input id="p-progress" type="number" min="0" max="100" placeholder="درصد پیشرفت">
-            <input id="p-build-status" placeholder="آخرین وضعیت ساخت">
-            <input id="p-adjustment" placeholder="آخرین وضعیت تعدیل">
+            <input id="p-build-status" placeholder="وضعیت ساخت">
+            <input id="p-adjustment" placeholder="وضعیت تعدیل">
 
-            <textarea id="p-description" placeholder="توضیحات کلی"></textarea>
+            <textarea id="p-description" placeholder="توضیحات"></textarea>
+
+            <!-- GPS -->
+            <input id="p-lat" placeholder="latitude">
+            <input id="p-lng" placeholder="longitude">
 
             <button id="add-project">ثبت</button>
             <button id="close-project">بستن</button>
+
         </div>
     </div>
 
     <div id="projects-list"></div>
+
 </section>
 
 <!-- MISSIONS -->
@@ -108,6 +125,7 @@
 
     <div id="mission-modal" class="modal">
         <div class="modal-box">
+
             <h3>ماموریت جدید</h3>
 
             <input id="m-name" placeholder="نام ماموریت">
@@ -116,10 +134,12 @@
 
             <button id="add-mission">ثبت</button>
             <button id="close-mission">بستن</button>
+
         </div>
     </div>
 
     <div id="missions-list"></div>
+
 </section>
 
 <!-- STAFF -->
@@ -138,8 +158,13 @@
     <button data-page="staff-page">پرسنل</button>
 </nav>
 
-<!-- IMPORTANT: defer load -->
+<!-- SCRIPTS -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- MAP JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script src="app.js" defer></script>
 
 </body>
