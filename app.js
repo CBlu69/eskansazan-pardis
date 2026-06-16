@@ -1,8 +1,12 @@
 /* ================= SUPABASE ================= */
 const supabaseUrl = "https://zaesmxrlwqjapbkbrnmn.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZXNteHJsd3FqYXBia2Jybm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1ODIwNzgsImV4cCI6MjA5NzE1ODA3OH0.FQu84hluK74Ze85p4spve_WGbwGvToiRwCs3ALP0GE0";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZXNteHJsd3FqYXBia2Jybm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1ODIwNzgsImV4cCI6MjA5NzE";
 const client = supabase.createClient(supabaseUrl, supabaseKey);
-/* ================= AUTH UI (بدون تغییر ظاهر اصلی) ================= */
+
+/* ================= AUTH STATE ================= */
+let currentUser = null;
+
+/* ================= LOGIN UI ================= */
 const loginUI = document.createElement("div");
 loginUI.id = "login-ui";
 loginUI.style = `
@@ -22,8 +26,21 @@ loginUI.innerHTML = `
 
 document.body.appendChild(loginUI);
 
-/* ================= APP STATE ================= */
-let currentUser = null;
+/* ================= SESSION CHECK ================= */
+async function checkSession() {
+    const { data } = await client.auth.getSession();
+
+    if (data.session?.user) {
+        currentUser = data.session.user;
+        startApp();
+    } else {
+        showLogin();
+    }
+}
+
+function showLogin() {
+    loginUI.style.display = "flex";
+}
 
 /* ================= LOGIN ================= */
 document.getElementById("loginBtn").onclick = async () => {
@@ -38,9 +55,10 @@ document.getElementById("loginBtn").onclick = async () => {
     if (error) return alert(error.message);
 
     currentUser = data.user;
-    initApp();
+    startApp();
 };
 
+/* ================= SIGNUP ================= */
 document.getElementById("signupBtn").onclick = async () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -52,28 +70,19 @@ document.getElementById("signupBtn").onclick = async () => {
 
     if (error) return alert(error.message);
 
-    alert("ثبت نام شد، حالا وارد شو");
+    alert("ثبت شد، حالا وارد شو");
 };
 
-/* ================= INIT SESSION ================= */
-async function checkSession() {
-    const { data } = await client.auth.getSession();
-
-    if (data.session) {
-        currentUser = data.session.user;
-        initApp();
-    }
-}
-
-checkSession();
-
 /* ================= START APP ================= */
-function initApp() {
+function startApp() {
+    if (!currentUser) return;
+
     loginUI.style.display = "none";
-    document.getElementById("dashboard-page").style.display = "block";
 
     loadProjects();
     loadMissions();
+    renderStaff();
+    update();
 }
 
 /* ================= SPLASH ================= */
@@ -119,6 +128,7 @@ document.getElementById("close-project").onclick = () =>
 /* ADD / UPDATE */
 document.getElementById("add-project").onclick = async () => {
 
+    if (!currentUser) return alert("ابتدا وارد شوید");
     if (!pName.value.trim()) return alert("نام پروژه الزامی است");
 
     const data = {
@@ -131,22 +141,28 @@ document.getElementById("add-project").onclick = async () => {
         owner_id: currentUser.id
     };
 
+    let result;
+
     if (editProjectIndex === null) {
-        await client.from("projects").insert([data]);
+        result = await client.from("projects").insert([data]).select();
     } else {
         const id = projects[editProjectIndex].id;
-        await client.from("projects").update(data).eq("id", id);
+        result = await client.from("projects").update(data).eq("id", id).select();
         editProjectIndex = null;
     }
+
+    if (result.error) return alert(result.error.message);
 
     clearProjectForm();
     loadProjects();
     pModal.style.display = "none";
 };
 
-/* LOAD (فقط مال این کاربر) */
+/* LOAD PROJECTS (USER ONLY) */
 async function loadProjects() {
-    let { data } = await client
+    if (!currentUser) return;
+
+    const { data } = await client
         .from("projects")
         .select("*")
         .eq("owner_id", currentUser.id)
@@ -156,7 +172,7 @@ async function loadProjects() {
     renderProjects();
 }
 
-/* RENDER */
+/* RENDER PROJECTS */
 function renderProjects() {
     const list = document.getElementById("projects-list");
     list.innerHTML = "";
@@ -166,7 +182,6 @@ function renderProjects() {
         <div class="item">
 
             <b>🏗 ${p.name}</b><br>
-
             ${p.supervisor ? `👷 ${p.supervisor}<br>` : ""}
             ${p.progress ? `📈 ${p.progress}%<br>` : ""}
             ${p.buildStatus ? `🏢 ${p.buildStatus}<br>` : ""}
@@ -182,6 +197,7 @@ function renderProjects() {
     update();
 }
 
+/* EDIT */
 window.editProject = function (i) {
     const p = projects[i];
 
@@ -196,7 +212,10 @@ window.editProject = function (i) {
     pModal.style.display = "flex";
 };
 
+/* DELETE */
 window.deleteProject = async function (id) {
+    if (!currentUser) return;
+
     await client.from("projects").delete().eq("id", id);
     loadProjects();
 };
@@ -216,8 +235,10 @@ document.getElementById("open-mission").onclick = () =>
 document.getElementById("close-mission").onclick = () =>
     mModal.style.display = "none";
 
+/* ADD */
 document.getElementById("add-mission").onclick = async () => {
 
+    if (!currentUser) return alert("ابتدا وارد شوید");
     if (!mName.value.trim()) return alert("نام ماموریت الزامی است");
 
     const data = {
@@ -240,7 +261,10 @@ document.getElementById("add-mission").onclick = async () => {
     mModal.style.display = "none";
 };
 
+/* LOAD MISSIONS */
 function loadMissions() {
+    if (!currentUser) return;
+
     client.from("missions")
         .select("*")
         .eq("owner_id", currentUser.id)
@@ -250,6 +274,7 @@ function loadMissions() {
         });
 }
 
+/* RENDER MISSIONS */
 function renderMissions() {
     const list = document.getElementById("missions-list");
     list.innerHTML = "";
@@ -269,9 +294,9 @@ function renderMissions() {
     update();
 }
 
+/* EDIT / DELETE */
 window.editMission = function (i) {
     const m = missions[i];
-
     mName.value = m.name || "";
     mManager.value = m.manager || "";
     mStatus.value = m.status || "";
@@ -287,10 +312,8 @@ window.deleteMission = async function (id) {
 
 /* ================= STAFF ================= */
 let staff = [
-    {name:"سید طاهر", lastname:"علوی", meli:"123", phone:"09121192271"},
-    {name:"اکبر", lastname:"کندی داینی", meli:"456", phone:"09121044458"},
-    {name:"علیرضا", lastname:"علوی", meli:"456", phone:"09123173681"},
-    {name:"سید امین", lastname:"امینی", meli:"456", phone:"09122307045"}
+    {name:"سید طاهر", lastname:"علوی", phone:"09121192271"},
+    {name:"اکبر", lastname:"کندی", phone:"09121044458"},
 ];
 
 function renderStaff(){
@@ -316,21 +339,35 @@ function update(){
     document.getElementById("staff-count").textContent = staff.length;
 }
 
-/* ================= INIT ================= */
-renderStaff();
-
-/* ================= CLEAR ================= */
+/* ================= UTIL ================= */
 function clearProjectForm(){
-    pName.value="";
-    pSupervisor.value="";
-    pProgress.value="";
-    pBuildStatus.value="";
-    pAdjustment.value="";
-    pDescription.value="";
+    pName.value = "";
+    pSupervisor.value = "";
+    pProgress.value = "";
+    pBuildStatus.value = "";
+    pAdjustment.value = "";
+    pDescription.value = "";
 }
 
 function clearMissionForm(){
-    mName.value="";
-    mManager.value="";
-    mStatus.value="";
+    mName.value = "";
+    mManager.value = "";
+    mStatus.value = "";
 }
+
+/* ================= INIT ================= */
+checkSession();
+
+/* ================= CLOCK ================= */
+setInterval(() => {
+    const now = new Date();
+
+    document.getElementById("live-time").textContent =
+        now.toLocaleTimeString("fa-IR", { timeZone: "Asia/Tehran" });
+
+    document.getElementById("live-date").textContent =
+        now.toLocaleDateString("fa-IR", { timeZone: "Asia/Tehran" });
+
+    document.getElementById("live-status").textContent =
+        navigator.onLine ? "🟢 آنلاین" : "🔴 آفلاین";
+}, 1000);
