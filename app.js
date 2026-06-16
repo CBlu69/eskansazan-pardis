@@ -88,9 +88,9 @@ function initMap() {
 
     map = L.map("map").setView([35.6892, 51.3890], 6);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap"
-    }).addTo(map);
+   L.tileLayer("https://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=YOUR_KEY", {
+    attribution: "© Thunderforest"
+}).addTo(map);
 }
 function renderMarkers() {
     if (!map) return;
