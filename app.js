@@ -89,7 +89,7 @@ function initMap() {
     map = L.map("map").setView([35.7248, 51.8120], 12); 
     // 👆 پردیس + زوم مناسب
 
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
     attribution: "© OpenStreetMap © CARTO"
 }).addTo(map);
 }
