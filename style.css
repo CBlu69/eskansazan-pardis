@@ -545,4 +545,21 @@ white-space:nowrap;
     transform:scale(.97);
 }
 
+.bottom-nav button {
+    background: none;
+    border: none;
+    flex: 1;
+    padding: 10px;
+}
 
+.bottom-nav img {
+    width: 26px;
+    height: 26px;
+    opacity: 0.7;
+    transition: 0.2s;
+}
+
+.bottom-nav button.active img {
+    opacity: 1;
+    transform: scale(1.2);
+}
