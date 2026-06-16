@@ -138,12 +138,13 @@ window.deleteProject = function (i) {
         renderProjects();
     }
 };
+/* mission*/
 let missions = get("missions");
 
 const mModal = document.getElementById("mission-modal");
 const mName = document.getElementById("m-name");
 const mManager = document.getElementById("m-manager");
-const mProgress = document.getElementById("m-progress");
+const mStatus = document.getElementById("m-status");
 
 /* open / close */
 document.getElementById("open-mission").onclick = () =>
@@ -157,12 +158,15 @@ let editMissionIndex = null;
 
 document.getElementById("add-mission").onclick = () => {
 
-    if (!mName.value.trim()) return;
+    if (!mName.value.trim()) {
+        alert("نام ماموریت الزامی است");
+        return;
+    }
 
     const data = {
         name: mName.value.trim(),
         manager: mManager.value.trim(),
-        progress: mProgress.value
+        status: mStatus.value.trim()
     };
 
     if (editMissionIndex === null) {
@@ -182,7 +186,7 @@ document.getElementById("add-mission").onclick = () => {
 function clearMissionForm() {
     mName.value = "";
     mManager.value = "";
-    mProgress.value = "";
+    mStatus.value = "";
 }
 
 /* RENDER */
@@ -194,9 +198,10 @@ function renderMissions() {
         list.innerHTML += `
         <div class="item">
 
-            <b>${m.name}</b><br>
-            ${m.manager ? m.manager + "<br>" : ""}
-            ${m.progress ? m.progress + "%<br>" : ""}
+            <b>📋 ${m.name}</b><br>
+
+            ${m.manager ? `👤 مسئول: ${m.manager}<br>` : ""}
+            ${m.status ? `📌 وضعیت: ${m.status}<br>` : ""}
 
             <button class="del-btn" onclick="editMission(${i})">✏️ اصلاح</button>
             <button class="del-btn" onclick="deleteMission(${i})">🗑 حذف</button>
@@ -213,7 +218,7 @@ window.editMission = function (i) {
 
     mName.value = m.name || "";
     mManager.value = m.manager || "";
-    mProgress.value = m.progress || "";
+    mStatus.value = m.status || "";
 
     editMissionIndex = i;
     mModal.style.display = "flex";
@@ -227,7 +232,6 @@ window.deleteMission = function (i) {
         renderMissions();
     }
 };
-
 /* STAFF */
 let staff = [
     {name:"سید طاهر", lastname:"علوی", meli:"123", phone:"09121192271"},
