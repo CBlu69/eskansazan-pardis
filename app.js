@@ -61,27 +61,27 @@ document.getElementById("add-project").onclick = async () => {
         description: pDescription.value.trim()
     };
 
+    let result;
+
     if (editProjectIndex === null) {
-        await client.from("projects").insert([data]);
+        result = await client.from("projects").insert([data]).select();
     } else {
         const id = projects[editProjectIndex].id;
-        await client.from("projects").update(data).eq("id", id);
+        result = await client.from("projects").update(data).eq("id", id).select();
         editProjectIndex = null;
+    }
+
+    console.log("SUPABASE RESULT:", result);
+
+    if (result.error) {
+        alert("خطا: " + result.error.message);
+        return;
     }
 
     clearProjectForm();
     loadProjects();
     pModal.style.display = "none";
 };
-
-function clearProjectForm() {
-    pName.value = "";
-    pSupervisor.value = "";
-    pProgress.value = "";
-    pBuildStatus.value = "";
-    pAdjustment.value = "";
-    pDescription.value = "";
-}
 
 /* LOAD */
 async function loadProjects() {
