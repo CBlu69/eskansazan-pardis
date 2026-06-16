@@ -28,7 +28,7 @@ async function checkSession() {
         await loadUserRole?.();
         startApp();
     } else {
-        showLogin();
+        loginUI.style.display = "flex";
     }
 }
 
