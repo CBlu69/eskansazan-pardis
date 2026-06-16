@@ -86,14 +86,12 @@ function initMap() {
     const el = document.getElementById("map");
     if (!el) return;
 
-    map = L.map("map").setView([35.6892, 51.3890], 6);
+    map = L.map("map").setView([35.7248, 51.8120], 12); 
+    // 👆 پردیس + زوم مناسب
 
-L.tileLayer(
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  {
-    attribution: "Tiles © Esri"
-  }
-).addTo(map);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    attribution: "© OpenStreetMap © CARTO"
+}).addTo(map);
 }
 function renderMarkers() {
     if (!map) return;
