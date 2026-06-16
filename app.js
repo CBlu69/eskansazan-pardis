@@ -86,26 +86,16 @@ function initMap() {
     const el = document.getElementById("map");
     if (!el) return;
 
-    map = L.map("map").setView([35.7248, 51.8120], 12); 
-    // 👆 پردیس + زوم مناسب
-
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap"
-}).addTo(map);
-}
-function renderMarkers() {
-    if (!map) return;
-
-    projects.forEach(p => {
-        if (!p.latitude || !p.longitude) return;
-
-        L.marker([p.latitude, p.longitude])
-            .addTo(map)
-            .bindPopup(`
-                <b>${p.name}</b><br>
-                📊 ${p.progress || 0}%
-            `);
+    map = new L.Map("map", {
+        key: "web.2772d12b4d864f19a5e91bea90c426ae",
+        maptype: "standard-night" // 🌙 حالت شب
     });
+
+    map.setView([35.7248, 51.8120], 12); // 📍 پردیس
+
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 300);
 }
 /* ================= NAV ================= */
 function initNav() {
