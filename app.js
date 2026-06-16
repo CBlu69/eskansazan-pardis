@@ -95,7 +95,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
 });
 
 /* ================= SIGNUP ================= */
-dodocument.getElementById("signupBtn").addEventListener("click", async () => {
+document.getElementById("signupBtn").addEventListener("click", async () => {
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
