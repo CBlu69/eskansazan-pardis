@@ -9,17 +9,14 @@ let userRole = "user";
 
 /* ================= DOM ELEMENTS ================= */
 let loginUI, loginBtn, signupBtn, emailInput, passInput;
-
 let pName, pSupervisor, pProgress, pBuildStatus, pAdjustment, pDescription;
 let mName, mManager, mStatus;
 
 /* ================= INIT DOM ================= */
 function initDOM() {
     loginUI = document.getElementById("login-ui");
-
     loginBtn = document.getElementById("loginBtn");
     signupBtn = document.getElementById("signupBtn");
-
     emailInput = document.getElementById("email");
     passInput = document.getElementById("password");
 
@@ -34,6 +31,43 @@ function initDOM() {
     mManager = document.getElementById("m-manager");
     mStatus = document.getElementById("m-status");
 }
+
+/* ================= SESSION ================= */
+async function checkSession() {
+    const { data } = await client.auth.getSession();
+
+    if (!data.session?.user) {
+        showLogin();
+        return;
+    }
+
+    currentUser = data.session.user;
+
+    await loadUserRole();
+    startApp();
+}
+
+function showLogin() {
+    if (loginUI) loginUI.style.display = "flex";
+}
+
+/* ================= ROLE ================= */
+async function loadUserRole() {
+    try {
+        const { data, error } = await client
+            .from("profiles")
+            .select("role")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+        if (error) {
+            console.warn("profiles error:", error.message);
+            userRole = "user";
+            return;
+        }
+
+        userRole = data?.role || "user";
+
 
 /* ================= SESSION ================= */
 async function checkSession() {
