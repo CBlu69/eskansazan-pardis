@@ -12,13 +12,9 @@ let loginUI, loginBtn, signupBtn, emailInput, passInput;
 let pName, pSupervisor, pProgress, pBuildStatus, pAdjustment, pDescription;
 let mName, mManager, mStatus;
 
-/* ================= PROJECTS ================= */
+/* ================= DATA ================= */
 let projects = [];
-
-/* ================= MISSIONS ================= */
 let missions = [];
-
-/* ================= STAFF ================= */
 let staff = [
     { name: "سید طاهر", lastname: "علوی", phone: "0912" }
 ];
@@ -41,6 +37,33 @@ function initDOM() {
     mName = document.getElementById("m-name");
     mManager = document.getElementById("m-manager");
     mStatus = document.getElementById("m-status");
+}
+
+/* ================= SPLASH ================= */
+function hideSplash() {
+    const splash = document.getElementById("splash");
+    if (splash) {
+        setTimeout(() => {
+            splash.style.opacity = "0";
+            splash.style.transition = "opacity 0.4s";
+            setTimeout(() => splash.style.display = "none", 400);
+        }, 1200);
+    }
+}
+
+/* ================= NAV ================= */
+function initNav() {
+    const buttons = document.querySelectorAll(".bottom-nav button");
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".bottom-nav button").forEach(b => b.classList.remove("active"));
+
+            const pageId = btn.dataset.page;
+            document.getElementById(pageId)?.classList.add("active");
+            btn.classList.add("active");
+        });
+    });
 }
 
 /* ================= SESSION ================= */
@@ -160,7 +183,7 @@ function bindEvents() {
     });
 }
 
-/* ================= LOAD PROJECTS ================= */
+/* ================= PROJECTS ================= */
 async function loadProjects() {
     if (!currentUser) return;
 
@@ -196,7 +219,7 @@ window.deleteProject = async (id) => {
     loadProjects();
 };
 
-/* ================= LOAD MISSIONS ================= */
+/* ================= MISSIONS ================= */
 async function loadMissions() {
     if (!currentUser) return;
 
@@ -257,5 +280,7 @@ function update() {
 window.addEventListener("DOMContentLoaded", async () => {
     initDOM();
     bindEvents();
+    initNav();
+    hideSplash();
     await checkSession();
 });
