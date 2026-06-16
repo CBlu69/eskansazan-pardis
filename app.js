@@ -7,17 +7,17 @@ const client = supabase.createClient(supabaseUrl, supabaseKey);
 let currentUser = null;
 let userRole = "user";
 
-/* ================= DOM ELEMENTS ================= */
-let loginUI, loginBtn, signupBtn, emailInput, passInput;
-let pName, pSupervisor, pProgress, pBuildStatus, pAdjustment, pDescription;
-let mName, mManager, mStatus;
-
 /* ================= DATA ================= */
 let projects = [];
 let missions = [];
 let staff = [
     { name: "سید طاهر", lastname: "علوی", phone: "0912" }
 ];
+
+/* ================= DOM ELEMENTS ================= */
+let loginUI, loginBtn, signupBtn, emailInput, passInput;
+let pName, pSupervisor, pProgress, pBuildStatus, pAdjustment, pDescription;
+let mName, mManager, mStatus;
 
 /* ================= INIT DOM ================= */
 function initDOM() {
@@ -51,6 +51,32 @@ function hideSplash() {
     }
 }
 
+/* ================= CLOCK ================= */
+function startClock() {
+    function tick() {
+        const now = new Date();
+
+        const timeEl = document.getElementById("live-time");
+        const dateEl = document.getElementById("live-date");
+
+        if (timeEl) {
+            timeEl.textContent = now.toLocaleTimeString("fa-IR");
+        }
+
+        if (dateEl) {
+            dateEl.textContent = now.toLocaleDateString("fa-IR", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
+        }
+    }
+
+    tick();
+    setInterval(tick, 1000);
+}
+
 /* ================= NAV ================= */
 function initNav() {
     const buttons = document.querySelectorAll(".bottom-nav button");
@@ -62,6 +88,38 @@ function initNav() {
             const pageId = btn.dataset.page;
             document.getElementById(pageId)?.classList.add("active");
             btn.classList.add("active");
+        });
+    });
+
+    // active اول
+    const first = document.querySelector(".bottom-nav button");
+    if (first) first.classList.add("active");
+}
+
+/* ================= MODALS ================= */
+function initModals() {
+    // project modal
+    document.getElementById("open-project")?.addEventListener("click", () => {
+        document.getElementById("project-modal").style.display = "flex";
+    });
+
+    document.getElementById("close-project")?.addEventListener("click", () => {
+        document.getElementById("project-modal").style.display = "none";
+    });
+
+    // mission modal
+    document.getElementById("open-mission")?.addEventListener("click", () => {
+        document.getElementById("mission-modal").style.display = "flex";
+    });
+
+    document.getElementById("close-mission")?.addEventListener("click", () => {
+        document.getElementById("mission-modal").style.display = "none";
+    });
+
+    // بستن با کلیک بیرون از modal
+    document.querySelectorAll(".modal").forEach(modal => {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) modal.style.display = "none";
         });
     });
 }
@@ -163,6 +221,7 @@ function bindEvents() {
 
         if (error) return alert(error.message);
 
+        document.getElementById("project-modal").style.display = "none";
         loadProjects();
     });
 
@@ -179,6 +238,7 @@ function bindEvents() {
 
         if (error) return alert(error.message);
 
+        document.getElementById("mission-modal").style.display = "none";
         loadMissions();
     });
 }
@@ -281,6 +341,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     initDOM();
     bindEvents();
     initNav();
+    initModals();
+    startClock();
     hideSplash();
     await checkSession();
 });
