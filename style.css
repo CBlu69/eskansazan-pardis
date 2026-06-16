@@ -172,6 +172,26 @@ font-size:13px;
 border-color:#38bdf8;
 box-shadow:0 0 0 2px rgba(56,189,248,0.2);
 }
+.modal-box textarea{
+    padding:12px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.05);
+    color:white;
+    outline:none;
+    transition:0.2s;
+    font-size:13px;
+    font-family:tahoma;
+    width:100%;
+    box-sizing:border-box;
+    min-height:50px;
+    resize:vertical;
+}
+
+.modal-box textarea:focus{
+    border-color:#38bdf8;
+    box-shadow:0 0 0 2px rgba(56,189,248,0.2);
+}
 
 /* ================= BUTTONS ================= */
 .modal-box button{
