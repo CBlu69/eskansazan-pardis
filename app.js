@@ -15,21 +15,20 @@ const passInput = document.getElementById("password");
 
 /* ================= SESSION CHECK ================= */
 async function checkSession() {
-    const { data, error } = await client.auth.getSession();
-
-    if (error) {
-        console.log("SESSION ERROR:", error);
-    }
+    const { data } = await client.auth.getSession();
 
     const session = data?.session;
 
-    if (session?.user) {
-        currentUser = session.user;
-        await loadUserRole?.();
-        startApp();
-    } else {
-        loginUI.style.display = "flex";
+    if (!session?.user) {
+        document.getElementById("login-ui").style.display = "flex";
+        return;
     }
+
+    currentUser = session.user;
+
+    document.getElementById("login-ui").style.display = "none";
+
+    startApp();
 }
 
 /* ================= ROLE SYSTEM ================= */
