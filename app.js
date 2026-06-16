@@ -73,24 +73,31 @@ function showLogin() {
 }
 
 /* ================= LOGIN ================= */
-document.getElementById("loginBtn").onclick = async () => {
-    const email = document.getElementById("email").value;
+dodocument.getElementById("loginBtn").addEventListener("click", async () => {
+
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    const { data, error } = await client.auth.signInWithPassword({
-        email,
-        password
-    });
+    const { data, error } =
+        await client.auth.signInWithPassword({
+            email,
+            password
+        });
 
-    if (error) return alert(error.message);
+    if (error) {
+        alert(error.message);
+        return;
+    }
 
     currentUser = data.user;
-    startApp();
-};
+
+    initApp();
+});
 
 /* ================= SIGNUP ================= */
-document.getElementById("signupBtn").onclick = async () => {
-    const email = document.getElementById("email").value;
+dodocument.getElementById("signupBtn").addEventListener("click", async () => {
+
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
     const { error } = await client.auth.signUp({
@@ -98,10 +105,13 @@ document.getElementById("signupBtn").onclick = async () => {
         password
     });
 
-    if (error) return alert(error.message);
+    if (error) {
+        alert(error.message);
+        return;
+    }
 
-    alert("ثبت شد، حالا وارد شو");
-};
+    alert("ایمیل تأیید برای شما ارسال شد. لطفاً ایمیل خود را تأیید کنید.");
+});
 
 /* ================= START APP ================= */
 function startApp() {
