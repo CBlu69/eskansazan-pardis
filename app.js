@@ -12,6 +12,17 @@ let loginUI, loginBtn, signupBtn, emailInput, passInput;
 let pName, pSupervisor, pProgress, pBuildStatus, pAdjustment, pDescription;
 let mName, mManager, mStatus;
 
+/* ================= PROJECTS ================= */
+let projects = [];
+
+/* ================= MISSIONS ================= */
+let missions = [];
+
+/* ================= STAFF ================= */
+let staff = [
+    { name: "سید طاهر", lastname: "علوی", phone: "0912" }
+];
+
 /* ================= INIT DOM ================= */
 function initDOM() {
     loginUI = document.getElementById("login-ui");
@@ -42,7 +53,6 @@ async function checkSession() {
     }
 
     currentUser = data.session.user;
-
     await loadUserRole();
     startApp();
 }
@@ -67,36 +77,10 @@ async function loadUserRole() {
         }
 
         userRole = data?.role || "user";
-
-
-/* ================= SESSION ================= */
-async function checkSession() {
-    const { data } = await client.auth.getSession();
-
-    if (!data.session?.user) {
-        showLogin();
-        return;
+    } catch (e) {
+        console.warn("loadUserRole exception:", e);
+        userRole = "user";
     }
-
-    currentUser = data.session.user;
-
-    await loadUserRole();
-    startApp();
-}
-
-function showLogin() {
-    if (loginUI) loginUI.style.display = "flex";
-}
-
-/* ================= ROLE ================= */
-async function loadUserRole() {
-    const { data } = await client
-        .from("profiles")
-        .select("role")
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-    userRole = data?.role || "user";
 }
 
 /* ================= LOGIN ================= */
@@ -104,15 +88,11 @@ async function login() {
     const email = emailInput.value.trim();
     const password = passInput.value;
 
-    const { data, error } = await client.auth.signInWithPassword({
-        email,
-        password
-    });
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
 
     if (error) return alert(error.message);
 
     currentUser = data.user;
-
     await loadUserRole();
     startApp();
 }
@@ -122,10 +102,7 @@ async function signup() {
     const email = emailInput.value.trim();
     const password = passInput.value;
 
-    const { data, error } = await client.auth.signUp({
-        email,
-        password
-    });
+    const { error } = await client.auth.signUp({ email, password });
 
     if (error) return alert(error.message);
 
@@ -146,11 +123,44 @@ function startApp() {
 function bindEvents() {
     loginBtn?.addEventListener("click", login);
     signupBtn?.addEventListener("click", signup);
+
+    document.getElementById("add-project")?.addEventListener("click", async () => {
+        const name = pName.value.trim();
+        if (!name) return alert("نام پروژه لازم است");
+
+        const { error } = await client.from("projects").insert([{
+            name,
+            supervisor: pSupervisor.value,
+            progress: pProgress.value,
+            buildStatus: pBuildStatus.value,
+            adjustment: pAdjustment.value,
+            description: pDescription.value,
+            owner_id: currentUser.id
+        }]);
+
+        if (error) return alert(error.message);
+
+        loadProjects();
+    });
+
+    document.getElementById("add-mission")?.addEventListener("click", async () => {
+        const name = mName.value.trim();
+        if (!name) return alert("نام ماموریت لازم است");
+
+        const { error } = await client.from("missions").insert([{
+            name,
+            manager: mManager.value,
+            status: mStatus.value,
+            owner_id: currentUser.id
+        }]);
+
+        if (error) return alert(error.message);
+
+        loadMissions();
+    });
 }
 
-/* ================= PROJECTS ================= */
-let projects = [];
-
+/* ================= LOAD PROJECTS ================= */
 async function loadProjects() {
     if (!currentUser) return;
 
@@ -164,26 +174,6 @@ async function loadProjects() {
     renderProjects();
 }
 
-document.getElementById("add-project").onclick = async () => {
-
-    const name = pName.value.trim();
-    if (!name) return alert("نام پروژه لازم است");
-
-    const { error } = await client.from("projects").insert([{
-        name,
-        supervisor: pSupervisor.value,
-        progress: pProgress.value,
-        buildStatus: pBuildStatus.value,
-        adjustment: pAdjustment.value,
-        description: pDescription.value,
-        owner_id: currentUser.id
-    }]);
-
-    if (error) return alert(error.message);
-
-    loadProjects();
-};
-
 function renderProjects() {
     const list = document.getElementById("projects-list");
     list.innerHTML = "";
@@ -194,8 +184,7 @@ function renderProjects() {
             <b>${p.name}</b><br>
             ${p.supervisor || ""}<br>
             ${p.progress || ""}%
-
-            <button onclick="deleteProject('${p.id}')">حذف</button>
+            <button class="del-btn" onclick="deleteProject('${p.id}')">حذف</button>
         </div>`;
     });
 
@@ -207,9 +196,7 @@ window.deleteProject = async (id) => {
     loadProjects();
 };
 
-/* ================= MISSIONS ================= */
-let missions = [];
-
+/* ================= LOAD MISSIONS ================= */
 async function loadMissions() {
     if (!currentUser) return;
 
@@ -222,23 +209,6 @@ async function loadMissions() {
     renderMissions();
 }
 
-document.getElementById("add-mission").onclick = async () => {
-
-    const name = mName.value.trim();
-    if (!name) return alert("نام ماموریت لازم است");
-
-    const { error } = await client.from("missions").insert([{
-        name,
-        manager: mManager.value,
-        status: mStatus.value,
-        owner_id: currentUser.id
-    }]);
-
-    if (error) return alert(error.message);
-
-    loadMissions();
-};
-
 function renderMissions() {
     const list = document.getElementById("missions-list");
     list.innerHTML = "";
@@ -248,8 +218,7 @@ function renderMissions() {
         <div class="item">
             <b>${m.name}</b><br>
             ${m.status || ""}
-
-            <button onclick="deleteMission('${m.id}')">حذف</button>
+            <button class="del-btn" onclick="deleteMission('${m.id}')">حذف</button>
         </div>`;
     });
 
@@ -262,10 +231,6 @@ window.deleteMission = async (id) => {
 };
 
 /* ================= STAFF ================= */
-let staff = [
-    { name: "سید طاهر", lastname: "علوی", phone: "0912" }
-];
-
 function renderStaff() {
     const list = document.getElementById("staff-list");
     list.innerHTML = "";
