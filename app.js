@@ -35,6 +35,10 @@ const pSupervisor = document.getElementById("p-supervisor");
 const pBuildStatus = document.getElementById("p-build-status");
 const pAdjustment = document.getElementById("p-adjustment");
 const pDescription = document.getElementById("p-description");
+pDescription.addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+});
 
 document.getElementById("open-project").onclick = () =>
     pModal.style.display = "flex";
