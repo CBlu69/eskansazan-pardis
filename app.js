@@ -208,7 +208,7 @@ function showLogin() {
 }
 
 /* ================= ROLE ================= */
-aasync function loadUserRole() {
+async function loadUserRole() {
     const { data, error } = await client
         .from("profiles")
         .select("role")
@@ -593,7 +593,7 @@ function renderFinance(){
 
     let actions = "";
 
-    if (f.status === "pending") {
+if (!f.status || f.status === "pending") {
 
       if (userRole === "admin" || userRole === "manager") {
         actions += `
@@ -604,13 +604,18 @@ function renderFinance(){
     }
 
     if (f.status === "approved") {
+if (f.status === "approved") {
 
-      if (userRole === "admin" || userRole === "finance") {
-        actions += `
-          <button class="glass-btn success" onclick="payFinance('${f.id}')">💳 تایید پرداخت</button>
-        `;
-      }
-    }
+  if (userRole === "admin" || userRole === "finance") {
+    actions += `
+      <button class="glass-btn success"
+        onclick="confirmPayment('${f.id}')">
+        💳 تایید پرداخت
+      </button>
+    `;
+  }
+
+}
 
     list.innerHTML += `
       <div class="glass-card">
