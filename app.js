@@ -394,8 +394,8 @@ document.getElementById("add-mission")?.addEventListener("click", async () => {
   let fileUrl = null;
 
   if (file) {
-    const fileName = `${Date.now()}-${file.name}`;
-
+const fileName =
+`${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'')}`;
     const { error: uploadError } = await client
       .storage
       .from("finance-files")
