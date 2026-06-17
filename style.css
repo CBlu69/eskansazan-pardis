@@ -134,27 +134,36 @@ color:#38bdf8;
 }
 
 /* ================= MODAL BOX ================= */
-.modal-box{
-width:92%;
-max-width:340px;
-background:linear-gradient(145deg,#0f172a,#111827);
-border:1px solid rgba(255,255,255,0.08);
-padding:18px;
-border-radius:18px;
-display:flex;
-flex-direction:column;
-gap:12px;
-box-shadow:0 20px 60px rgba(0,0,0,0.5);
-animation:pop 0.2s ease;
-
-overflow-y: auto;
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
 }
 
-@keyframes pop{
-from{transform:scale(0.9);opacity:0}
-to{transform:scale(1);opacity:1}
+.modal-box {
+    width: 90%;
+    max-width: 360px;
+    background: rgba(17, 24, 39, 0.9);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    position: relative;
+    animation: pop 0.2s ease;
 }
 
+@keyframes pop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
 /* ================= TITLE ================= */
 .modal-box h3{
 margin:0;
