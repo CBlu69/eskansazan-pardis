@@ -401,11 +401,11 @@ const fileName =
       .from("finance-files")
       .upload(fileName, file);
 
-    if (uploadError) {
-      alert("خطا در آپلود فایل");
-      return;
-    }
-
+  if (uploadError) {
+  console.error(uploadError);
+  alert(JSON.stringify(uploadError));
+  return;
+}
     const { data } = client
       .storage
       .from("finance-files")
