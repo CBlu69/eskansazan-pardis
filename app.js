@@ -632,7 +632,7 @@ if (f.status === "approved") {
       </div>
     `;
   };
-}
+
 
 async function loadFinance(){
   const { data } = await client
