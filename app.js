@@ -435,7 +435,28 @@ const fileName =
   document.getElementById("finance-modal").style.display = "none";
   loadFinance();
 });
+
+  document.getElementById("logout-btn")?.addEventListener("click", async () => {
+    const confirmLogout = confirm("آیا مطمئنی میخوای خارج شی؟");
+    if (!confirmLogout) return;
+
+    const { error } = await client.auth.signOut();
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    currentUser = null;
+    userRole = "user";
+
+    // برگشت به لاگین
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("login-ui").style.display = "flex";
+});
 }
+
+
 /* ================= PROJECTS ================= */
 async function loadProjects() {
     if (!currentUser) return;
