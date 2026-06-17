@@ -9,6 +9,17 @@ let userRole = "user";
 let editingProjectId = null;
 let editingMissionId = null;
 
+function isAdmin(){
+  return userRole === "admin";
+}
+
+function isManager(){
+  return userRole === "manager";
+}
+
+function isFinance(){
+  return userRole === "finance";
+}
 
 /* ================= DATA ================= */
 let projects = [];
@@ -370,32 +381,27 @@ document.getElementById("add-mission")?.addEventListener("click", async () => {
 
     loadMissions();
 });
+
     document.getElementById("add-finance")?.addEventListener("click", async () => {
 
   const title = document.getElementById("f-title").value;
-  const amount = document.getElementById("f-amount").value;
+  const amount = document.getElementById("f-amount").value.replace(/[^0-9]/g,'');
   const description = document.getElementById("f-desc").value;
 
   if (!title) return alert("عنوان لازم است");
 
-  const { data, error } = await client
+  await client
     .from("financial_requests")
     .insert([{
       title,
-      amount,
+      amount: Number(amount),
       description,
-      owner_id: currentUser.id
+      owner_id: currentUser.id,
+      status: "pending",
+      payment_status: "unpaid"
     }]);
 
-  console.log("finance insert:", data, error);
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
   document.getElementById("finance-modal").style.display = "none";
-
   loadFinance();
 });
 }
@@ -569,11 +575,32 @@ function renderFinance(){
   list.innerHTML = "";
 
   financeRequests.forEach(f => {
+
     list.innerHTML += `
       <div class="item">
-        <b>${f.title || "-"}</b><br>
-        💰 ${f.amount || 0}<br>
-        📌 ${f.description || ""}
+        <b>${f.title}</b><br>
+        💰 ${Number(f.amount || 0).toLocaleString()}<br>
+        📌 ${f.description || ""}<br>
+
+        وضعیت: ${f.status}<br>
+        پرداخت: ${f.payment_status}
+
+        <div class="action-buttons">
+
+          ${(isAdmin() || isManager()) ? `
+            <button onclick="approveFinance('${f.id}')">✔ تایید</button>
+            <button onclick="rejectFinance('${f.id}')">❌ رد</button>
+          ` : ""}
+
+          ${isFinance() ? `
+            <button onclick="confirmPayment('${f.id}')">💳 تایید پرداخت</button>
+          ` : ""}
+
+          ${isAdmin() ? `
+            <button onclick="deleteFinance('${f.id}')">🗑 حذف</button>
+          ` : ""}
+
+        </div>
       </div>
     `;
   });
@@ -583,11 +610,44 @@ async function loadFinance(){
   const { data } = await client
     .from("financial_requests")
     .select("*")
-    .order("created_at",{ascending:false});
+    .order("id", { ascending:false });
 
   financeRequests = data || [];
   renderFinance();
 }
+window.approveFinance = async (id) => {
+  await client
+    .from("financial_requests")
+    .update({ status: "approved" })
+    .eq("id", id);
+
+  loadFinance();
+};
+window.rejectFinance = async (id) => {
+  await client
+    .from("financial_requests")
+    .update({ status: "rejected" })
+    .eq("id", id);
+
+  loadFinance();
+};
+window.confirmPayment = async (id) => {
+  await client
+    .from("financial_requests")
+    .update({ payment_status: "paid" })
+    .eq("id", id);
+
+  loadFinance();
+};
+window.deleteFinance = async (id) => {
+  await client
+    .from("financial_requests")
+    .delete()
+    .eq("id", id);
+
+  loadFinance();
+};
+
 /* ================= DASH ================= */
 function update() {
     document.getElementById("projects-count").textContent = projects.length;
@@ -605,3 +665,5 @@ window.addEventListener("DOMContentLoaded", async () => {
     hideSplash();
     await checkSession();
 });
+
+
