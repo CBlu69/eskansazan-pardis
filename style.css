@@ -117,23 +117,6 @@ color:#38bdf8;
 }
 
 /* ================= MODAL OVERLAY ================= */
-.modal{
-    position: fixed;
-    inset: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-
-    z-index: 99999;
-
-    /* 🔥 این خیلی مهمه برای جلوگیری از cut شدن */
-    overflow: auto;
-}
-
-/* ================= MODAL BOX ================= */
 .modal {
     position: fixed;
     inset: 0;
@@ -144,6 +127,8 @@ color:#38bdf8;
     backdrop-filter: blur(8px);
     z-index: 9999;
 }
+/* ================= MODAL BOX ================= */
+
 
 .modal-box {
     width: 90%;
