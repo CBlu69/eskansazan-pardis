@@ -512,6 +512,27 @@ function renderStaff() {
 
     update();
 }
+/* ================= GLASS BUTTONS ================= */
+.glass-btn{
+  background: rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+  color:white;
+  padding:8px 10px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.glass-btn:hover{
+  background: rgba(255,255,255,0.15);
+}
+
+/* file preview modal */
+.file-preview{
+  max-width:100%;
+  border-radius:12px;
+}
 
 /* ================= DASH ================= */
 function update() {
