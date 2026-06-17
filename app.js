@@ -8,7 +8,7 @@ let currentUser = null;
 let userRole = "user";
 let editingProjectId = null;
 let editingMissionId = null;
-let map = null;
+
 
 /* ================= DATA ================= */
 let projects = [];
@@ -109,24 +109,6 @@ function startClock() {
 
     draw();
     setInterval(draw,1000);
-}
-/* map*/
-function initMap() {
-    if (map) return;
-
-    const el = document.getElementById("map");
-    if (!el) return;
-
-    map = new L.Map("map", {
-        key: "web.2772d12b4d864f19a5e91bea90c426ae",
-        maptype: "standard-night" // 🌙 حالت شب
-    });
-
-    map.setView([35.7248, 51.8120], 12); // 📍 پردیس
-
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 300);
 }
 /* ================= NAV ================= */
 function initNav() {
@@ -260,8 +242,6 @@ async function signup() {
 function startApp() {
     if (loginUI) loginUI.style.display = "none";
 
-    initMap(); // 🗺️ مهم
-
     loadProjects();
     loadMissions();
     renderStaff();
@@ -385,8 +365,7 @@ async function loadProjects() {
     projects = data || [];
 
     renderProjects();
-    renderMarkers(); // 🗺️ نقشه اینجا
-}
+    }
 
 function renderProjects() {
     const list = document.getElementById("projects-list");
@@ -445,20 +424,6 @@ window.deleteProject = async (id) => {
 };
 
 
-function renderMarkers() {
-    if (!map) return;
-
-    projects.forEach(p => {
-        if (!p.latitude || !p.longitude) return;
-
-        L.marker([p.latitude, p.longitude])
-            .addTo(map)
-            .bindPopup(`
-                <b>${p.name}</b><br>
-                📊 ${p.progress || 0}%
-            `);
-    });
-}
 /* ================= MISSIONS ================= */
 async function loadMissions() {
     if (!currentUser) return;
