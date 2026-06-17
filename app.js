@@ -246,6 +246,7 @@ function startApp() {
     loadMissions();
     renderStaff();
     update();
+    loadFinance();
 }
 
 /* ================= EVENTS ================= */
