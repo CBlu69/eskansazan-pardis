@@ -436,23 +436,21 @@ const fileName =
   loadFinance();
 });
 
-  document.getElementById("logout-btn")?.addEventListener("click", async () => {
-    const confirmLogout = confirm("آیا مطمئنی میخوای خارج شی؟");
-    if (!confirmLogout) return;
+document.getElementById("logout-btn")?.addEventListener("click", () => {
+    document.getElementById("logout-modal").style.display = "flex";
+});
 
-    const { error } = await client.auth.signOut();
+document.getElementById("cancel-logout")?.addEventListener("click", () => {
+    document.getElementById("logout-modal").style.display = "none";
+});
 
-    if (error) {
-        alert(error.message);
-        return;
-    }
+document.getElementById("confirm-logout")?.addEventListener("click", async () => {
 
-    currentUser = null;
-    userRole = "user";
+    document.getElementById("logout-modal").style.display = "none";
 
-    // برگشت به لاگین
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById("login-ui").style.display = "flex";
+    await client.auth.signOut();
+
+    location.reload();
 });
 }
 
