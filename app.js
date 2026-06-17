@@ -368,6 +368,34 @@ document.getElementById("add-mission")?.addEventListener("click", async () => {
 
     loadMissions();
 });
+    document.getElementById("add-finance")?.addEventListener("click", async () => {
+
+  const title = document.getElementById("f-title").value;
+  const amount = document.getElementById("f-amount").value;
+  const description = document.getElementById("f-desc").value;
+
+  if (!title) return alert("عنوان لازم است");
+
+  const { data, error } = await client
+    .from("financial_requests")
+    .insert([{
+      title,
+      amount,
+      description,
+      owner_id: currentUser.id
+    }]);
+
+  console.log("finance insert:", data, error);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  document.getElementById("finance-modal").style.display = "none";
+
+  loadFinance();
+});
 }
 
 /* ================= PROJECTS ================= */
