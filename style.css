@@ -1,3 +1,4 @@
+/* ================= BASE ================= */
 body{
     margin:0;
     font-family:tahoma;
@@ -6,173 +7,154 @@ body{
         radial-gradient(circle at top right,#1e3a8a,#0b1220 40%),
         radial-gradient(circle at bottom left,#0f766e,#0b1220 35%);
     min-height:100vh;
-    padding-bottom:80px;
+    overflow-x:hidden;
+    padding-bottom:90px;
 }
 
+main{
+    padding:10px 0 90px;
+}
+
+h2{
+    margin-top:10px;
+}
+
+/* ================= SPLASH ================= */
 #splash{
-position:fixed;
-inset:0;
-background:#05070f;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;
+    position:fixed;
+    inset:0;
+    background:#05070f;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
 }
 
 .splash-logo{
-width:120px;
-animation:zoom 1.2s ease;
+    width:120px;
+    animation:zoom 1.2s ease;
 }
 
 @keyframes zoom{
-0%{transform:scale(0.6);opacity:0}
-100%{transform:scale(1);opacity:1}
+    0%{transform:scale(0.6);opacity:0}
+    100%{transform:scale(1);opacity:1}
 }
 
+/* ================= HEADER ================= */
 .header{
-text-align:center;
-padding:15px;
+    text-align:center;
+    padding:15px;
 }
 
 .logo{width:80px}
 
+/* ================= PAGE ================= */
 .page{
-display:none;
-padding:15px;
-opacity:0;
-transform:translateY(8px);
-transition:0.25s;
+    display:none;
+    padding:15px;
+    min-height:calc(100vh - 140px);
 }
 
 .page.active{
-display:block;
-opacity:1;
-transform:translateY(0);
+    display:block;
 }
 
+/* ================= CARDS GRID ================= */
 .cards{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
 }
 
+/* ================= CARD ================= */
 .card{
-    background: rgba(255,255,255,0.10);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 18px;
-    padding: 16px;
-    box-shadow:
-        0 8px 32px rgba(0,0,0,0.35),
-        inset 0 1px 1px rgba(255,255,255,0.08);
-}
-.card{
-    transition:0.25s;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:18px;
+    padding:16px;
+    text-align:center;
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    transition:0.2s;
 }
 
 .card:hover{
-    transform:translateY(-5px);
+    transform:translateY(-4px);
 }
 
-.card:active{
-    transform:scale(0.97);
-}
-
+/* ================= BUTTON ================= */
 button{
-padding:10px;
-border:none;
-border-radius:10px;
-background:#38bdf8;
-color:white;
-cursor:pointer;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#38bdf8;
+    color:white;
+    cursor:pointer;
 }
 
+/* ================= ITEM ================= */
 .item{
-background:rgba(255,255,255,0.06);
-padding:10px;
-border-radius:10px;
-margin-top:8px;
+    background:rgba(255,255,255,0.06);
+    padding:10px;
+    border-radius:10px;
+    margin-top:8px;
 }
 
+/* ================= NAV ================= */
 .bottom-nav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-display:flex;
-justify-content:space-around;
-background:#111827;
-padding:10px;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:space-around;
+    background:#111827;
+    padding:10px;
 }
 
 .bottom-nav button{
-background:none;
-color:#aaa;
-border:none;
+    background:none;
+    border:none;
+    flex:1;
 }
 
-.bottom-nav button.active{
-color:#38bdf8;
+.bottom-nav img{
+    width:26px;
+    height:26px;
+    opacity:0.6;
+    transition:0.2s;
 }
 
-/* ================= MODAL OVERLAY ================= */
-.modal {
-    position: fixed;
-    inset: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(8px);
-    z-index: 9999;
-}
-/* ================= MODAL BOX ================= */
-
-
-.modal-box {
-    width: 90%;
-    max-width: 360px;
-    background: rgba(17, 24, 39, 0.9);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    position: relative;
-    animation: pop 0.2s ease;
+.bottom-nav button.active img{
+    opacity:1;
+    transform:scale(1.2);
 }
 
-@keyframes pop {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-/* ================= TITLE ================= */
-.modal-box h3{
-margin:0;
-font-size:16px;
-text-align:center;
-color:#38bdf8;
-}
-
-/* ================= INPUTS ================= */
-.modal-box input{
-padding:12px;
-border-radius:12px;
-border:1px solid rgba(255,255,255,0.08);
-background:rgba(255,255,255,0.05);
-color:white;
-outline:none;
-transition:0.2s;
-font-size:13px;
+/* ================= MODAL ================= */
+.modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(8px);
+    z-index:9999;
 }
 
-.modal-box input:focus{
-border-color:#38bdf8;
-box-shadow:0 0 0 2px rgba(56,189,248,0.2);
+.modal-box{
+    width:90%;
+    max-width:360px;
+    background:rgba(17,24,39,0.9);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
 }
+
+.modal-box input,
 .modal-box textarea{
     padding:12px;
     border-radius:12px;
@@ -180,520 +162,129 @@ box-shadow:0 0 0 2px rgba(56,189,248,0.2);
     background:rgba(255,255,255,0.05);
     color:white;
     outline:none;
+}
+
+/* ================= ACTION BUTTONS ================= */
+.action-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+    flex-wrap:wrap;
+}
+
+/* ================= GLASS CARD ================= */
+.glass-card{
+    background:rgba(255,255,255,0.06);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:16px;
+    padding:14px;
+    margin-bottom:12px;
+}
+
+/* ================= GLASS BUTTON ================= */
+.glass-btn{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    color:white;
+    padding:6px 12px;
+    border-radius:10px;
+    cursor:pointer;
     transition:0.2s;
-    font-size:13px;
-    font-family:tahoma;
-    width:100%;
-    box-sizing:border-box;
-    min-height:50px;
-    resize:vertical;
 }
 
-.modal-box textarea:focus{
-    border-color:#38bdf8;
-    box-shadow:0 0 0 2px rgba(56,189,248,0.2);
+.glass-btn:hover{
+    transform:scale(1.05);
 }
 
-/* ================= BUTTONS ================= */
-.modal-box button{
-padding:12px;
-border:none;
-border-radius:12px;
-font-size:13px;
-cursor:pointer;
-transition:0.15s;
+.glass-btn.danger{
+    border-color:rgba(255,80,80,0.4);
+    background:rgba(255,0,0,0.1);
 }
 
-/* دکمه اصلی */
-.modal-box button:first-of-type{
-background:#38bdf8;
-color:#001018;
-font-weight:bold;
+.glass-btn.success{
+    border-color:rgba(80,255,120,0.4);
+    background:rgba(0,255,100,0.1);
 }
 
-.modal-box button:first-of-type:active{
-transform:scale(0.97);
-}
-
-/* دکمه بستن */
-.modal-box button:last-of-type{
-background:rgba(255,255,255,0.08);
-color:#fff;
-}
-
-.modal-box button:last-of-type:hover{
-background:rgba(255,255,255,0.12);
-}
-/* ================= DELETE BUTTON (APP STYLE) ================= */
-.del-btn{
-margin-top:10px;
-padding:8px 10px;
-border:none;
-border-radius:10px;
-background:rgba(239,68,68,0.15);
-color:#ef4444;
-font-size:12px;
-cursor:pointer;
-transition:0.2s;
-width:100%;
-border:1px solid rgba(239,68,68,0.3);
-}
-
-.del-btn:hover{
-background:#ef4444;
-color:white;
-transform:translateY(-2px);
-}
-
-.del-btn:active{
-transform:scale(0.97);
-}
-/* ================= STAFF GRID ================= */
+/* ================= STAFF ================= */
 #staff-list{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
 }
 
-/* کارت پرسنل حرفه‌ای */
 .staff-card{
-background:rgba(255,255,255,0.06);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:14px;
-padding:12px;
-text-align:center;
-backdrop-filter: blur(8px);
-transition:0.2s;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:14px;
+    padding:12px;
+    text-align:center;
 }
 
-.staff-card:hover{
-transform:translateY(-4px);
-}
-
-/* اسم */
-.staff-card b{
-display:block;
-color:#38bdf8;
-font-size:13px;
-margin-bottom:4px;
-}
-
-/* مشخصات */
-.staff-card small{
-display:block;
-color:#94a3b8;
-font-size:11px;
-}
-
-/* دکمه تماس */
-.call-btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:5px;
-margin-top:8px;
-background:#22c55e;
-color:white;
-padding:4px 8px;
-border-radius:8px;
-text-decoration:none;
-font-size:10px;
-width:max-content;
-min-width:0;
-white-space:nowrap;
-}
 /* ================= LOGIN ================= */
-
 #login-ui{
     position:fixed;
     inset:0;
     display:flex;
     justify-content:center;
     align-items:center;
-
-    background:
-        radial-gradient(circle at top right,#1e3a8a,#0b1220 40%),
-        radial-gradient(circle at bottom left,#0f766e,#0b1220 35%);
-
+    background:radial-gradient(circle,#1e3a8a,#0b1220);
     z-index:99999;
-    padding:20px;
 }
 
 .login-box{
     width:100%;
     max-width:360px;
-
-    padding:32px 26px;
-
+    padding:30px;
+    border-radius:24px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
     display:flex;
     flex-direction:column;
-    gap:14px;
-
-    background:rgba(255,255,255,.08);
-
-    border:1px solid rgba(255,255,255,.12);
-
-    border-radius:28px;
-
-    backdrop-filter:blur(22px);
-    -webkit-backdrop-filter:blur(22px);
-
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.45),
-        inset 0 1px 1px rgba(255,255,255,.08);
-
-    animation:loginPop .35s ease;
+    gap:12px;
 }
 
-@keyframes loginPop{
-    from{
-        transform:translateY(15px) scale(.95);
-        opacity:0;
-    }
-
-    to{
-        transform:translateY(0) scale(1);
-        opacity:1;
-    }
-}
-
-.login-logo{
-    width:95px;
-    margin:auto;
-}
-
-.login-box h2{
-    margin:0;
-    text-align:center;
-
-    color:#38bdf8;
-
-    font-size:24px;
-
-    font-weight:bold;
-}
-
-.login-text{
-    margin:0 0 8px;
-
-    text-align:center;
-
-    color:#94a3b8;
-
-    font-size:13px;
-}
-
-.login-box input{
-    width:100%;
-
-    box-sizing:border-box;
-
-    padding:14px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:rgba(255,255,255,.06);
-
-    color:white;
-
-    font-size:14px;
-
-    outline:none;
-
-    transition:.2s;
-}
-
-.login-box input::placeholder{
-    color:#94a3b8;
-}
-
-.login-box input:focus{
-    background:rgba(255,255,255,.10);
-
-    box-shadow:
-        0 0 0 2px rgba(56,189,248,.25);
-}
-
-#loginBtn,
-#signupBtn{
-    width:100%;
-
-    padding:14px;
-
-    border:none;
-
-    border-radius:14px;
-
-    font-size:14px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.2s;
-}
-
-#loginBtn{
-    background:linear-gradient(135deg,#38bdf8,#2563eb);
-
-    color:white;
-
-    box-shadow:
-        0 8px 20px rgba(56,189,248,.35);
-}
-
-#signupBtn{
-    background:rgba(255,255,255,.08);
-
-    color:white;
-
-    border:1px solid rgba(255,255,255,.12);
-}
-
-#loginBtn:hover,
-#signupBtn:hover{
-    transform:translateY(-2px);
-}
-
-#loginBtn:active,
-#signupBtn:active{
-    transform:scale(.98);
-}
-
-/* دکمه‌های اصلاح و حذف */
-.action-buttons{
+/* ================= USER CARD ================= */
+.user-profile-card{
+    margin-top:15px;
     display:flex;
-    gap:10px;
-    margin-top:12px;
-}
-
-.edit-btn,
-.del-btn{
-    flex:1;
-
-    padding:10px 12px;
-
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.12);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    cursor:pointer;
-
-    font-weight:bold;
-    font-size:13px;
-
-    transition:.2s;
-}
-
-/* اصلاح */
-.edit-btn{
-    background:linear-gradient(
-        135deg,
-        rgba(56,189,248,.30),
-        rgba(37,99,235,.30)
-    );
-
-    color:#38bdf8;
-
-    box-shadow:
-        0 6px 18px rgba(56,189,248,.18);
-}
-
-.edit-btn:hover{
-    background:linear-gradient(
-        135deg,
-        #38bdf8,
-        #2563eb
-    );
-
-    color:white;
-
-    transform:translateY(-2px);
-}
-
-/* حذف */
-.del-btn{
-    background:linear-gradient(
-        135deg,
-        rgba(239,68,68,.25),
-        rgba(220,38,38,.25)
-    );
-
-    color:#ef4444;
-
-    box-shadow:
-        0 6px 18px rgba(239,68,68,.18);
-}
-
-.del-btn:hover{
-    background:linear-gradient(
-        135deg,
-        #ef4444,
-        #dc2626
-    );
-
-    color:white;
-
-    transform:translateY(-2px);
-}
-
-.edit-btn:active,
-.del-btn:active{
-    transform:scale(.97);
-}
-
-.bottom-nav button {
-    background: none;
-    border: none;
-    flex: 1;
-    padding: 10px;
-}
-
-.bottom-nav img {
-    width: 26px;
-    height: 26px;
-    opacity: 0.7;
-    transition: 0.2s;
-}
-
-.bottom-nav button.active img {
-    opacity: 1;
-    transform: scale(1.2);
-}
-
-.clock-box{
-    display:flex;
-    flex-direction:column;
     align-items:center;
-    gap:8px;
+    justify-content:space-between;
+    gap:12px;
+
+    padding:14px;
+    border-radius:16px;
+
+    background:rgba(255,255,255,0.06);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.12);
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
 }
 
-#clock{
-    background:#0f172a;
-    border-radius:50%;
+.user-avatar{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(56,189,248,0.2);
+    border:1px solid rgba(56,189,248,0.4);
+    font-size:20px;
 }
 
-#live-date{
-    color:white;
+.user-info{
+    flex:1;
+}
+
+.user-info div{
+    font-weight:bold;
     font-size:14px;
 }
-.card,
-.item,
-.staff-card {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
-/* ================= GLASS BUTTONS ================= */
-.glass-btn{
-  background: rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
-  color:white;
-  padding:8px 10px;
-  border-radius:10px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.glass-btn:hover{
-  background: rgba(255,255,255,0.15);
-}
-
-/* file preview modal */
-.file-preview{
-  max-width:100%;
-  border-radius:12px;
-}
-main{
-    padding-bottom: 90px;
-    padding-top: 10px;
-}
-
-h2{
-    margin-top: 10px;
-}
-
-/* جلوگیری از قفل شدن محتوا زیر navbar */
-.page{
-    min-height: calc(100vh - 140px);
-    padding-bottom: 100px;
-}
-
-/* اسکرول درست */
-body{
-    overflow-x: hidden;
-}
-.glass-card {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  padding: 14px;
-  margin-bottom: 12px;
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.action-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.glass-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: 0.2s;
-}
-
-.glass-btn:hover {
-  transform: scale(1.05);
-  background: rgba(255,255,255,0.15);
-}
-
-.glass-btn.danger {
-  border-color: rgba(255,80,80,0.4);
-  background: rgba(255,0,0,0.1);
-}
-
-.glass-btn.success {
-  border-color: rgba(80,255,120,0.4);
-  background: rgba(0,255,100,0.1);
-}
-.user-profile-card {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: white;
-}
-
-.user-avatar {
-  font-size: 28px;
-}
-
-.user-info div {
-  font-weight: bold;
-}
-
-.user-info small {
-  opacity: 0.7;
+.user-info small{
+    opacity:0.7;
+    font-size:12px;
 }
