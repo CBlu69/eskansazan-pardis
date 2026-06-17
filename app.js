@@ -826,9 +826,12 @@ window.approveFinance = async (id) => {
 };
 
 window.rejectFinance = async (id) => {
+
+  if (!confirm("درخواست رد و حذف شود؟")) return;
+
   await client
     .from("financial_requests")
-    .update({ status: "rejected" })
+    .delete()
     .eq("id", id);
 
   loadFinance();
