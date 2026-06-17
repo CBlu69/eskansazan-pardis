@@ -13,6 +13,7 @@ let editingMissionId = null;
 /* ================= DATA ================= */
 let projects = [];
 let missions = [];
+let financeRequests = [];
 let staff = [
     { name: "سید طاهر", lastname: "علوی", phone: "0912", nationalId: "1234567890" }
 ];
@@ -246,7 +247,11 @@ function startApp() {
     loadMissions();
     renderStaff();
     update();
-    loadFinance();
+    try {
+  loadFinance();
+} catch(e){
+  console.warn("finance error", e);
+    }
 }
 
 /* ================= EVENTS ================= */
@@ -513,8 +518,32 @@ function renderStaff() {
 
     update();
 }
+/* ================= finance ================= */
 
+function renderFinance(){
+  const list = document.getElementById("finance-list");
+  list.innerHTML = "";
 
+  financeRequests.forEach(f => {
+    list.innerHTML += `
+      <div class="item">
+        <b>${f.title || "-"}</b><br>
+        💰 ${f.amount || 0}<br>
+        📌 ${f.description || ""}
+      </div>
+    `;
+  });
+}
+
+async function loadFinance(){
+  const { data } = await client
+    .from("financial_requests")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  financeRequests = data || [];
+  renderFinance();
+}
 /* ================= DASH ================= */
 function update() {
     document.getElementById("projects-count").textContent = projects.length;
