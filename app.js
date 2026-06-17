@@ -162,7 +162,13 @@ function initModals() {
             if (e.target === modal) modal.style.display = "none";
         });
     });
-    
+    document.getElementById("open-finance")?.addEventListener("click", () => {
+    document.getElementById("finance-modal").style.display = "flex";
+});
+
+document.getElementById("close-finance")?.addEventListener("click", () => {
+    document.getElementById("finance-modal").style.display = "none";
+});
 }
 
 /* ================= SESSION ================= */
