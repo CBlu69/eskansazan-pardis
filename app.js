@@ -95,6 +95,7 @@ function startClock() {
 
     function draw() {
         const now = new Date();
+
         const r = canvas.width / 2;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -102,7 +103,7 @@ function startClock() {
         ctx.save();
         ctx.translate(r, r);
 
-        /* پس‌زمینه ساعت */
+        /* بدنه ساعت */
         ctx.beginPath();
         ctx.arc(0, 0, r - 6, 0, Math.PI * 2);
 
@@ -117,43 +118,40 @@ function startClock() {
         ctx.fillStyle = grd;
         ctx.fill();
 
-        /* حلقه نورانی دور ساعت */
+        /* حلقه دور */
         ctx.beginPath();
         ctx.arc(0, 0, r - 6, 0, Math.PI * 2);
-
-        ctx.strokeStyle = "rgba(56,189,248,.75)";
-        ctx.lineWidth = 2;
-
-        ctx.shadowColor = "#38bdf8";
-        ctx.shadowBlur = 15;
-
+        ctx.strokeStyle = "rgba(56,189,248,.35)";
+        ctx.lineWidth = 3;
         ctx.stroke();
 
-        ctx.shadowBlur = 0;
+        /* فقط ۱۲ تیک ساعت */
+        for (let i = 0; i < 12; i++) {
 
-        /* اعداد ساعت */
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 13px Tahoma";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+            const ang = i * Math.PI / 6;
 
-        for (let n = 1; n <= 12; n++) {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(255,255,255,.35)";
+            ctx.lineWidth = 2;
 
-            const ang = n * Math.PI / 6;
-
-            ctx.fillText(
-                n,
-                Math.sin(ang) * (r - 28),
-                -Math.cos(ang) * (r - 28)
+            ctx.moveTo(
+                Math.sin(ang) * (r - 16),
+                -Math.cos(ang) * (r - 16)
             );
+
+            ctx.lineTo(
+                Math.sin(ang) * (r - 26),
+                -Math.cos(ang) * (r - 26)
+            );
+
+            ctx.stroke();
         }
 
-        /* زمان */
         const h = now.getHours() % 12;
         const m = now.getMinutes();
         const s = now.getSeconds();
 
-        /* عقربه ساعت */
+        /* ساعت */
         drawHand(
             (h * Math.PI / 6) + (m * Math.PI / 360),
             r * 0.42,
@@ -161,18 +159,18 @@ function startClock() {
             "#ffffff"
         );
 
-        /* عقربه دقیقه */
+        /* دقیقه */
         drawHand(
             m * Math.PI / 30,
-            r * 0.60,
+            r * 0.58,
             3,
             "#38bdf8"
         );
 
-        /* عقربه ثانیه */
+        /* ثانیه */
         drawHand(
             s * Math.PI / 30,
-            r * 0.70,
+            r * 0.68,
             2,
             "#ef4444"
         );
@@ -181,11 +179,6 @@ function startClock() {
         ctx.beginPath();
         ctx.arc(0, 0, 5, 0, Math.PI * 2);
         ctx.fillStyle = "#ffffff";
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(0, 0, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "#38bdf8";
         ctx.fill();
 
         ctx.restore();
@@ -202,7 +195,6 @@ function startClock() {
     draw();
     setInterval(draw, 1000);
 }
-
 /* ================= NAV ================= */
 function initNav() {
     const buttons = document.querySelectorAll(".bottom-nav button");
