@@ -584,7 +584,6 @@ function paymentText(status){
     }
 }
 /* ================= finance ================= */
-
 function renderFinance(){
   const list = document.getElementById("finance-list");
   list.innerHTML = "";
@@ -593,8 +592,7 @@ function renderFinance(){
 
     let actions = "";
 
-if (!f.status || f.status === "pending") {
-
+    if (!f.status || f.status === "pending") {
       if (userRole === "admin" || userRole === "manager") {
         actions += `
           <button class="glass-btn" onclick="approveFinance('${f.id}')">✔ تایید</button>
@@ -604,18 +602,12 @@ if (!f.status || f.status === "pending") {
     }
 
     if (f.status === "approved") {
-if (f.status === "approved") {
-
-  if (userRole === "admin" || userRole === "finance") {
-    actions += `
-      <button class="glass-btn success"
-        onclick="confirmPayment('${f.id}')">
-        💳 تایید پرداخت
-      </button>
-    `;
-  }
-
-}
+      if (userRole === "admin" || userRole === "finance") {
+        actions += `
+          <button class="glass-btn success" onclick="confirmPayment('${f.id}')">💳 تایید پرداخت</button>
+        `;
+      }
+    }
 
     list.innerHTML += `
       <div class="glass-card">
@@ -631,9 +623,11 @@ if (f.status === "approved") {
         </div>
       </div>
     `;
-  };
+  });
+}
 
 
+/* ================= LOAD FINANCE ================= */
 async function loadFinance(){
   const { data } = await client
     .from("financial_requests")
@@ -643,6 +637,9 @@ async function loadFinance(){
   financeRequests = data || [];
   renderFinance();
 }
+
+
+/* ================= ACTIONS ================= */
 window.approveFinance = async (id) => {
   await client
     .from("financial_requests")
@@ -651,6 +648,7 @@ window.approveFinance = async (id) => {
 
   loadFinance();
 };
+
 window.rejectFinance = async (id) => {
   await client
     .from("financial_requests")
@@ -659,6 +657,7 @@ window.rejectFinance = async (id) => {
 
   loadFinance();
 };
+
 window.confirmPayment = async (id) => {
   await client
     .from("financial_requests")
@@ -667,6 +666,7 @@ window.confirmPayment = async (id) => {
 
   loadFinance();
 };
+
 window.deleteFinance = async (id) => {
   await client
     .from("financial_requests")
