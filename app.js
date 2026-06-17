@@ -10,16 +10,16 @@ let userRole = "user";
 let editingProjectId = null;
 let editingMissionId = null;
 let rejectFinanceId = null;
-function isAdmin(){
-  return userRole === "admin";
+function isAdmin() {
+    return userRole === "admin";
 }
 
-function isManager(){
-  return userRole === "manager";
+function isManager() {
+    return userRole === "manager";
 }
 
-function isFinance(){
-  return userRole === "finance";
+function isFinance() {
+    return userRole === "finance";
 }
 
 /* ================= DATA ================= */
@@ -221,24 +221,24 @@ function initModals() {
         document.getElementById("project-modal").style.display = "flex";
     });
 
-   document.getElementById("close-project")?.addEventListener("click", () => {
-    document.getElementById("project-modal").style.display = "none";
+    document.getElementById("close-project")?.addEventListener("click", () => {
+        document.getElementById("project-modal").style.display = "none";
 
-    editingProjectId = null;
-    document.getElementById("add-project").textContent = "ثبت";
-});
+        editingProjectId = null;
+        document.getElementById("add-project").textContent = "ثبت";
+    });
 
     // mission modal
     document.getElementById("open-mission")?.addEventListener("click", () => {
         document.getElementById("mission-modal").style.display = "flex";
     });
 
-   document.getElementById("close-mission")?.addEventListener("click", () => {
-    document.getElementById("mission-modal").style.display = "none";
+    document.getElementById("close-mission")?.addEventListener("click", () => {
+        document.getElementById("mission-modal").style.display = "none";
 
-    editingMissionId = null;
-    document.getElementById("add-mission").textContent = "ثبت";
-});
+        editingMissionId = null;
+        document.getElementById("add-mission").textContent = "ثبت";
+    });
 
     // بستن با کلیک بیرون از modal
     document.querySelectorAll(".modal").forEach(modal => {
@@ -247,12 +247,12 @@ function initModals() {
         });
     });
     document.getElementById("open-finance")?.addEventListener("click", () => {
-    document.getElementById("finance-modal").style.display = "flex";
-});
+        document.getElementById("finance-modal").style.display = "flex";
+    });
 
-document.getElementById("close-finance")?.addEventListener("click", () => {
-    document.getElementById("finance-modal").style.display = "none";
-});
+    document.getElementById("close-finance")?.addEventListener("click", () => {
+        document.getElementById("finance-modal").style.display = "none";
+    });
 }
 
 /* ================= SESSION ================= */
@@ -335,10 +335,10 @@ async function startApp() {
     renderStaff();
     update();
     showUserInfo();
-   
+
     try {
         await loadFinance();
-    } catch(e){
+    } catch (e) {
         console.warn("finance error", e);
     }
 }
@@ -349,199 +349,199 @@ function bindEvents() {
     signupBtn?.addEventListener("click", signup);
 
 
-document.getElementById("add-project")?.addEventListener("click", async () => {
+    document.getElementById("add-project")?.addEventListener("click", async () => {
 
-    const name = pName.value.trim();
-    if (!name) return alert("نام پروژه لازم است");
+        const name = pName.value.trim();
+        if (!name) return alert("نام پروژه لازم است");
 
-    let error;
+        let error;
 
-    if (editingProjectId) {
-        ({ error } = await client
-            .from("projects")
-            .update({
-                name,
-                supervisor: pSupervisor.value,
-                progress: pProgress.value,
-                buildStatus: pBuildStatus.value,
-                adjustment: pAdjustment.value,
-                description: pDescription.value
-            })
-            .eq("id", editingProjectId));
+        if (editingProjectId) {
+            ({ error } = await client
+                .from("projects")
+                .update({
+                    name,
+                    supervisor: pSupervisor.value,
+                    progress: pProgress.value,
+                    buildStatus: pBuildStatus.value,
+                    adjustment: pAdjustment.value,
+                    description: pDescription.value
+                })
+                .eq("id", editingProjectId));
 
-        editingProjectId = null;
+            editingProjectId = null;
 
-        document.getElementById("add-project").textContent = "ثبت";
-    } else {
-        ({ error } = await client
-            .from("projects")
+            document.getElementById("add-project").textContent = "ثبت";
+        } else {
+            ({ error } = await client
+                .from("projects")
+                .insert([{
+                    name,
+                    supervisor: pSupervisor.value,
+                    progress: pProgress.value,
+                    buildStatus: pBuildStatus.value,
+                    adjustment: pAdjustment.value,
+                    description: pDescription.value,
+                    owner_id: currentUser.id
+                }]));
+        }
+
+        if (error) return alert(error.message);
+
+        pName.value = "";
+        pSupervisor.value = "";
+        pProgress.value = "";
+        pBuildStatus.value = "";
+        pAdjustment.value = "";
+        pDescription.value = "";
+
+        document.getElementById("project-modal").style.display = "none";
+        document.getElementById("f-amount")?.addEventListener("input", (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, "");
+        });
+        loadProjects();
+    });
+
+
+
+    document.getElementById("add-mission")?.addEventListener("click", async () => {
+
+        const name = mName.value.trim();
+        if (!name) return alert("نام ماموریت لازم است");
+
+        let error;
+
+        if (editingMissionId) {
+            ({ error } = await client
+                .from("missions")
+                .update({
+                    name,
+                    manager: mManager.value,
+                    status: mStatus.value
+                })
+                .eq("id", editingMissionId));
+
+            editingMissionId = null;
+
+            document.getElementById("add-mission").textContent = "ثبت";
+        } else {
+            ({ error } = await client
+                .from("missions")
+                .insert([{
+                    name,
+                    manager: mManager.value,
+                    status: mStatus.value,
+                    owner_id: currentUser.id
+                }]));
+        }
+
+        if (error) return alert(error.message);
+
+        mName.value = "";
+        mManager.value = "";
+        mStatus.value = "";
+
+        document.getElementById("mission-modal").style.display = "none";
+
+        loadMissions();
+    });
+
+    document.getElementById("add-finance")?.addEventListener("click", async () => {
+
+        const title = document.getElementById("f-title").value;
+        const amount = document.getElementById("f-amount").value.replace(/[^0-9]/g, '');
+        const description = document.getElementById("f-desc").value;
+
+        if (!title) return alert("عنوان لازم است");
+
+        const fileInput = document.getElementById("f-file");
+        const file = fileInput.files[0];
+
+        let fileUrl = null;
+
+        if (file) {
+            const fileName =
+                `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '')}`;
+            const { error: uploadError } = await client
+                .storage
+                .from("finance-files")
+                .upload(fileName, file);
+
+            if (uploadError) {
+                console.error(uploadError);
+                alert(JSON.stringify(uploadError));
+                return;
+            }
+            const { data } = client
+                .storage
+                .from("finance-files")
+                .getPublicUrl(fileName);
+
+            fileUrl = data.publicUrl;
+        }
+
+        const { error } = await client
+            .from("financial_requests")
             .insert([{
-                name,
-                supervisor: pSupervisor.value,
-                progress: pProgress.value,
-                buildStatus: pBuildStatus.value,
-                adjustment: pAdjustment.value,
-                description: pDescription.value,
-                owner_id: currentUser.id
-            }]));
-    }
+                title,
+                amount: Number(amount),
+                description,
+                file_url: fileUrl,
+                owner_id: currentUser.id,
+                status: "pending",
+                payment_status: "unpaid"
+            }]);
 
-    if (error) return alert(error.message);
+        if (error) {
+            alert(error.message);
+            return;
+        }
 
-    pName.value = "";
-    pSupervisor.value = "";
-    pProgress.value = "";
-    pBuildStatus.value = "";
-    pAdjustment.value = "";
-    pDescription.value = "";
+        document.getElementById("finance-modal").style.display = "none";
+        loadFinance();
+    });
 
-    document.getElementById("project-modal").style.display = "none";
-document.getElementById("f-amount")?.addEventListener("input", (e) => {
-  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-});
-    loadProjects();
-});
+    document.getElementById("logout-btn")?.addEventListener("click", () => {
+        document.getElementById("logout-modal").style.display = "flex";
+    });
 
+    document.getElementById("cancel-logout")?.addEventListener("click", () => {
+        document.getElementById("logout-modal").style.display = "none";
+    });
 
+    document.getElementById("confirm-logout")?.addEventListener("click", async () => {
 
-document.getElementById("add-mission")?.addEventListener("click", async () => {
+        document.getElementById("logout-modal").style.display = "none";
 
-    const name = mName.value.trim();
-    if (!name) return alert("نام ماموریت لازم است");
+        await client.auth.signOut();
 
-    let error;
+        location.reload();
+    });
 
-    if (editingMissionId) {
-        ({ error } = await client
-            .from("missions")
-            .update({
-                name,
-                manager: mManager.value,
-                status: mStatus.value
-            })
-            .eq("id", editingMissionId));
+    document.getElementById("reject-cancel-btn")?.addEventListener("click", () => {
+        document.getElementById("reject-modal").style.display = "none";
+        rejectFinanceId = null;
+    });
 
-        editingMissionId = null;
+    document.getElementById("reject-confirm-btn")?.addEventListener("click", async () => {
+        if (!rejectFinanceId) return;
 
-        document.getElementById("add-mission").textContent = "ثبت";
-    } else {
-        ({ error } = await client
-            .from("missions")
-            .insert([{
-                name,
-                manager: mManager.value,
-                status: mStatus.value,
-                owner_id: currentUser.id
-            }]));
-    }
+        const { error } = await client
+            .from("financial_requests")
+            .delete()
+            .eq("id", rejectFinanceId);
 
-    if (error) return alert(error.message);
+        if (error) {
+            alert(error.message);
+            return;
+        }
 
-    mName.value = "";
-    mManager.value = "";
-    mStatus.value = "";
+        document.getElementById("reject-modal").style.display = "none";
+        rejectFinanceId = null;
 
-    document.getElementById("mission-modal").style.display = "none";
-
-    loadMissions();
-});
-
-   document.getElementById("add-finance")?.addEventListener("click", async () => {
-
-  const title = document.getElementById("f-title").value;
-  const amount = document.getElementById("f-amount").value.replace(/[^0-9]/g, '');
-  const description = document.getElementById("f-desc").value;
-
-  if (!title) return alert("عنوان لازم است");
-
-  const fileInput = document.getElementById("f-file");
-  const file = fileInput.files[0];
-
-  let fileUrl = null;
-
-  if (file) {
-const fileName =
-`${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'')}`;
-    const { error: uploadError } = await client
-      .storage
-      .from("finance-files")
-      .upload(fileName, file);
-
-  if (uploadError) {
-  console.error(uploadError);
-  alert(JSON.stringify(uploadError));
-  return;
+        loadFinance(); // 👈 مهم
+    });
 }
-    const { data } = client
-      .storage
-      .from("finance-files")
-      .getPublicUrl(fileName);
-
-    fileUrl = data.publicUrl;
-  }
-
-  const { error } = await client
-    .from("financial_requests")
-    .insert([{
-      title,
-      amount: Number(amount),
-      description,
-      file_url: fileUrl,
-      owner_id: currentUser.id,
-      status: "pending",
-      payment_status: "unpaid"
-    }]);
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  document.getElementById("finance-modal").style.display = "none";
-  loadFinance();
-});
-
-document.getElementById("logout-btn")?.addEventListener("click", () => {
-    document.getElementById("logout-modal").style.display = "flex";
-});
-
-document.getElementById("cancel-logout")?.addEventListener("click", () => {
-    document.getElementById("logout-modal").style.display = "none";
-});
-
-document.getElementById("confirm-logout")?.addEventListener("click", async () => {
-
-    document.getElementById("logout-modal").style.display = "none";
-
-    await client.auth.signOut();
-
-    location.reload();
-});
-
-  document.getElementById("reject-cancel-btn")?.addEventListener("click", () => {
-  document.getElementById("reject-modal").style.display = "none";
-  rejectFinanceId = null;
-});
-
-document.getElementById("reject-confirm-btn")?.addEventListener("click", async () => {
-  if (!rejectFinanceId) return;
-
-  const { error } = await client
-    .from("financial_requests")
-    .delete()
-    .eq("id", rejectFinanceId);
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  document.getElementById("reject-modal").style.display = "none";
-  rejectFinanceId = null;
-
-  loadFinance(); // 👈 مهم
-});
-
 
 /* ================= PROJECTS ================= */
 async function loadProjects() {
@@ -558,7 +558,7 @@ async function loadProjects() {
     projects = data || [];
 
     renderProjects();
-    }
+}
 
 function renderProjects() {
     const list = document.getElementById("projects-list");
@@ -588,7 +588,7 @@ function renderProjects() {
     update();
 }
 
-window.editProject = function(id) {
+window.editProject = function (id) {
     const project = projects.find(p => p.id === id);
     if (!project) return;
 
@@ -657,7 +657,7 @@ function renderMissions() {
     update();
 }
 
-window.editMission = function(id) {
+window.editMission = function (id) {
     const mission = missions.find(m => m.id === id);
     if (!mission) return;
 
@@ -707,8 +707,8 @@ function renderStaff() {
 }
 /* ================= HELPERS ================= */
 
-function statusText(status){
-    switch(status){
+function statusText(status) {
+    switch (status) {
         case "pending": return "در انتظار بررسی";
         case "approved": return "تایید شده";
         case "rejected": return "رد شده";
@@ -716,35 +716,35 @@ function statusText(status){
     }
 }
 
-function paymentText(status){
-    switch(status){
+function paymentText(status) {
+    switch (status) {
         case "paid": return "پرداخت شده";
         case "unpaid": return "پرداخت نشده";
         default: return "نامشخص";
     }
 }
 
-  function roleToFa(role) {
+function roleToFa(role) {
     switch (role) {
-      case "admin": return "مدیر سیستم";
-      case "manager": return "مدیر پروژه";
-      case "finance": return "امور مالی";
-      case "user": return "کاربر عادی";
-      default: return "نامشخص";
+        case "admin": return "مدیر سیستم";
+        case "manager": return "مدیر پروژه";
+        case "finance": return "امور مالی";
+        case "user": return "کاربر عادی";
+        default: return "نامشخص";
     }
-  }
+}
 /* ================= finance ================= */
-function renderFinance(){
-  const list = document.getElementById("finance-list");
-  list.innerHTML = "";
+function renderFinance() {
+    const list = document.getElementById("finance-list");
+    list.innerHTML = "";
 
-  financeRequests.forEach(f => {
+    financeRequests.forEach(f => {
 
-    let actions = "";
+        let actions = "";
 
-    if (!f.status || f.status === "pending") {
-  if (userRole === "admin" || userRole === "manager") {
-    actions += `
+        if (!f.status || f.status === "pending") {
+            if (userRole === "admin" || userRole === "manager") {
+                actions += `
       <button class="glass-btn" onclick="approveFinance('${f.id}')">
         ✔ تایید
       </button>
@@ -753,36 +753,36 @@ function renderFinance(){
         ✖ رد
       </button>
     `;
-  }
-}
+            }
+        }
 
-   if (
-  f.status === "approved" &&
-  f.payment_status !== "paid"
-) {
-  if (userRole === "admin" || userRole === "finance") {
-    actions += `
+        if (
+            f.status === "approved" &&
+            f.payment_status !== "paid"
+        ) {
+            if (userRole === "admin" || userRole === "finance") {
+                actions += `
       <button class="glass-btn success"
         onclick="confirmPayment('${f.id}')">
         💳 تایید پرداخت
       </button>
     `;
-  }
-}
- if (
-  f.payment_status === "paid" &&
-  userRole === "admin"
-) {
-  actions += `
+            }
+        }
+        if (
+            f.payment_status === "paid" &&
+            userRole === "admin"
+        ) {
+            actions += `
     <button class="glass-btn danger"
       onclick="deleteFinance('${f.id}')">
       🗑 حذف
     </button>
   `;
-}
-  
-    
-    list.innerHTML += `
+        }
+
+
+        list.innerHTML += `
   <div class="glass-card">
     <b>${f.title || "-"}</b><br>
     💰 ${Number(f.amount || 0).toLocaleString()} تومان<br>
@@ -805,82 +805,82 @@ function renderFinance(){
     </div>
   </div>
 `;
-  });
+    });
 }
 
 
 /* ================= LOAD FINANCE ================= */
-async function loadFinance(){
-  const { data } = await client
-    .from("financial_requests")
-    .select("*")
-    .order("id", { ascending:false });
+async function loadFinance() {
+    const { data } = await client
+        .from("financial_requests")
+        .select("*")
+        .order("id", { ascending: false });
 
-  financeRequests = data || [];
-  renderFinance();
+    financeRequests = data || [];
+    renderFinance();
 }
 
 
 /* ================= ACTIONS ================= */
 window.approveFinance = async (id) => {
-  await client
-    .from("financial_requests")
-    .update({ status: "approved" })
-    .eq("id", id);
+    await client
+        .from("financial_requests")
+        .update({ status: "approved" })
+        .eq("id", id);
 
-  loadFinance();
+    loadFinance();
 };
 
 window.rejectFinance = async (id) => {
 
-  if (!confirm("درخواست رد و حذف شود؟")) return;
+    if (!confirm("درخواست رد و حذف شود؟")) return;
 
-  await client
-    .from("financial_requests")
-    .delete()
-    .eq("id", id);
+    await client
+        .from("financial_requests")
+        .delete()
+        .eq("id", id);
 
-  loadFinance();
+    loadFinance();
 };
 
 window.confirmPayment = async (id) => {
-  await client
-    .from("financial_requests")
-    .update({ payment_status: "paid" })
-    .eq("id", id);
+    await client
+        .from("financial_requests")
+        .update({ payment_status: "paid" })
+        .eq("id", id);
 
-  loadFinance();
+    loadFinance();
 };
 
 window.deleteFinance = async (id) => {
-  await client
-    .from("financial_requests")
-    .delete()
-    .eq("id", id);
+    await client
+        .from("financial_requests")
+        .delete()
+        .eq("id", id);
 
-  loadFinance();
+    loadFinance();
 };
 
 window.openRejectModal = function (id) {
-  rejectFinanceId = id;
-  document.getElementById("reject-modal").style.display = "flex";
+    rejectFinanceId = id;
+    document.getElementById("reject-modal").style.display = "flex";
 };
 /* ================= userinfo ================= */
 
 function showUserInfo() {
-  if (!currentUser) return;
+    if (!currentUser) return;
 
-  document.getElementById("user-email").textContent = currentUser.email;
-  document.getElementById("user-id").textContent = currentUser.id;
+    document.getElementById("user-email").textContent = currentUser.email;
+    document.getElementById("user-id").textContent = currentUser.id;
 
-  const roleEl = document.getElementById("user-role");
-  roleEl.textContent = roleToFa(userRole);
+    const roleEl = document.getElementById("user-role");
+    roleEl.textContent = roleToFa(userRole);
 
-  // رنگ‌بندی هم اختیاری
-  if (userRole === "admin") roleEl.style.color = "#ef4444";
-  else if (userRole === "manager") roleEl.style.color = "#3b82f6";
-  else if (userRole === "finance") roleEl.style.color = "#22c55e";
-  else roleEl.style.color = "#a1a1aa";
+    // رنگ‌بندی هم اختیاری
+    if (userRole === "admin") roleEl.style.color = "#ef4444";
+    else if (userRole === "manager") roleEl.style.color = "#3b82f6";
+    else if (userRole === "finance") roleEl.style.color = "#22c55e";
+    else roleEl.style.color = "#a1a1aa";
 }
 
 /* ================= DASH ================= */
