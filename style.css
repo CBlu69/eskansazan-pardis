@@ -974,3 +974,97 @@ button:hover,
     color:white;
     border:1px solid rgba(255,255,255,.12);
 }
+/* ================= PREMIUM TYPOGRAPHY SYSTEM ================= */
+
+/* کل بدنه - فونت پایه نرم و خوانا */
+body {
+    font-family: "Vazirmatn", "IRANSans", system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* تیترهای اصلی (داشبورد و سکشن‌ها) */
+h1, h2 {
+    font-family: "Vazirmatn", "IRANSans", sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+/* تیترهای داخلی کارت‌ها */
+h3, h4 {
+    font-family: "Vazirmatn", "IRANSans", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* کارت‌ها (پروژه، مالی، staff و ...) */
+.card,
+.item,
+.staff-card,
+.glass-card,
+.user-profile-card {
+    font-family: "Vazirmatn", "IRANSans", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+/* متن‌های توضیحی داخل کارت */
+.card p,
+.item p,
+.staff-card small,
+.glass-card span {
+    font-weight: 400;
+    font-size: 12.5px;
+    opacity: 0.85;
+}
+
+/* اسم‌ها و آیتم‌های مهم */
+.card b,
+.item b,
+.staff-card b,
+.glass-card b {
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+}
+
+/* دکمه‌ها (حس حرفه‌ای و UI اپلیکیشن) */
+button,
+.glass-btn,
+.edit-btn,
+.del-btn,
+.call-btn {
+    font-family: "Vazirmatn", "IRANSans", sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* ورودی‌ها (حس نرم و مدرن) */
+input,
+textarea {
+    font-family: "Vazirmatn", "IRANSans", sans-serif;
+    font-weight: 500;
+    font-size: 13.5px;
+}
+
+/* لیبل‌ها و متن‌های کوچک */
+small {
+    font-family: "Vazirmatn", "IRANSans", sans-serif;
+    font-weight: 400;
+    font-size: 11.5px;
+}
+
+/* نوار پایین (حس اپلیکیشن موبایل) */
+.bottom-nav button {
+    font-family: "Vazirmatn", "IRANSans", sans-serif;
+    font-weight: 600;
+}
+
+/* متن‌های وضعیت (finance / status) */
+span {
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
