@@ -434,7 +434,7 @@ document.getElementById("add-mission")?.addEventListener("click", async () => {
   document.getElementById("finance-modal").style.display = "none";
   loadFinance();
 });
-  
+}
 /* ================= PROJECTS ================= */
 async function loadProjects() {
     if (!currentUser) return;
