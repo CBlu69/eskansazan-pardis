@@ -118,14 +118,19 @@ color:#38bdf8;
 
 /* ================= MODAL OVERLAY ================= */
 .modal{
-position:fixed;
-inset:0;
-display:none;
-justify-content:center;
-align-items:center;
-background:rgba(0,0,0,0.65);
-backdrop-filter: blur(6px);
-z-index:999;
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+
+    z-index: 99999;
+
+    /* 🔥 این خیلی مهمه برای جلوگیری از cut شدن */
+    overflow: auto;
 }
 
 /* ================= MODAL BOX ================= */
@@ -141,6 +146,8 @@ flex-direction:column;
 gap:12px;
 box-shadow:0 20px 60px rgba(0,0,0,0.5);
 animation:pop 0.2s ease;
+max-height: 90vh;
+overflow-y: auto;
 }
 
 @keyframes pop{
