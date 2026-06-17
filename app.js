@@ -657,7 +657,7 @@ function renderFinance(){
     </button>
   `;
 }
-  }
+  
     
     list.innerHTML += `
   <div class="glass-card">
