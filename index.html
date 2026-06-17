@@ -217,15 +217,23 @@
 
 <script src="app.js" defer></script>
 <!-- LOGOUT MODAL -->
-<div id="logout-modal" class="logout-modal">
-  <div class="logout-box">
+<div id="logout-modal" class="modal">
+  <div class="modal-box">
 
     <h3>خروج از حساب</h3>
-    <p>آیا مطمئنی میخوای خارج شی؟</p>
 
-    <div class="logout-actions">
-      <button id="confirm-logout">بله، خروج</button>
-      <button id="cancel-logout">لغو</button>
+    <p style="text-align:center">
+      آیا مطمئن هستید که می‌خواهید خارج شوید؟
+    </p>
+
+    <div class="action-buttons">
+      <button id="confirm-logout" class="glass-btn danger">
+        خروج
+      </button>
+
+      <button id="cancel-logout" class="glass-btn">
+        انصراف
+      </button>
     </div>
 
   </div>
