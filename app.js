@@ -176,7 +176,7 @@ async function checkSession() {
 
     currentUser = data.session.user;
     await loadUserRole();
-    startApp();
+    await startApp();
 }
 
 function showLogin() {
@@ -224,7 +224,7 @@ async function login() {
 
     currentUser = data.session.user;
     await loadUserRole();
-    startApp();
+    await startApp();
 }
 
 /* ================= SIGNUP ================= */
@@ -247,12 +247,11 @@ function startApp() {
     loadMissions();
     renderStaff();
     update();
-    try {
-  loadFinance();
+  try {
+  await loadFinance();
 } catch(e){
   console.warn("finance error", e);
-    }
-}
+  }
 
 /* ================= EVENTS ================= */
 function bindEvents() {
