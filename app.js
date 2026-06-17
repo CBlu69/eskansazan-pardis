@@ -269,7 +269,8 @@ async function startApp() {
     loadMissions();
     renderStaff();
     update();
-
+    showUserInfo();
+   
     try {
         await loadFinance();
     } catch(e){
@@ -734,6 +735,23 @@ window.deleteFinance = async (id) => {
 
   loadFinance();
 };
+/* ================= userinfo ================= */
+
+function showUserInfo() {
+  if (!currentUser) return;
+
+  document.getElementById("user-email").textContent = currentUser.email;
+  document.getElementById("user-id").textContent = currentUser.id;
+
+  const roleEl = document.getElementById("user-role");
+  roleEl.textContent = userRole;
+
+  // رنگ‌بندی role
+  if (userRole === "admin") roleEl.style.color = "red";
+  else if (userRole === "manager") roleEl.style.color = "dodgerblue";
+  else if (userRole === "finance") roleEl.style.color = "limegreen";
+  else roleEl.style.color = "gray";
+}
 
 /* ================= DASH ================= */
 function update() {
