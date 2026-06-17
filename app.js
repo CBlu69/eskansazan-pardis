@@ -565,6 +565,24 @@ function renderStaff() {
 
     update();
 }
+/* ================= HELPERS ================= */
+
+function statusText(status){
+    switch(status){
+        case "pending": return "در انتظار بررسی";
+        case "approved": return "تایید شده";
+        case "rejected": return "رد شده";
+        default: return "نامشخص";
+    }
+}
+
+function paymentText(status){
+    switch(status){
+        case "paid": return "پرداخت شده";
+        case "unpaid": return "پرداخت نشده";
+        default: return "نامشخص";
+    }
+}
 /* ================= finance ================= */
 
 function renderFinance(){
@@ -573,30 +591,38 @@ function renderFinance(){
 
   financeRequests.forEach(f => {
 
-    list.innerHTML += `
-      <div class="item">
-        <b>${f.title}</b><br>
-        💰 ${Number(f.amount || 0).toLocaleString()}<br>
-        📌 ${f.description || ""}<br>
+    let actions = "";
 
-        وضعیت: ${f.status}<br>
-        پرداخت: ${f.payment_status}
+    if (f.status === "pending") {
+
+      if (userRole === "admin" || userRole === "manager") {
+        actions += `
+          <button class="glass-btn" onclick="approveFinance('${f.id}')">✔ تایید</button>
+          <button class="glass-btn danger" onclick="rejectFinance('${f.id}')">✖ رد</button>
+        `;
+      }
+    }
+
+    if (f.status === "approved") {
+
+      if (userRole === "admin" || userRole === "finance") {
+        actions += `
+          <button class="glass-btn success" onclick="payFinance('${f.id}')">💳 تایید پرداخت</button>
+        `;
+      }
+    }
+
+    list.innerHTML += `
+      <div class="glass-card">
+        <b>${f.title || "-"}</b><br>
+        💰 ${Number(f.amount || 0).toLocaleString()} تومان<br>
+        📌 ${f.description || ""}<br><br>
+
+        <span>وضعیت: ${statusText(f.status)}</span><br>
+        <span>پرداخت: ${paymentText(f.payment_status)}</span>
 
         <div class="action-buttons">
-
-          ${(isAdmin() || isManager()) ? `
-            <button onclick="approveFinance('${f.id}')">✔ تایید</button>
-            <button onclick="rejectFinance('${f.id}')">❌ رد</button>
-          ` : ""}
-
-          ${isFinance() ? `
-            <button onclick="confirmPayment('${f.id}')">💳 تایید پرداخت</button>
-          ` : ""}
-
-          ${isAdmin() ? `
-            <button onclick="deleteFinance('${f.id}')">🗑 حذف</button>
-          ` : ""}
-
+          ${actions}
         </div>
       </div>
     `;
