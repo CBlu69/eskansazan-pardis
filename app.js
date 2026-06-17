@@ -640,7 +640,18 @@ function renderFinance(){
         `;
       }
     }
+    if (f.payment_status === "paid") {
 
+  if (userRole === "admin") {
+    actions += `
+      <button class="glass-btn danger"
+        onclick="deleteFinance('${f.id}')">
+        🗑 حذف
+      </button>
+    `;
+  }
+    }
+    
     list.innerHTML += `
   <div class="glass-card">
     <b>${f.title || "-"}</b><br>
