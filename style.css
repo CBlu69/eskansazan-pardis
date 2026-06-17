@@ -697,3 +697,255 @@ body{
 .user-info small {
   opacity: 0.7;
 }
+
+/* ============ LOGOUT MODAL ============ */
+.logout-modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(10px);
+    z-index:99999;
+    animation:fadeIn 0.2s ease;
+}
+
+.logout-box{
+    width:90%;
+    max-width:320px;
+
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    backdrop-filter:blur(20px);
+
+    border-radius:18px;
+    padding:20px;
+
+    text-align:center;
+
+    animation:popIn 0.25s ease;
+}
+
+.logout-box h3{
+    margin:0;
+    color:#38bdf8;
+}
+
+.logout-box p{
+    font-size:13px;
+    opacity:0.8;
+    margin:10px 0 20px;
+}
+
+.logout-actions{
+    display:flex;
+    gap:10px;
+}
+
+.logout-actions button{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* تایید */
+#confirm-logout{
+    background:#ef4444;
+    color:white;
+}
+
+/* لغو */
+#cancel-logout{
+    background:rgba(255,255,255,0.1);
+    color:white;
+}
+
+/* انیمیشن‌ها */
+@keyframes fadeIn{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+@keyframes popIn{
+    from{transform:scale(0.9);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+/* ================= PREMIUM GLASS ================= */
+
+.card,
+.staff-card,
+.item,
+.glass-card,
+.user-profile-card{
+    background: rgba(255,255,255,0.08) !important;
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 8px 32px rgba(0,0,0,.25),
+        inset 0 1px 1px rgba(255,255,255,.10);
+
+    position:relative;
+    overflow:hidden;
+}
+
+/* خط نور بالای کارت */
+.card::before,
+.staff-card::before,
+.item::before,
+.glass-card::before,
+.user-profile-card::before{
+    content:"";
+
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.8),
+            transparent
+        );
+}
+
+/* Hover حرفه‌ای */
+.card:hover,
+.staff-card:hover,
+.item:hover,
+.glass-card:hover,
+.user-profile-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 15px 40px rgba(56,189,248,.12),
+        0 10px 30px rgba(0,0,0,.30);
+}
+
+/* ================= TITLES ================= */
+
+h2{
+    font-size:22px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #38bdf8
+        );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    font-weight:bold;
+}
+
+/* ================= NUMBERS ================= */
+
+.card h3{
+    font-size:28px;
+
+    margin:0;
+
+    color:#38bdf8;
+
+    text-shadow:
+        0 0 15px rgba(56,189,248,.45);
+}
+
+/* ================= USER CARD ================= */
+
+.user-profile-card{
+
+    margin-top:18px;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(56,189,248,.10),
+            rgba(255,255,255,.05)
+        ) !important;
+}
+
+.user-avatar{
+
+    width:55px;
+    height:55px;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #38bdf8,
+            #2563eb
+        );
+
+    color:white;
+
+    box-shadow:
+        0 0 20px rgba(56,189,248,.45);
+}
+
+/* ================= BUTTONS ================= */
+
+button,
+.glass-btn{
+
+    transition:.25s;
+}
+
+button:hover,
+.glass-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(56,189,248,.25);
+}
+
+/* ================= NAVBAR ================= */
+
+.bottom-nav{
+
+    background:
+        rgba(17,24,39,.75);
+
+    backdrop-filter:blur(20px);
+
+    border-top:
+        1px solid rgba(255,255,255,.08);
+}
+
+/* ================= PAGE ANIMATION ================= */
+
+.page.active{
+    animation:fadePage .25s ease;
+}
+
+@keyframes fadePage{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
