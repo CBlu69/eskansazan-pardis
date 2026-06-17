@@ -1,3 +1,4 @@
+
 /* ================= SUPABASE ================= */
 const supabaseUrl = "https://zaesmxrlwqjapbkbrnmn.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZXNteHJsd3FqYXBia2Jybm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1ODIwNzgsImV4cCI6MjA5NzE1ODA3OH0.FQu84hluK74Ze85p4spve_WGbwGvToiRwCs3ALP0GE0";
@@ -379,30 +380,61 @@ document.getElementById("add-mission")?.addEventListener("click", async () => {
     loadMissions();
 });
 
-    document.getElementById("add-finance")?.addEventListener("click", async () => {
+   document.getElementById("add-finance")?.addEventListener("click", async () => {
 
   const title = document.getElementById("f-title").value;
-  const amount = document.getElementById("f-amount").value.replace(/[^0-9]/g,'');
+  const amount = document.getElementById("f-amount").value.replace(/[^0-9]/g, '');
   const description = document.getElementById("f-desc").value;
 
   if (!title) return alert("عنوان لازم است");
 
-  await client
+  const fileInput = document.getElementById("f-file");
+  const file = fileInput.files[0];
+
+  let fileUrl = null;
+
+  if (file) {
+    const fileName = `${Date.now()}-${file.name}`;
+
+    const { error: uploadError } = await client
+      .storage
+      .from("finance-files")
+      .upload(fileName, file);
+
+    if (uploadError) {
+      alert("خطا در آپلود فایل");
+      return;
+    }
+
+    const { data } = client
+      .storage
+      .from("finance-files")
+      .getPublicUrl(fileName);
+
+    fileUrl = data.publicUrl;
+  }
+
+  const { error } = await client
     .from("financial_requests")
     .insert([{
       title,
       amount: Number(amount),
       description,
+      file_url: fileUrl,
       owner_id: currentUser.id,
       status: "pending",
       payment_status: "unpaid"
     }]);
 
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
   document.getElementById("finance-modal").style.display = "none";
   loadFinance();
 });
-}
-
+  
 /* ================= PROJECTS ================= */
 async function loadProjects() {
     if (!currentUser) return;
@@ -610,19 +642,28 @@ function renderFinance(){
     }
 
     list.innerHTML += `
-      <div class="glass-card">
-        <b>${f.title || "-"}</b><br>
-        💰 ${Number(f.amount || 0).toLocaleString()} تومان<br>
-        📌 ${f.description || ""}<br><br>
+  <div class="glass-card">
+    <b>${f.title || "-"}</b><br>
+    💰 ${Number(f.amount || 0).toLocaleString()} تومان<br>
+    📌 ${f.description || ""}
 
-        <span>وضعیت: ${statusText(f.status)}</span><br>
-        <span>پرداخت: ${paymentText(f.payment_status)}</span>
+    ${f.file_url ? `
+      <br><br>
+      <a href="${f.file_url}" target="_blank" class="glass-btn">
+        📎 ضمیمه
+      </a>
+    ` : ""}
 
-        <div class="action-buttons">
-          ${actions}
-        </div>
-      </div>
-    `;
+    <br><br>
+
+    <span>وضعیت: ${statusText(f.status)}</span><br>
+    <span>پرداخت: ${paymentText(f.payment_status)}</span>
+
+    <div class="action-buttons">
+      ${actions}
+    </div>
+  </div>
+`;
   });
 }
 
