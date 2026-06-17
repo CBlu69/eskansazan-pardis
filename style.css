@@ -611,3 +611,22 @@ white-space:nowrap;
   max-width:100%;
   border-radius:12px;
 }
+main{
+    padding-bottom: 90px;
+    padding-top: 10px;
+}
+
+h2{
+    margin-top: 10px;
+}
+
+/* جلوگیری از قفل شدن محتوا زیر navbar */
+.page{
+    min-height: calc(100vh - 140px);
+    padding-bottom: 100px;
+}
+
+/* اسکرول درست */
+body{
+    overflow-x: hidden;
+}
