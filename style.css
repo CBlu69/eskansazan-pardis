@@ -959,3 +959,18 @@ button:hover,
         transform:translateY(0);
     }
 }
+#reject-confirm-btn{
+    background:linear-gradient(
+        135deg,
+        #ef4444,
+        #dc2626
+    );
+
+    color:white;
+}
+
+#reject-cancel-btn{
+    background:rgba(255,255,255,.08);
+    color:white;
+    border:1px solid rgba(255,255,255,.12);
+}
