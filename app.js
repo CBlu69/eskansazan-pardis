@@ -633,24 +633,31 @@ function renderFinance(){
       }
     }
 
-    if (f.status === "approved") {
-      if (userRole === "admin" || userRole === "finance") {
-        actions += `
-          <button class="glass-btn success" onclick="confirmPayment('${f.id}')">💳 تایید پرداخت</button>
-        `;
-      }
-    }
-    if (f.payment_status === "paid") {
-
-  if (userRole === "admin") {
+   if (
+  f.status === "approved" &&
+  f.payment_status !== "paid"
+) {
+  if (userRole === "admin" || userRole === "finance") {
     actions += `
-      <button class="glass-btn danger"
-        onclick="deleteFinance('${f.id}')">
-        🗑 حذف
+      <button class="glass-btn success"
+        onclick="confirmPayment('${f.id}')">
+        💳 تایید پرداخت
       </button>
     `;
   }
-    }
+}
+ if (
+  f.payment_status === "paid" &&
+  userRole === "admin"
+) {
+  actions += `
+    <button class="glass-btn danger"
+      onclick="deleteFinance('${f.id}')">
+      🗑 حذف
+    </button>
+  `;
+}
+  }
     
     list.innerHTML += `
   <div class="glass-card">
