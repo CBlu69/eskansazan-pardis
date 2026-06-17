@@ -616,6 +616,16 @@ function paymentText(status){
         default: return "نامشخص";
     }
 }
+
+  function roleToFa(role) {
+    switch (role) {
+      case "admin": return "مدیر سیستم";
+      case "manager": return "مدیر پروژه";
+      case "finance": return "امور مالی";
+      case "user": return "کاربر عادی";
+      default: return "نامشخص";
+    }
+  }
 /* ================= finance ================= */
 function renderFinance(){
   const list = document.getElementById("finance-list");
@@ -744,13 +754,13 @@ function showUserInfo() {
   document.getElementById("user-id").textContent = currentUser.id;
 
   const roleEl = document.getElementById("user-role");
-  roleEl.textContent = userRole;
+  roleEl.textContent = roleToFa(userRole);
 
-  // رنگ‌بندی role
-  if (userRole === "admin") roleEl.style.color = "red";
-  else if (userRole === "manager") roleEl.style.color = "dodgerblue";
-  else if (userRole === "finance") roleEl.style.color = "limegreen";
-  else roleEl.style.color = "gray";
+  // رنگ‌بندی هم اختیاری
+  if (userRole === "admin") roleEl.style.color = "#ef4444";
+  else if (userRole === "manager") roleEl.style.color = "#3b82f6";
+  else if (userRole === "finance") roleEl.style.color = "#22c55e";
+  else roleEl.style.color = "#a1a1aa";
 }
 
 /* ================= DASH ================= */
