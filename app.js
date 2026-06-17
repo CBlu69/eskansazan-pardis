@@ -526,17 +526,21 @@ document.getElementById("confirm-logout")?.addEventListener("click", async () =>
 document.getElementById("reject-confirm-btn")?.addEventListener("click", async () => {
   if (!rejectFinanceId) return;
 
-  await client
+  const { error } = await client
     .from("financial_requests")
-    .update({ status: "rejected" })
+    .delete()
     .eq("id", rejectFinanceId);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
   document.getElementById("reject-modal").style.display = "none";
   rejectFinanceId = null;
 
-  loadFinance();
+  loadFinance(); // 👈 مهم
 });
-}
 
 
 /* ================= PROJECTS ================= */
