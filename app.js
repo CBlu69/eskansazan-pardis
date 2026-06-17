@@ -208,25 +208,22 @@ function showLogin() {
 }
 
 /* ================= ROLE ================= */
-async function loadUserRole() {
-    try {
-        const { data, error } = await client
-            .from("profiles")
-            .select("role")
-            .eq("id", currentUser.id)
-            .maybeSingle();
+aasync function loadUserRole() {
+    const { data, error } = await client
+        .from("profiles")
+        .select("role")
+        .eq("id", currentUser.id)
+        .single();
 
-        if (error) {
-            console.warn("profiles error:", error.message);
-            userRole = "user";
-            return;
-        }
-
-        userRole = data?.role || "user";
-    } catch (e) {
-        console.warn("loadUserRole exception:", e);
+    if (error) {
+        console.warn("role error:", error.message);
         userRole = "user";
+        return;
     }
+
+    userRole = data.role || "user";
+
+    console.log("FINAL ROLE:", userRole);
 }
 
 /* ================= LOGIN ================= */
