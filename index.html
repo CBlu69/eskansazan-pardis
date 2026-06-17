@@ -158,9 +158,37 @@
     <button data-page="staff-page">
         <img src="users.png">
     </button>
+    <button data-page="finance-page">
+        <img src="finance.png">
+    </button>
 
 </nav>
+ <!-- Finance -->
+    <section id="finance-page" class="page">
+  <h2>درخواست‌های مالی</h2>
 
+  <button id="open-finance">+ درخواست مالی</button>
+
+  <div id="finance-modal" class="modal">
+    <div class="modal-box">
+
+      <h3>درخواست مالی</h3>
+
+      <input id="f-title" placeholder="عنوان">
+      <input id="f-amount" placeholder="مبلغ">
+      <textarea id="f-desc" placeholder="توضیحات"></textarea>
+
+      <input id="f-file" type="file">
+
+      <button id="add-finance">ثبت</button>
+      <button id="close-finance">بستن</button>
+
+    </div>
+  </div>
+
+  <div id="finance-list"></div>
+</section>
+    
 <!-- SCRIPTS -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
