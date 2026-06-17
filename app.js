@@ -631,7 +631,7 @@ if (f.status === "approved") {
         </div>
       </div>
     `;
-  });
+  };
 }
 
 async function loadFinance(){
