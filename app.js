@@ -693,5 +693,3 @@ window.addEventListener("DOMContentLoaded", async () => {
     hideSplash();
     await checkSession();
 });
-
-
