@@ -240,18 +240,20 @@ async function signup() {
 }
 
 /* ================= START APP ================= */
-function startApp() {
+async function startApp() {
     if (loginUI) loginUI.style.display = "none";
 
     loadProjects();
     loadMissions();
     renderStaff();
     update();
-  try {
-  await loadFinance();
-} catch(e){
-  console.warn("finance error", e);
-  }
+
+    try {
+        await loadFinance();
+    } catch(e){
+        console.warn("finance error", e);
+    }
+}
 
 /* ================= EVENTS ================= */
 function bindEvents() {
