@@ -42,101 +42,111 @@
 
 <main>
 
-<!-- DASHBOARD -->
-<section id="dashboard-page" class="page active">
+  <!-- DASHBOARD -->
+  <section id="dashboard-page" class="page active">
     <h2>داشبورد</h2>
 
     <div class="cards">
+      <div class="card">
+        <h3 id="projects-count">0</h3>
+        <p>پروژه‌ها</p>
+      </div>
 
-        <div class="card">
-            <h3 id="projects-count">0</h3>
-            <p>پروژه‌ها</p>
-        </div>
+      <div class="card">
+        <h3 id="missions-count">0</h3>
+        <p>ماموریت‌ها</p>
+      </div>
 
-        <div class="card">
-            <h3 id="missions-count">0</h3>
-            <p>ماموریت‌ها</p>
-        </div>
+      <div class="card">
+        <h3 id="staff-count">0</h3>
+        <p>پرسنل</p>
+      </div>
 
-        <div class="card">
-            <h3 id="staff-count">0</h3>
-            <p>پرسنل</p>
-        </div>
-
-       <div class="card clock-card">
-    <canvas id="clock" width="120" height="120"></canvas>
-    <p id="live-date">----</p>
-</div>
-
+      <div class="card clock-card">
+        <canvas id="clock" width="120" height="120"></canvas>
+        <p id="live-date">----</p>
+      </div>
     </div>
+  </section>
 
-<!-- PROJECTS -->
-<section id="projects-page" class="page">
-
+  <!-- PROJECTS -->
+  <section id="projects-page" class="page">
     <h2>پروژه‌ها</h2>
 
     <button id="open-project">+ افزودن پروژه</button>
 
-    <!-- MODAL -->
     <div id="project-modal" class="modal">
-        <div class="modal-box">
+      <div class="modal-box">
+        <h3>پروژه جدید</h3>
 
-            <h3>پروژه جدید</h3>
+        <input id="p-name" placeholder="نام پروژه *">
+        <input id="p-supervisor" placeholder="سرپرست کارگاه">
+        <input id="p-progress" type="number" min="0" max="100" placeholder="درصد پیشرفت">
+        <input id="p-build-status" placeholder="وضعیت ساخت">
+        <input id="p-adjustment" placeholder="وضعیت تعدیل">
+        <textarea id="p-description" placeholder="توضیحات"></textarea>
 
-            <input id="p-name" placeholder="نام پروژه *">
-            <input id="p-supervisor" placeholder="سرپرست کارگاه">
+        <input id="p-lat" placeholder="latitude">
+        <input id="p-lng" placeholder="longitude">
 
-            <input id="p-progress" type="number" min="0" max="100" placeholder="درصد پیشرفت">
-            <input id="p-build-status" placeholder="وضعیت ساخت">
-            <input id="p-adjustment" placeholder="وضعیت تعدیل">
-
-            <textarea id="p-description" placeholder="توضیحات"></textarea>
-
-            <!-- GPS -->
-            <input id="p-lat" placeholder="latitude">
-            <input id="p-lng" placeholder="longitude">
-
-            <button id="add-project">ثبت</button>
-            <button id="close-project">بستن</button>
-
-        </div>
+        <button id="add-project">ثبت</button>
+        <button id="close-project">بستن</button>
+      </div>
     </div>
 
     <div id="projects-list"></div>
+  </section>
 
-</section>
-
-<!-- MISSIONS -->
-<section id="missions-page" class="page">
-
+  <!-- MISSIONS -->
+  <section id="missions-page" class="page">
     <h2>ماموریت‌ها</h2>
 
     <button id="open-mission">+ افزودن ماموریت</button>
 
     <div id="mission-modal" class="modal">
-        <div class="modal-box">
+      <div class="modal-box">
+        <h3>ماموریت جدید</h3>
 
-            <h3>ماموریت جدید</h3>
+        <input id="m-name" placeholder="نام ماموریت">
+        <input id="m-manager" placeholder="مسئول">
+        <input id="m-status" placeholder="وضعیت">
 
-            <input id="m-name" placeholder="نام ماموریت">
-            <input id="m-manager" placeholder="مسئول">
-            <input id="m-status" placeholder="وضعیت">
-
-            <button id="add-mission">ثبت</button>
-            <button id="close-mission">بستن</button>
-
-        </div>
+        <button id="add-mission">ثبت</button>
+        <button id="close-mission">بستن</button>
+      </div>
     </div>
 
     <div id="missions-list"></div>
+  </section>
 
-</section>
-
-<!-- STAFF -->
-<section id="staff-page" class="page">
+  <!-- STAFF -->
+  <section id="staff-page" class="page">
     <h2>پرسنل</h2>
     <div id="staff-list"></div>
-</section>
+  </section>
+
+  <!-- FINANCE -->
+  <section id="finance-page" class="page">
+    <h2>درخواست‌های مالی</h2>
+
+    <button id="open-finance">+ درخواست مالی</button>
+
+    <div id="finance-modal" class="modal">
+      <div class="modal-box">
+        <h3>درخواست مالی</h3>
+
+        <input id="f-title" placeholder="عنوان">
+        <input id="f-amount" placeholder="مبلغ">
+        <textarea id="f-desc" placeholder="توضیحات"></textarea>
+        <input id="f-file" type="file">
+
+        <button id="add-finance">ثبت</button>
+        <button id="close-finance">بستن</button>
+      </div>
+    </div>
+
+    <div id="finance-list"></div>
+  </section>
 
 </main>
 
