@@ -15,13 +15,13 @@ let projects = [];
 let missions = [];
 let financeRequests = [];
 let staff = [
-    { name: "سید طاهر", lastname: "علوی", phone: "09121192271", nationalId: "5459703840" }
-    { name: "اکبر", lastname: "کندی", phone: "09121044458", nationalId: "005125331" }
-    { name: "علیرضا", lastname: "علوی", phone: "09123173681", nationalId: "0065088786" }
-    { name: "سید امین", lastname: "امینی", phone: "09122307045", nationalId: "0080434657" }
-    { name: "سید صمد", lastname: "حسینی", phone: "09123350694", nationalId: "2141044855" }
-    { name: "احمد", lastname: "نقیبی", phone: "09122110268", nationalId: "4989547047" }
-    { name: "سید امین", lastname: "امینی", phone: "09122307045", nationalId: "0080434657" }
+    { name: "سید طاهر", lastname: "علوی", phone: "09121192271", nationalId: "5459703840" },
+    { name: "اکبر", lastname: "کندی", phone: "09121044458", nationalId: "005125331" },
+    { name: "علیرضا", lastname: "علوی", phone: "09123173681", nationalId: "0065088786" },
+    { name: "سید امین", lastname: "امینی", phone: "09122307045", nationalId: "0080434657" },
+    { name: "سید صمد", lastname: "حسینی", phone: "09123350694", nationalId: "2141044855" },
+    { name: "احمد", lastname: "نقیبی", phone: "09122110268", nationalId: "4989547047" },
+    { name: "سید امین", lastname: "امینی", phone: "09122307045", nationalId: "0080434657" },
     { name: "نورمحمد", lastname: "اعرابی", phone: "09191075146", nationalId: "2249735875" }
 ];
 
