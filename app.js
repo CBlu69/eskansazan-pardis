@@ -95,7 +95,6 @@ function startClock() {
 
     function draw() {
         const now = new Date();
-
         const r = canvas.width / 2;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -103,7 +102,7 @@ function startClock() {
         ctx.save();
         ctx.translate(r, r);
 
-        // بدنه ساعت
+        /* پس‌زمینه ساعت */
         ctx.beginPath();
         ctx.arc(0, 0, r - 6, 0, Math.PI * 2);
 
@@ -118,98 +117,85 @@ function startClock() {
         ctx.fillStyle = grd;
         ctx.fill();
 
-        // حلقه دور
+        /* حلقه نورانی دور ساعت */
         ctx.beginPath();
-        ctx.arc(0,0,r-6,0,Math.PI*2);
-        ctx.strokeStyle="rgba(56,189,248,.4)";
-        ctx.lineWidth=3;
+        ctx.arc(0, 0, r - 6, 0, Math.PI * 2);
+
+        ctx.strokeStyle = "rgba(56,189,248,.75)";
+        ctx.lineWidth = 2;
+
+        ctx.shadowColor = "#38bdf8";
+        ctx.shadowBlur = 15;
+
         ctx.stroke();
 
-        // اعداد
-        ctx.fillStyle="white";
-        ctx.font="12px Tahoma";
-        ctx.textAlign="center";
-        ctx.textBaseline="middle";
+        ctx.shadowBlur = 0;
 
-        for(let n=1;n<=12;n++){
-            const ang=n*Math.PI/6;
+        /* اعداد ساعت */
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 13px Tahoma";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        for (let n = 1; n <= 12; n++) {
+
+            const ang = n * Math.PI / 6;
 
             ctx.fillText(
                 n,
-                Math.sin(ang)*(r-20),
-                -Math.cos(ang)*(r-20)
+                Math.sin(ang) * (r - 28),
+                -Math.cos(ang) * (r - 28)
             );
         }
 
-        // تیک‌ها
-        for(let i=0;i<60;i++){
-
-            const ang=i*Math.PI/30;
-
-            ctx.beginPath();
-
-            const len=i%5===0 ? 8 : 4;
-
-            ctx.strokeStyle=
-                i%5===0
-                ? "rgba(255,255,255,.8)"
-                : "rgba(255,255,255,.25)";
-
-            ctx.lineWidth=
-                i%5===0 ? 2 : 1;
-
-            ctx.moveTo(
-                Math.sin(ang)*(r-14),
-                -Math.cos(ang)*(r-14)
-            );
-
-            ctx.lineTo(
-                Math.sin(ang)*(r-14-len),
-                -Math.cos(ang)*(r-14-len)
-            );
-
-            ctx.stroke();
-        }
-
+        /* زمان */
         const h = now.getHours() % 12;
         const m = now.getMinutes();
         const s = now.getSeconds();
 
+        /* عقربه ساعت */
         drawHand(
             (h * Math.PI / 6) + (m * Math.PI / 360),
-            r * 0.45,
+            r * 0.42,
             5,
             "#ffffff"
         );
 
+        /* عقربه دقیقه */
         drawHand(
             m * Math.PI / 30,
-            r * 0.62,
+            r * 0.60,
             3,
             "#38bdf8"
         );
 
+        /* عقربه ثانیه */
         drawHand(
             s * Math.PI / 30,
-            r * 0.72,
+            r * 0.70,
             2,
             "#ef4444"
         );
 
-        // نقطه وسط
+        /* نقطه وسط */
         ctx.beginPath();
-        ctx.arc(0,0,5,0,Math.PI*2);
-        ctx.fillStyle="#fff";
+        ctx.arc(0, 0, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#38bdf8";
         ctx.fill();
 
         ctx.restore();
 
         document.getElementById("live-date").textContent =
             now.toLocaleDateString("fa-IR", {
-                weekday:"long",
-                year:"numeric",
-                month:"long",
-                day:"numeric"
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
             });
     }
 
