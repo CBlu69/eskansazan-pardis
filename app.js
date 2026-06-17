@@ -9,7 +9,7 @@ let currentUser = null;
 let userRole = "user";
 let editingProjectId = null;
 let editingMissionId = null;
-
+let rejectFinanceId = null;
 function isAdmin(){
   return userRole === "admin";
 }
@@ -517,6 +517,25 @@ document.getElementById("confirm-logout")?.addEventListener("click", async () =>
 
     location.reload();
 });
+
+  document.getElementById("reject-cancel-btn")?.addEventListener("click", () => {
+  document.getElementById("reject-modal").style.display = "none";
+  rejectFinanceId = null;
+});
+
+document.getElementById("reject-confirm-btn")?.addEventListener("click", async () => {
+  if (!rejectFinanceId) return;
+
+  await client
+    .from("financial_requests")
+    .update({ status: "rejected" })
+    .eq("id", rejectFinanceId);
+
+  document.getElementById("reject-modal").style.display = "none";
+  rejectFinanceId = null;
+
+  loadFinance();
+});
 }
 
 
@@ -720,13 +739,18 @@ function renderFinance(){
     let actions = "";
 
     if (!f.status || f.status === "pending") {
-      if (userRole === "admin" || userRole === "manager") {
-        actions += `
-          <button class="glass-btn" onclick="approveFinance('${f.id}')">✔ تایید</button>
-          <button class="glass-btn danger" onclick="rejectFinance('${f.id}')">✖ رد</button>
-        `;
-      }
-    }
+  if (userRole === "admin" || userRole === "manager") {
+    actions += `
+      <button class="glass-btn" onclick="approveFinance('${f.id}')">
+        ✔ تایید
+      </button>
+
+      <button class="glass-btn danger" onclick="openRejectModal('${f.id}')">
+        ✖ رد
+      </button>
+    `;
+  }
+}
 
    if (
   f.status === "approved" &&
@@ -831,6 +855,11 @@ window.deleteFinance = async (id) => {
     .eq("id", id);
 
   loadFinance();
+};
+
+window.openRejectModal = function (id) {
+  rejectFinanceId = id;
+  document.getElementById("reject-modal").style.display = "flex";
 };
 /* ================= userinfo ================= */
 
