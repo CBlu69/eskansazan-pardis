@@ -321,7 +321,9 @@ document.getElementById("add-project")?.addEventListener("click", async () => {
     pDescription.value = "";
 
     document.getElementById("project-modal").style.display = "none";
-
+document.getElementById("f-amount")?.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+});
     loadProjects();
 });
 
