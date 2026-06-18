@@ -923,20 +923,23 @@ async function loadAllUsers() {
 
     let html = '<div style="overflow-x:auto;">';
 
-    profiles.forEach(profile => {
-        html += `
-        <div class="user-row">
-            <span>${profile.email || profile.id}</span>
-            <span class="role-badge ${profile.role || 'user'}">${roleToFa(profile.role)}</span>
-            <select id="role-select-${profile.id}" class="role-select">
-                <option value="user" ${profile.role === 'user' ? 'selected' : ''}>کاربر عادی</option>
-                <option value="manager" ${profile.role === 'manager' ? 'selected' : ''}>مدیرعامل</option>
-                <option value="finance" ${profile.role === 'finance' ? 'selected' : ''}>امور مالی</option>
-                <option value="admin" ${profile.role === 'admin' ? 'selected' : ''}>مدیر سیستم</option>
-            </select>
-            <button class="save-role-btn" onclick="updateUserRole('${profile.id}')">💾 ذخیره</button>
-        </div>`;
-    });
+profiles.forEach(profile => {
+    html += `
+    <div class="user-row">
+        <div style="flex:1;">
+            <div style="font-weight:bold; color:white;">📧 ${profile.email || 'بدون ایمیل'}</div>
+            <small style="opacity:0.5;">🆔 ${profile.id?.slice(0,12)}...</small>
+        </div>
+        <span class="role-badge ${profile.role || 'user'}">${roleToFa(profile.role)}</span>
+        <select id="role-select-${profile.id}">
+            <option value="user" ${profile.role === 'user' ? 'selected' : ''}>کاربر عادی</option>
+            <option value="manager" ${profile.role === 'manager' ? 'selected' : ''}>مدیرعامل</option>
+            <option value="finance" ${profile.role === 'finance' ? 'selected' : ''}>امور مالی</option>
+            <option value="admin" ${profile.role === 'admin' ? 'selected' : ''}>مدیر سیستم</option>
+        </select>
+        <button class="save-role-btn" onclick="updateUserRole('${profile.id}')">💾 ذخیره</button>
+    </div>`;
+});
 
     html += '</div>';
     table.innerHTML = html;
