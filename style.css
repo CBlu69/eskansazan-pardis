@@ -34,8 +34,77 @@ text-align:center;
 padding:15px;
 }
 
-.logo{width: 120px;}
+.logo{
+    width:110px;
+    padding:10px;
+    border-radius:16px;
 
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.12);
+
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.3),
+        0 0 18px rgba(56,189,248,.35);
+
+    transition:0.3s;
+
+    /* ✨ انیمیشن ورود */
+    animation:logoIntro 0.7s ease-out;
+}
+
+/* ورود */
+@keyframes logoIntro{
+    0%{
+        transform:scale(0.5);
+        opacity:0;
+        filter:blur(8px);
+    }
+    100%{
+        transform:scale(1);
+        opacity:1;
+        filter:blur(0);
+    }
+}
+
+/* 🌊 شناوری نرم */
+.logo{
+    animation:
+        logoIntro 0.7s ease-out,
+        floatLogo 4s ease-in-out infinite 0.7s;
+}
+
+@keyframes floatLogo{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-6px)}
+}
+
+/* ✨ glow زنده */
+.logo::after{
+    content:"";
+    position:absolute;
+    inset:-20px;
+    background:radial-gradient(circle, rgba(56,189,248,0.4), transparent 60%);
+    filter:blur(18px);
+    z-index:-1;
+    animation:glowPulse 3s ease-in-out infinite;
+    border-radius:20px;
+}
+
+@keyframes glowPulse{
+    0%,100%{transform:scale(0.9); opacity:0.4}
+    50%{transform:scale(1.15); opacity:0.9}
+}
+
+/* hover حرفه‌ای‌تر */
+.logo:hover{
+    transform:scale(1.06) translateY(-2px);
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.45),
+        0 0 35px rgba(56,189,248,.7);
+}
 .page{
 display:none;
 padding:15px;
@@ -1071,4 +1140,231 @@ span {
 .card h3, .staff-card b, .item b {
     color: white;
 }
+/* ================= AURORA BACKGROUND ================= */
 
+body::before{
+    content:"";
+    position:fixed;
+    inset:-30%;
+
+    background:
+        radial-gradient(circle,#00f5ff55 0%,transparent 35%),
+        radial-gradient(circle,#7c3aed55 0%,transparent 40%),
+        radial-gradient(circle,#38bdf855 0%,transparent 30%);
+
+    animation:aurora 20s linear infinite;
+
+    z-index:-2;
+}
+
+@keyframes aurora{
+
+    0%{
+        transform:translate(-10%,-10%) rotate(0deg);
+    }
+
+    100%{
+        transform:translate(10%,10%) rotate(360deg);
+    }
+}
+
+/* ================= PREMIUM GLASS ================= */
+
+.card,
+.staff-card,
+.item,
+.glass-card{
+    position:relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.12),
+            rgba(255,255,255,.04)
+        );
+
+    border:1px solid rgba(255,255,255,.15);
+
+    backdrop-filter:blur(30px);
+
+    overflow:hidden;
+}
+
+/* نور متحرک روی کارت */
+
+.card::after,
+.staff-card::after,
+.item::after,
+.glass-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:-150%;
+    left:-150%;
+
+    width:300%;
+    height:300%;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent,
+            rgba(255, 255, 255, 0.089),
+            transparent 
+        );
+
+    transform:rotate(25deg);
+
+    transition:1.2s;
+}
+
+.card:hover::after,
+.staff-card:hover::after,
+.item:hover::after,
+.glass-card:hover::after{
+
+    left:100%;
+}
+
+/* ================= FLOAT EFFECT ================= */
+
+.card:hover,
+.staff-card:hover,
+.item:hover,
+.glass-card:hover{
+
+    transform:
+        translateY(-8px)
+        scale(1.02);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.4),
+        0 0 35px rgba(56,189,248,.25);
+}
+
+/* ================= NAVBAR ================= */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    padding:12px;
+
+    background:rgba(15,23,42,.85);
+
+    backdrop-filter:blur(25px);
+    -webkit-backdrop-filter:blur(25px);
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+    z-index:999;
+}
+
+.bottom-nav button{
+    flex:1;
+    background:none;
+    border:none;
+}
+
+.bottom-nav img{
+    width:26px;
+    height:26px;
+    opacity:.7;
+    transition:.25s;
+}
+
+.bottom-nav button.active img{
+    opacity:1;
+    transform:scale(1.18);
+}
+
+/* ================= BUTTONS ================= */
+
+button,
+.glass-btn{
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.12),
+            rgba(255,255,255,.05)
+        );
+
+    backdrop-filter:blur(20px);
+
+    border:
+        1px solid rgba(255,255,255,.15);
+}
+
+button:hover,
+.glass-btn:hover{
+
+    box-shadow:
+        0 0 25px rgba(56,189,248,.4);
+
+    transform:
+        translateY(-3px);
+}
+
+/* ================= TITLES ================= */
+
+h2{
+
+    font-size:28px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #eeaf02
+        );
+
+    background-size:300%;
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:titleGlow 12s linear infinite;
+}
+
+@keyframes titleGlow{
+
+    0%{
+        background-position:0%;
+    }
+
+    100%{
+        background-position:300%;
+    }
+}
+.action-buttons button,
+.logout-actions button{
+    flex:1 !important;
+    height:50px !important;
+    padding:0 !important;
+    margin:0 !important;
+    width: 70px;
+    font-size:13px !important;
+    line-height:44px !important;
+
+    display:flex !important;
+    align-items:center;
+    justify-content:center;
+
+    box-sizing:border-box;
+}
+#dashboard-page .card h3{
+    font-size:50px ant;
+}
+
+#dashboard-page .card p{
+    font-size:16px !important;
+}
