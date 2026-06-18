@@ -215,6 +215,16 @@ function initModals() {
             if (e.target === modal) modal.style.display = "none";
         });
     });
+    // دکمه فراموشی رمز
+document.getElementById("forgotBtn")?.addEventListener("click", () => {
+    document.getElementById("reset-modal").style.display = "flex";
+});
+
+// دکمه‌های مودال ریست
+document.getElementById("send-reset-btn")?.addEventListener("click", sendResetPassword);
+document.getElementById("close-reset-btn")?.addEventListener("click", () => {
+    document.getElementById("reset-modal").style.display = "none";
+});
 }
 
 /* ================= SESSION ================= */
