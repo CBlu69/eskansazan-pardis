@@ -962,7 +962,7 @@ window.updateUserRole = async function (userId) {
 
     const { error } = await client
         .from("profiles")
-        .upsert({ id: userId, role: newRole, email: null }, { onConflict: 'id' });
+        .upsert({ id: userId, role: newRole });
 
     if (error) {
         showToast(error.message, 'error');
