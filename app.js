@@ -279,11 +279,20 @@ async function signup() {
     const email = emailInput.value.trim();
     const password = passInput.value;
 
-    const { error } = await client.auth.signUp({ email, password });
+    const { data, error } = await client.auth.signUp({ email, password });
 
     if (error) {
         showToast(error.message, 'error');
         return;
+    }
+
+    // ذخیره ایمیل توی جدول profiles
+    if (data.user) {
+        await client.from("profiles").upsert({
+            id: data.user.id,
+            email: email,
+            role: "user"
+        });
     }
 
     showToast('ایمیل تایید ارسال شد 📧', 'success');
