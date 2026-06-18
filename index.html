@@ -30,23 +30,8 @@
 
         <button id="loginBtn">ورود</button>
         <button id="signupBtn">ثبت نام</button>
-        
-        <button id="forgotBtn" class="forgot-btn">رمز عبور را فراموش کردم</button>
 
     </div>
-</div>
-
-<!-- RESET PASSWORD MODAL -->
-<div id="reset-modal" class="modal">
-  <div class="modal-box">
-    <h3>بازیابی رمز عبور</h3>
-    <p style="text-align:center; font-size:13px; opacity:0.8;">
-      ایمیل خود را وارد کنید، لینک بازیابی ارسال می‌شود.
-    </p>
-    <input id="reset-email" type="email" placeholder="ایمیل">
-    <button id="send-reset-btn">ارسال لینک</button>
-    <button id="close-reset-btn">بازگشت</button>
-  </div>
 </div>
 
 <!-- SPLASH -->
@@ -246,7 +231,7 @@
         <img src="finance.png" alt="مالی">
     </button>
     <button data-page="admin-page" id="admin-nav-btn" style="display:none;">
-        <img src="settings.png" alt="مدیریت">
+        <span style="font-size:22px;">⚙️</span>
     </button>
 
 </nav>
@@ -271,6 +256,18 @@
       </button>
     </div>
 
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div id="delete-modal" class="modal">
+  <div class="modal-box">
+    <h3>⚠️ تایید حذف</h3>
+    <p style="text-align:center">آیا از حذف این آیتم مطمئن هستید؟</p>
+    <div class="action-buttons">
+      <button id="confirm-delete" class="glass-btn danger">🗑 حذف</button>
+      <button id="cancel-delete" class="glass-btn">انصراف</button>
+    </div>
   </div>
 </div>
 
