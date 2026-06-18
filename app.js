@@ -775,7 +775,7 @@ function paymentText(status) {
 function roleToFa(role) {
     switch (role) {
         case "admin": return "مدیر سیستم";
-        case "manager": return "مدیر پروژه";
+        case "manager": return "مدیرعامل";
         case "finance": return "امور مالی";
         case "user": return "کاربر عادی";
         default: return "نامشخص";
@@ -930,7 +930,7 @@ async function loadAllUsers() {
             <span class="role-badge ${profile.role || 'user'}">${roleToFa(profile.role)}</span>
             <select id="role-select-${profile.id}" class="role-select">
                 <option value="user" ${profile.role === 'user' ? 'selected' : ''}>کاربر عادی</option>
-                <option value="manager" ${profile.role === 'manager' ? 'selected' : ''}>مدیر پروژه</option>
+                <option value="manager" ${profile.role === 'manager' ? 'selected' : ''}>مدیرعامل</option>
                 <option value="finance" ${profile.role === 'finance' ? 'selected' : ''}>امور مالی</option>
                 <option value="admin" ${profile.role === 'admin' ? 'selected' : ''}>مدیر سیستم</option>
             </select>
