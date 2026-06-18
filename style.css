@@ -1368,3 +1368,228 @@ h2{
 #dashboard-page .card p{
     font-size:16px !important;
 }
+/* ================= TOAST ================= */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(56,189,248,0.95);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  z-index: 999999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.toast.error {
+  background: rgba(239,68,68,0.95);
+}
+
+.toast.success {
+  background: rgba(34,197,94,0.95);
+}
+
+/* ================= FORGOT BUTTON ================= */
+.forgot-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+  background: transparent;
+  color: #94a3b8;
+  margin-top: -4px;
+}
+
+.forgot-btn:hover {
+  color: #38bdf8;
+}
+
+/* ================= SEARCH BOX ================= */
+.search-box {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  align-items: center;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: white;
+  outline: none;
+  font-size: 13px;
+  backdrop-filter: blur(10px);
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+}
+
+.search-box input::placeholder {
+  color: #94a3b8;
+}
+
+.search-box input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
+}
+
+/* ================= FILTER SELECT ================= */
+.filter-select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: white;
+  outline: none;
+  font-size: 13px;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+  min-width: 120px;
+}
+
+.filter-select option {
+  background: #1e293b;
+  color: white;
+}
+
+/* ================= PAGINATION ================= */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+  transition: 0.2s;
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+}
+
+.pagination button:hover {
+  background: rgba(56,189,248,0.3);
+  border-color: #38bdf8;
+}
+
+.pagination button.active-page {
+  background: #38bdf8;
+  color: #0b1220;
+  font-weight: bold;
+  border-color: #38bdf8;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ================= ADMIN TABLE ================= */
+#users-table {
+  overflow-x: auto;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.user-row:last-child {
+  border-bottom: none;
+}
+
+.user-row span {
+  font-size: 13px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.user-row select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+}
+
+.user-row select option {
+  background: #1e293b;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.role-badge.admin {
+  background: rgba(239,68,68,0.2);
+  color: #ef4444;
+}
+
+.role-badge.manager {
+  background: rgba(59,130,246,0.2);
+  color: #3b82f6;
+}
+
+.role-badge.finance {
+  background: rgba(34,197,94,0.2);
+  color: #22c55e;
+}
+
+.role-badge.user {
+  background: rgba(161,161,170,0.2);
+  color: #a1a1aa;
+}
+
+.save-role-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(56,189,248,0.2);
+  color: #38bdf8;
+  cursor: pointer;
+  font-size: 11px;
+  transition: 0.2s;
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+}
+
+.save-role-btn:hover {
+  background: #38bdf8;
+  color: #0b1220;
+}
