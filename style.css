@@ -1190,43 +1190,6 @@ body::before{
     overflow:hidden;
 }
 
-/* نور متحرک روی کارت */
-
-.card::after,
-.staff-card::after,
-.item::after,
-.glass-card::after{
-
-    content:"";
-
-    position:absolute;
-
-    top:-150%;
-    left:-150%;
-
-    width:300%;
-    height:300%;
-
-    background:
-        linear-gradient(
-            120deg,
-            transparent,
-            rgba(255, 255, 255, 0.089),
-            transparent 
-        );
-
-    transform:rotate(25deg);
-
-    transition:1.2s;
-}
-
-.card:hover::after,
-.staff-card:hover::after,
-.item:hover::after,
-.glass-card:hover::after{
-
-    left:100%;
-}
 
 /* ================= FLOAT EFFECT ================= */
 
