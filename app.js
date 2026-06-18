@@ -216,12 +216,17 @@ function initModals() {
         });
     });
     // فراموشی رمز
+setTimeout(() => {
     const fb = document.getElementById("forgotBtn");
     if (fb) {
         fb.onclick = () => {
             document.getElementById("reset-modal").style.display = "flex";
         };
+        console.log("✅ forgotBtn وصل شد");
+    } else {
+        console.log("❌ forgotBtn پیدا نشد");
     }
+}, 500);
 
     // دکمه‌های داخل مودال ریست
     const sr = document.getElementById("send-reset-btn");
