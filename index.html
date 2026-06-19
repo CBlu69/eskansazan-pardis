@@ -1,300 +1,299 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="./favicon.ico">
-<title>اسکان سازان پردیس</title>
-    
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
 
-    </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <title>اسکان سازان پردیس</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+
+</head>
+
 <body>
 
-<!-- TOAST -->
-<div id="toast" class="toast"></div>
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
 
-<!-- LOGIN -->
-<div id="login-ui">
+  <!-- LOGIN -->
+  <div id="login-ui">
     <div class="login-box">
 
-        <img src="logo.png" class="login-logo" alt="لوگو">
+      <img src="logo.png" class="login-logo" alt="لوگو">
 
-        <h2>اسکان سازان پردیس</h2>
-        <p class="login-text">ورود به سامانه مدیریت</p>
+      <h2>اسکان سازان پردیس</h2>
+      <p class="login-text">ورود به سامانه مدیریت</p>
 
-        <input id="email" type="email" placeholder="ایمیل">
-        <input id="password" type="password" placeholder="رمز عبور">
+      <input id="email" type="email" placeholder="ایمیل">
+      <input id="password" type="password" placeholder="رمز عبور">
 
-        <button id="loginBtn">ورود</button>
-        <button id="signupBtn">ثبت نام</button>
+      <button id="loginBtn">ورود</button>
+      <button id="signupBtn">ثبت نام</button>
 
     </div>
-</div>
+  </div>
 
-<!-- SPLASH -->
-<div id="splash">
+  <!-- SPLASH -->
+  <div id="splash">
     <img src="logo.png" class="splash-logo" alt="لوگو">
-</div>
+  </div>
 
-<header class="header">
+  <header class="header">
     <img src="logo.png" class="logo" alt="لوگو">
-</header>
+  </header>
 
-<main>
+  <main>
 
-<!-- DASHBOARD -->
-<section id="dashboard-page" class="page active">
-  <h2>داشبورد</h2>
+    <!-- DASHBOARD -->
+    <section id="dashboard-page" class="page active">
+      <h2>داشبورد</h2>
 
-  <div class="cards">
-  <div class="card">
-    <h3 id="projects-count">0</h3>
-    <p>پروژه‌ها</p>
-  </div>
+      <div class="cards">
+        <div class="card">
+          <h3 id="projects-count">0</h3>
+          <p>پروژه‌ها</p>
+        </div>
 
-  <div class="card">
-    <h3 id="missions-count">0</h3>
-    <p>ماموریت‌ها</p>
-  </div>
+        <div class="card">
+          <h3 id="missions-count">0</h3>
+          <p>ماموریت‌ها</p>
+        </div>
 
-  <div class="card">
-    <h3 id="staff-count">0</h3>
-    <p>پرسنل</p>
-  </div>
+        <div class="card">
+          <h3 id="staff-count">0</h3>
+          <p>پرسنل</p>
+        </div>
 
-  <div class="card clock-card">
-    <canvas id="clock" width="120" height="120"></canvas>
-    <p id="live-date">----</p>
-  </div>
-</div>
-
-<!-- 👤 USER CARD -->
-<div id="user-profile-card" class="user-profile-card">
-  <div class="user-avatar">👤</div>
-
-  <div class="user-info">
-    <div id="user-role">Role</div>
-    <div id="user-email">email@example.com</div>
-    <small id="user-id">User ID</small>
-  </div>
-
-  <button id="logout-btn" class="logout-btn">خروج</button>
-</div>
-</section>
-    
-  <!-- PROJECTS -->
-  <section id="projects-page" class="page">
-    <h2>پروژه‌ها</h2>
-
-    <button id="open-project">+ افزودن پروژه</button>
-    
-    <!-- SEARCH BOX -->
-    <div class="search-box">
-      <input id="project-search" type="text" placeholder="🔍 جستجوی پروژه...">
-    </div>
-
-    <div id="project-modal" class="modal">
-      <div class="modal-box">
-        <h3>پروژه جدید</h3>
-
-        <input id="p-name" placeholder="نام پروژه *">
-        <input id="p-supervisor" placeholder="سرپرست کارگاه">
-        <input id="p-progress" type="number" min="0" max="100" placeholder="درصد پیشرفت">
-        <input id="p-build-status" placeholder="وضعیت ساخت">
-        <input id="p-adjustment" placeholder="وضعیت تعدیل">
-        <textarea id="p-description" placeholder="توضیحات"></textarea>
-
-        <input id="p-lat" placeholder="latitude">
-        <input id="p-lng" placeholder="longitude">
-
-        <button id="add-project">ثبت</button>
-        <button id="close-project">بستن</button>
+        <div class="card clock-card">
+          <canvas id="clock" width="120" height="120"></canvas>
+          <p id="live-date">----</p>
+        </div>
       </div>
-    </div>
 
-    <div id="projects-list"></div>
-    <div id="projects-pagination" class="pagination"></div>
-  </section>
+      <!-- 👤 USER CARD -->
+      <div id="user-profile-card" class="user-profile-card">
+        <div class="user-avatar">👤</div>
 
-  <!-- MISSIONS -->
-  <section id="missions-page" class="page">
-    <h2>ماموریت‌ها</h2>
+        <div class="user-info">
+          <div id="user-role">Role</div>
+          <div id="user-email">email@example.com</div>
+          <small id="user-id">User ID</small>
+        </div>
 
-    <button id="open-mission">+ افزودن ماموریت</button>
-    
-    <!-- SEARCH BOX -->
-    <div class="search-box">
-      <input id="mission-search" type="text" placeholder="🔍 جستجوی ماموریت...">
-    </div>
-
-    <div id="mission-modal" class="modal">
-      <div class="modal-box">
-        <h3>ماموریت جدید</h3>
-
-        <input id="m-name" placeholder="نام ماموریت">
-        <input id="m-manager" placeholder="مسئول">
-        <input id="m-status" placeholder="وضعیت">
-
-        <button id="add-mission">ثبت</button>
-        <button id="close-mission">بستن</button>
+        <button id="logout-btn" class="logout-btn">خروج</button>
       </div>
-    </div>
+    </section>
 
-    <div id="missions-list"></div>
-    <div id="missions-pagination" class="pagination"></div>
-  </section>
+    <!-- PROJECTS -->
+    <section id="projects-page" class="page">
+      <h2>پروژه‌ها</h2>
 
-  <!-- STAFF -->
-  <section id="staff-page" class="page">
-    <h2>پرسنل</h2>
-    
-    <!-- SEARCH BOX -->
-    <div class="search-box">
-      <input id="staff-search" type="text" placeholder="🔍 جستجوی پرسنل...">
-    </div>
-    
-    <div id="staff-list"></div>
-    <div id="staff-pagination" class="pagination"></div>
-  </section>
+      <button id="open-project">+ افزودن پروژه</button>
 
-  <!-- FINANCE -->
-  <section id="finance-page" class="page">
-    <h2>درخواست‌های مالی</h2>
-
-    <button id="open-finance">+ درخواست مالی</button>
-    
-    <!-- SEARCH & FILTER -->
-    <div class="search-box">
-      <input id="finance-search" type="text" placeholder="🔍 جستجوی درخواست...">
-      <select id="finance-filter" class="filter-select">
-        <option value="all">همه</option>
-        <option value="pending">در انتظار</option>
-        <option value="approved">تایید شده</option>
-        <option value="rejected">رد شده</option>
-        <option value="paid">پرداخت شده</option>
-        <option value="unpaid">پرداخت نشده</option>
-      </select>
-    </div>
-
-    <div id="finance-modal" class="modal">
-      <div class="modal-box">
-        <h3>درخواست مالی</h3>
-
-        <input id="f-title" placeholder="عنوان">
-        <input id="f-amount" type="text" placeholder="مبلغ">
-        <textarea id="f-desc" placeholder="توضیحات"></textarea>
-        <input id="f-file" type="file" accept="image/*,.pdf">
-
-        <button id="add-finance">ثبت</button>
-        <button id="close-finance">بستن</button>
+      <div class="search-box">
+        <input id="project-search" type="text" placeholder="🔍 جستجوی پروژه...">
       </div>
-    </div>
 
-    <div id="finance-list"></div>
-    <div id="finance-pagination" class="pagination"></div>
-  </section>
+      <div id="project-modal" class="modal">
+        <div class="modal-box">
+          <h3>پروژه جدید</h3>
 
-  <!-- ADMIN PANEL (only for admin) -->
-  <section id="admin-page" class="page">
-    <h2>پنل مدیریت</h2>
-    
-    <div id="admin-users-list" class="glass-card" style="margin-bottom:16px;">
-      <h3>👥 کاربران سیستم</h3>
-      <div id="users-table"></div>
-    </div>
-  </section>
+          <input id="p-name" placeholder="نام پروژه *">
+          <input id="p-supervisor" placeholder="سرپرست کارگاه">
+          <input id="p-progress" type="number" min="0" max="100" placeholder="درصد پیشرفت">
+          <input id="p-build-status" placeholder="وضعیت ساخت">
+          <input id="p-adjustment" placeholder="وضعیت تعدیل">
+          <textarea id="p-description" placeholder="توضیحات"></textarea>
 
-</main>
+          <input id="p-lat" placeholder="latitude">
+          <input id="p-lng" placeholder="longitude">
 
-<!-- NAV -->
-<nav class="bottom-nav">
+          <button id="add-project">ثبت</button>
+          <button id="close-project">بستن</button>
+        </div>
+      </div>
+
+      <div id="projects-list"></div>
+      <div id="projects-pagination" class="pagination"></div>
+    </section>
+
+    <!-- MISSIONS -->
+    <section id="missions-page" class="page">
+      <h2>ماموریت‌ها</h2>
+
+      <button id="open-mission">+ افزودن ماموریت</button>
+
+      <div class="search-box">
+        <input id="mission-search" type="text" placeholder="🔍 جستجوی ماموریت...">
+      </div>
+
+      <div id="mission-modal" class="modal">
+        <div class="modal-box">
+          <h3>ماموریت جدید</h3>
+
+          <input id="m-name" placeholder="نام ماموریت">
+          <input id="m-manager" placeholder="مسئول">
+          <input id="m-status" placeholder="وضعیت">
+
+          <button id="add-mission">ثبت</button>
+          <button id="close-mission">بستن</button>
+        </div>
+      </div>
+
+      <div id="missions-list"></div>
+      <div id="missions-pagination" class="pagination"></div>
+    </section>
+
+    <!-- STAFF -->
+    <section id="staff-page" class="page">
+      <h2>پرسنل</h2>
+
+      <div class="search-box">
+        <input id="staff-search" type="text" placeholder="🔍 جستجوی پرسنل...">
+      </div>
+
+      <div id="staff-list"></div>
+      <div id="staff-pagination" class="pagination"></div>
+    </section>
+
+    <!-- FINANCE -->
+    <section id="finance-page" class="page">
+      <h2>درخواست‌های مالی</h2>
+
+      <button id="open-finance">+ درخواست مالی</button>
+
+      <div class="search-box">
+        <input id="finance-search" type="text" placeholder="🔍 جستجوی درخواست...">
+        <select id="finance-filter" class="filter-select">
+          <option value="all">همه</option>
+          <option value="pending">در انتظار</option>
+          <option value="approved">تایید شده</option>
+          <option value="rejected">رد شده</option>
+          <option value="paid">پرداخت شده</option>
+          <option value="unpaid">پرداخت نشده</option>
+        </select>
+      </div>
+
+      <div id="finance-modal" class="modal">
+        <div class="modal-box">
+          <h3>درخواست مالی</h3>
+
+          <input id="f-title" placeholder="عنوان">
+          <input id="f-amount" type="text" placeholder="مبلغ">
+          <textarea id="f-desc" placeholder="توضیحات"></textarea>
+          <input id="f-file" type="file" accept="image/*,.pdf">
+
+          <button id="add-finance">ثبت</button>
+          <button id="close-finance">بستن</button>
+        </div>
+      </div>
+
+      <div id="finance-list"></div>
+      <div id="finance-pagination" class="pagination"></div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="admin-page" class="page">
+      <h2>پنل مدیریت</h2>
+
+      <div id="admin-users-list" class="glass-card" style="margin-bottom:16px;">
+        <h3>👥 کاربران سیستم</h3>
+        <div id="users-table"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- NAV -->
+  <nav class="bottom-nav">
 
     <button data-page="dashboard-page">
-        <img src="home.png" alt="خانه">
+      <img src="home.png" alt="خانه">
     </button>
 
     <button data-page="projects-page">
-        <img src="building.png" alt="پروژه‌ها">
+      <img src="building.png" alt="پروژه‌ها">
     </button>
 
     <button data-page="missions-page">
-        <img src="task.png" alt="ماموریت‌ها">
+      <img src="task.png" alt="ماموریت‌ها">
     </button>
 
     <button data-page="staff-page">
-        <img src="users.png" alt="پرسنل">
+      <img src="users.png" alt="پرسنل">
     </button>
     <button data-page="finance-page">
-        <img src="finance.png" alt="مالی">
+      <img src="finance.png" alt="مالی">
     </button>
     <button data-page="admin-page" id="admin-nav-btn" style="display:none;">
-        <img src="settings.png" alt="مدیریت">
+      <img src="settings.png" alt="مدیریت">
     </button>
 
-</nav>
+  </nav>
 
-<!-- LOGOUT MODAL -->
-<div id="logout-modal" class="modal">
-  <div class="modal-box">
+  <!-- LOGOUT MODAL -->
+  <div id="logout-modal" class="modal">
+    <div class="modal-box">
 
-    <h3>خروج از حساب</h3>
+      <h3>خروج از حساب</h3>
 
-    <p style="text-align:center">
-      آیا مطمئن هستید که می‌خواهید خارج شوید؟
-    </p>
+      <p style="text-align:center">
+        آیا مطمئن هستید که می‌خواهید خارج شوید؟
+      </p>
 
-    <div class="action-buttons">
-      <button id="confirm-logout" class="glass-btn danger">
-        خروج
-      </button>
+      <div class="action-buttons">
+        <button id="confirm-logout" class="glass-btn danger">
+          خروج
+        </button>
 
-      <button id="cancel-logout" class="glass-btn">
-        انصراف
-      </button>
-    </div>
+        <button id="cancel-logout" class="glass-btn">
+          انصراف
+        </button>
+      </div>
 
-  </div>
-</div>
-
-<!-- DELETE MODAL -->
-<div id="delete-modal" class="modal">
-  <div class="modal-box">
-    <h3>⚠️ تایید حذف</h3>
-    <p style="text-align:center">آیا از حذف این آیتم مطمئن هستید؟</p>
-    <div class="action-buttons">
-      <button id="confirm-delete" class="glass-btn danger">🗑 حذف</button>
-      <button id="cancel-delete" class="glass-btn">انصراف</button>
     </div>
   </div>
-</div>
 
-<!-- REJECT MODAL -->
-<div id="reject-modal" class="logout-modal">
-  <div class="logout-box">
-    <h3>رد درخواست مالی</h3>
-
-    <p>
-      آیا از رد کردن این درخواست مطمئن هستید؟
-    </p>
-
-    <div class="logout-actions">
-      <button id="reject-confirm-btn">
-        رد درخواست
-      </button>
-
-      <button id="reject-cancel-btn">
-        انصراف
-      </button>
+  <!-- DELETE MODAL -->
+  <div id="delete-modal" class="modal">
+    <div class="modal-box">
+      <h3>⚠️ تایید حذف</h3>
+      <p style="text-align:center">آیا از حذف این آیتم مطمئن هستید؟</p>
+      <div class="action-buttons">
+        <button id="confirm-delete" class="glass-btn danger">🗑 حذف</button>
+        <button id="cancel-delete" class="glass-btn">انصراف</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- SCRIPTS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js" defer></script>
+  <!-- REJECT MODAL -->
+  <div id="reject-modal" class="logout-modal">
+    <div class="logout-box">
+      <h3>رد درخواست مالی</h3>
+
+      <p>
+        آیا از رد کردن این درخواست مطمئن هستید؟
+      </p>
+
+      <div class="logout-actions">
+        <button id="reject-confirm-btn">
+          رد درخواست
+        </button>
+
+        <button id="reject-cancel-btn">
+          انصراف
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js" defer></script>
 
 </body>
+
 </html>
