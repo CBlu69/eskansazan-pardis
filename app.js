@@ -264,6 +264,19 @@ async function login() {
 async function signup() {
     const email = emailInput.value.trim();
     const password = passInput.value;
+
+    // چک کن ببینیم این ایمیل قبلاً ثبت شده یا نه
+    const { data: existing } = await client
+        .from("profiles")
+        .select("id")
+        .eq("email", email)
+        .single();
+
+    if (existing) {
+        showToast('این ایمیل قبلاً ثبت شده، لطفاً وارد شوید ⚠️', 'error');
+        return;
+    }
+
     const { data, error } = await client.auth.signUp({ email, password });
     if (error) { showToast(error.message, 'error'); return; }
     if (data.user) {
@@ -271,7 +284,6 @@ async function signup() {
     }
     showToast('ایمیل تایید ارسال شد 📧', 'success');
 }
-
 /* ================= START APP ================= */
 async function startApp() {
     if (loginUI) loginUI.style.display = "none";
