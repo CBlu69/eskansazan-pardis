@@ -282,7 +282,7 @@ async function signup() {
     if (data.user) {
         await client.from("profiles").upsert({ id: data.user.id, email: email, role: "user" });
     }
-    showToast('ایمیل تایید ارسال شد 📧', 'success');
+showToast('ثبت‌نام با موفقیت انجام شد ✅', 'success');
 }
 /* ================= START APP ================= */
 async function startApp() {
