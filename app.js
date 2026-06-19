@@ -776,7 +776,7 @@ function startAutoRefresh() {
         await loadFinance();
         update();
         if (userRole === "admin") await loadAllUsers();
-    }, 30000);
+    }, 60000);
 }
 
 function stopAutoRefresh() {
