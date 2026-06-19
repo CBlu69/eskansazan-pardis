@@ -10,14 +10,14 @@ let editingProjectId = null;
 let editingMissionId = null;
 let rejectFinanceId = null;
 
-// Pagination state
 let projectPage = 1, missionPage = 1, staffPage = 1, financePage = 1;
 const PAGE_SIZE = 5;
 
-// All data cache
 let allProjects = [];
 let allMissions = [];
 let allFinance = [];
+
+let autoRefreshInterval = null;
 
 function isAdmin() { return userRole === "admin"; }
 function isManager() { return userRole === "manager"; }
@@ -282,6 +282,7 @@ async function startApp() {
     update();
     showUserInfo();
     if (userRole === "admin") await loadAllUsers();
+    startAutoRefresh();
 }
 
 /* ================= EVENTS ================= */
@@ -289,7 +290,6 @@ function bindEvents() {
     loginBtn?.addEventListener("click", login);
     signupBtn?.addEventListener("click", signup);
 
-    // Project add
     document.getElementById("add-project")?.addEventListener("click", async () => {
         const name = pName.value.trim();
         if (!name) return showToast("نام پروژه لازم است", 'error');
@@ -317,7 +317,6 @@ function bindEvents() {
         showToast('پروژه با موفقیت ذخیره شد ✅', 'success');
     });
 
-    // Mission add
     document.getElementById("add-mission")?.addEventListener("click", async () => {
         const name = mName.value.trim();
         if (!name) return showToast("نام ماموریت لازم است", 'error');
@@ -340,7 +339,6 @@ function bindEvents() {
         showToast('ماموریت با موفقیت ذخیره شد ✅', 'success');
     });
 
-    // Finance add
     document.getElementById("add-finance")?.addEventListener("click", async () => {
         const title = document.getElementById("f-title").value;
         const amount = document.getElementById("f-amount").value.replace(/[^0-9]/g, '');
@@ -374,7 +372,6 @@ function bindEvents() {
         e.target.value = e.target.value.replace(/[^0-9]/g, "");
     });
 
-    // Logout
     document.getElementById("logout-btn")?.addEventListener("click", () => {
         document.getElementById("logout-modal").style.display = "flex";
     });
@@ -383,11 +380,11 @@ function bindEvents() {
     });
     document.getElementById("confirm-logout")?.addEventListener("click", async () => {
         document.getElementById("logout-modal").style.display = "none";
+        stopAutoRefresh();
         await client.auth.signOut();
         location.reload();
     });
 
-    // Delete modal
     document.getElementById("cancel-delete")?.addEventListener("click", () => {
         document.getElementById("delete-modal").style.display = "none";
         window._deleteId = null;
@@ -414,7 +411,6 @@ function bindEvents() {
         }
     });
 
-    // Reject modal
     document.getElementById("reject-cancel-btn")?.addEventListener("click", () => {
         document.getElementById("reject-modal").style.display = "none";
         rejectFinanceId = null;
@@ -429,7 +425,6 @@ function bindEvents() {
         showToast('درخواست رد و حذف شد ❌', 'info');
     });
 
-    // Search
     document.getElementById("project-search")?.addEventListener("input", () => { projectPage = 1; renderProjects(); });
     document.getElementById("mission-search")?.addEventListener("input", () => { missionPage = 1; renderMissions(); });
     document.getElementById("staff-search")?.addEventListener("input", () => { renderStaff(); });
@@ -496,7 +491,7 @@ function renderProjects() {
     update();
 }
 
-window.editProject = function(id) {
+window.editProject = function (id) {
     const project = allProjects.find(p => p.id === id);
     if (!project) return;
     editingProjectId = id;
@@ -510,7 +505,7 @@ window.editProject = function(id) {
     document.getElementById("project-modal").style.display = "flex";
 };
 
-window.deleteProject = function(id) {
+window.deleteProject = function (id) {
     window._deleteId = id;
     window._deleteType = "project";
     document.getElementById("delete-modal").style.display = "flex";
@@ -552,7 +547,7 @@ function renderMissions() {
     update();
 }
 
-window.editMission = function(id) {
+window.editMission = function (id) {
     const mission = allMissions.find(m => m.id === id);
     if (!mission) return;
     editingMissionId = id;
@@ -563,7 +558,7 @@ window.editMission = function(id) {
     document.getElementById("mission-modal").style.display = "flex";
 };
 
-window.deleteMission = function(id) {
+window.deleteMission = function (id) {
     window._deleteId = id;
     window._deleteType = "mission";
     document.getElementById("delete-modal").style.display = "flex";
@@ -675,7 +670,6 @@ function renderFinance() {
     renderPagination("finance-pagination", financePage, total, (page) => { financePage = page; renderFinance(); });
 }
 
-/* ================= FINANCE ACTIONS ================= */
 window.approveFinance = async (id) => {
     await client.from("financial_requests").update({ status: "approved" }).eq("id", id);
     await loadFinance();
@@ -686,12 +680,12 @@ window.confirmPayment = async (id) => {
     await loadFinance();
     showToast('پرداخت تایید شد 💳', 'success');
 };
-window.deleteFinance = function(id) {
+window.deleteFinance = function (id) {
     window._deleteId = id;
     window._deleteType = "finance";
     document.getElementById("delete-modal").style.display = "flex";
 };
-window.openRejectModal = function(id) {
+window.openRejectModal = function (id) {
     rejectFinanceId = id;
     document.getElementById("reject-modal").style.display = "flex";
 };
@@ -737,7 +731,7 @@ async function loadAllUsers() {
     table.innerHTML = html;
 }
 
-window.updateUserRole = async function(userId) {
+window.updateUserRole = async function (userId) {
     const select = document.getElementById(`role-select-${userId}`);
     if (!select) return;
     const newRole = select.value;
@@ -758,6 +752,26 @@ function update() {
     document.getElementById("projects-count").textContent = allProjects.length;
     document.getElementById("missions-count").textContent = allMissions.length;
     document.getElementById("staff-count").textContent = defaultStaff.length;
+}
+
+/* ================= AUTO REFRESH ================= */
+function startAutoRefresh() {
+    stopAutoRefresh();
+    autoRefreshInterval = setInterval(async () => {
+        if (!currentUser) return;
+        await loadProjects();
+        await loadMissions();
+        await loadFinance();
+        update();
+        if (userRole === "admin") await loadAllUsers();
+    }, 30000);
+}
+
+function stopAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+    }
 }
 
 /* ================= INIT ================= */
