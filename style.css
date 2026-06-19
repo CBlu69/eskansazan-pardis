@@ -1,1558 +1,299 @@
-body{
-    margin:0;
-    font-family:tahoma;
-    color:white;
-    background:
-        radial-gradient(circle at top right,#1e3a8a,#0b1220 40%),
-        radial-gradient(circle at bottom left,#0f766e,#0b1220 35%);
-    min-height:100vh;
-    padding-bottom:80px;
-}
-
-#splash{
-position:fixed;
-inset:0;
-background:#05070f;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;
-}
-
-.splash-logo{
-width:120px;
-animation:zoom 1.2s ease;
-}
-
-@keyframes zoom{
-0%{transform:scale(0.6);opacity:0}
-100%{transform:scale(1);opacity:1}
-}
-
-.header{
-text-align:center;
-padding:15px;
-}
-
-.logo{
-    width:110px;
-    padding:10px;
-    border-radius:16px;
-
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.12);
-
-    backdrop-filter:blur(15px);
-    -webkit-backdrop-filter:blur(15px);
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.3),
-        0 0 18px rgba(56,189,248,.35);
-
-    transition:0.3s;
-
-    /* ✨ انیمیشن ورود */
-    animation:logoIntro 0.7s ease-out;
-}
-
-/* ورود */
-@keyframes logoIntro{
-    0%{
-        transform:scale(0.5);
-        opacity:0;
-        filter:blur(8px);
-    }
-    100%{
-        transform:scale(1);
-        opacity:1;
-        filter:blur(0);
-    }
-}
-
-/* 🌊 شناوری نرم */
-.logo{
-    animation:
-        logoIntro 0.7s ease-out,
-        floatLogo 4s ease-in-out infinite 0.7s;
-}
-
-@keyframes floatLogo{
-    0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-6px)}
-}
-
-/* ✨ glow زنده */
-.logo::after{
-    content:"";
-    position:absolute;
-    inset:-20px;
-    background:radial-gradient(circle, rgba(56,189,248,0.4), transparent 60%);
-    filter:blur(18px);
-    z-index:-1;
-    animation:glowPulse 3s ease-in-out infinite;
-    border-radius:20px;
-}
-
-@keyframes glowPulse{
-    0%,100%{transform:scale(0.9); opacity:0.4}
-    50%{transform:scale(1.15); opacity:0.9}
-}
-
-/* hover حرفه‌ای‌تر */
-.logo:hover{
-    transform:scale(1.06) translateY(-2px);
-    box-shadow:
-        0 20px 50px rgba(0,0,0,.45),
-        0 0 35px rgba(56,189,248,.7);
-}
-.page{
-display:none;
-padding:15px;
-opacity:0;
-transform:translateY(8px);
-transition:0.25s;
-}
-
-.page.active{
-display:block;
-opacity:1;
-transform:translateY(0);
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
-}
-
-.card{
-    background: rgba(255,255,255,0.10);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 18px;
-    padding: 16px;
-    box-shadow:
-        0 8px 32px rgba(0,0,0,0.35),
-        inset 0 1px 1px rgba(255,255,255,0.08);
-}
-.card{
-    transition:0.25s;
-}
-
-.card:hover{
-    transform:translateY(-5px);
-}
-
-.card:active{
-    transform:scale(0.97);
-}
-
-button{
-padding:10px;
-border:none;
-border-radius:10px;
-background:#38bdf8;
-color:white;
-cursor:pointer;
-}
-
-.item{
-background:rgba(255,255,255,0.06);
-padding:10px;
-border-radius:10px;
-margin-top:8px;
-}
-
-.bottom-nav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-display:flex;
-justify-content:space-around;
-background:#111827;
-padding:10px;
-}
-
-.bottom-nav button{
-background:none;
-color:#aaa;
-border:none;
-}
-
-.bottom-nav button.active{
-color:#38bdf8;
-}
-
-/* ================= MODAL OVERLAY ================= */
-.modal {
-    position: fixed;
-    inset: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(8px);
-    z-index: 9999;
-}
-/* ================= MODAL BOX ================= */
-
-
-.modal-box {
-    width: 90%;
-    max-width: 360px;
-    background: rgba(17, 24, 39, 0.9);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    position: relative;
-    animation: pop 0.2s ease;
-}
-
-@keyframes pop {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-/* ================= TITLE ================= */
-.modal-box h3{
-margin:0;
-font-size:16px;
-text-align:center;
-color:#38bdf8;
-}
-
-/* ================= INPUTS ================= */
-.modal-box input{
-padding:12px;
-border-radius:12px;
-border:1px solid rgba(255,255,255,0.08);
-background:rgba(255,255,255,0.05);
-color:white;
-outline:none;
-transition:0.2s;
-font-size:13px;
-}
-
-.modal-box input:focus{
-border-color:#38bdf8;
-box-shadow:0 0 0 2px rgba(56,189,248,0.2);
-}
-.modal-box textarea{
-    padding:12px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,0.08);
-    background:rgba(255,255,255,0.05);
-    color:white;
-    outline:none;
-    transition:0.2s;
-    font-size:13px;
-    font-family:tahoma;
-    width:100%;
-    box-sizing:border-box;
-    min-height:50px;
-    resize:vertical;
-}
-
-.modal-box textarea:focus{
-    border-color:#38bdf8;
-    box-shadow:0 0 0 2px rgba(56,189,248,0.2);
-}
-
-/* ================= BUTTONS ================= */
-.modal-box button{
-padding:12px;
-border:none;
-border-radius:12px;
-font-size:13px;
-cursor:pointer;
-transition:0.15s;
-}
-
-/* دکمه اصلی */
-.modal-box button:first-of-type{
-background:#38bdf8;
-color:#001018;
-font-weight:bold;
-}
-
-.modal-box button:first-of-type:active{
-transform:scale(0.97);
-}
-
-/* دکمه بستن */
-.modal-box button:last-of-type{
-background:rgba(255,255,255,0.08);
-color:#fff;
-}
-
-.modal-box button:last-of-type:hover{
-background:rgba(255,255,255,0.12);
-}
-/* ================= DELETE BUTTON (APP STYLE) ================= */
-.del-btn{
-margin-top:10px;
-padding:8px 10px;
-border:none;
-border-radius:10px;
-background:rgba(239,68,68,0.15);
-color:#ef4444;
-font-size:12px;
-cursor:pointer;
-transition:0.2s;
-width:100%;
-border:1px solid rgba(239,68,68,0.3);
-}
-
-.del-btn:hover{
-background:#ef4444;
-color:white;
-transform:translateY(-2px);
-}
-
-.del-btn:active{
-transform:scale(0.97);
-}
-/* ================= STAFF GRID ================= */
-#staff-list{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
-}
-
-/* کارت پرسنل حرفه‌ای */
-.staff-card{
-background:rgba(255,255,255,0.06);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:14px;
-padding:12px;
-text-align:center;
-backdrop-filter: blur(8px);
-transition:0.2s;
-}
-
-.staff-card:hover{
-transform:translateY(-4px);
-}
-
-/* اسم */
-.staff-card b{
-display:block;
-color:#38bdf8;
-font-size:13px;
-margin-bottom:4px;
-}
-
-/* مشخصات */
-.staff-card small{
-display:block;
-color:#94a3b8;
-font-size:11px;
-}
-
-/* دکمه تماس */
-.call-btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:5px;
-margin-top:8px;
-background:#22c55e;
-color:white;
-padding:4px 8px;
-border-radius:8px;
-text-decoration:none;
-font-size:10px;
-width:max-content;
-min-width:0;
-white-space:nowrap;
-}
-/* ================= LOGIN ================= */
-
-#login-ui{
-    position:fixed;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background:
-        radial-gradient(circle at top right,#1e3a8a,#0b1220 40%),
-        radial-gradient(circle at bottom left,#0f766e,#0b1220 35%);
-
-    z-index:99999;
-    padding:20px;
-}
-
-.login-box{
-    width:100%;
-    max-width:360px;
-
-    padding:32px 26px;
-
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-
-    background:rgba(255,255,255,.08);
-
-    border:1px solid rgba(255,255,255,.12);
-
-    border-radius:28px;
-
-    backdrop-filter:blur(22px);
-    -webkit-backdrop-filter:blur(22px);
-
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.45),
-        inset 0 1px 1px rgba(255,255,255,.08);
-
-    animation:loginPop .35s ease;
-}
-
-@keyframes loginPop{
-    from{
-        transform:translateY(15px) scale(.95);
-        opacity:0;
-    }
-
-    to{
-        transform:translateY(0) scale(1);
-        opacity:1;
-    }
-}
-
-.login-logo{
-    width:95px;
-    margin:auto;
-}
-
-.login-box h2{
-    margin:0;
-    text-align:center;
-
-    color:#38bdf8;
-
-    font-size:24px;
-
-    font-weight:bold;
-}
-
-.login-text{
-    margin:0 0 8px;
-
-    text-align:center;
-
-    color:#94a3b8;
-
-    font-size:13px;
-}
-
-.login-box input{
-    width:100%;
-
-    box-sizing:border-box;
-
-    padding:14px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:rgba(255,255,255,.06);
-
-    color:white;
-
-    font-size:14px;
-
-    outline:none;
-
-    transition:.2s;
-}
-
-.login-box input::placeholder{
-    color:#94a3b8;
-}
-
-.login-box input:focus{
-    background:rgba(255,255,255,.10);
-
-    box-shadow:
-        0 0 0 2px rgba(56,189,248,.25);
-}
-
-#loginBtn,
-#signupBtn{
-    width:100%;
-
-    padding:14px;
-
-    border:none;
-
-    border-radius:14px;
-
-    font-size:14px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.2s;
-}
-
-#loginBtn{
-    background:linear-gradient(135deg,#38bdf8,#2563eb);
-
-    color:white;
-
-    box-shadow:
-        0 8px 20px rgba(56,189,248,.35);
-}
-
-#signupBtn{
-    background:rgba(255,255,255,.08);
-
-    color:white;
-
-    border:1px solid rgba(255,255,255,.12);
-}
-
-#loginBtn:hover,
-#signupBtn:hover{
-    transform:translateY(-2px);
-}
-
-#loginBtn:active,
-#signupBtn:active{
-    transform:scale(.98);
-}
-
-/* دکمه‌های اصلاح و حذف */
-.action-buttons{
-    display:flex;
-    gap:10px;
-    margin-top:12px;
-}
-
-.edit-btn,
-.del-btn{
-    flex:1;
-
-    padding:10px 12px;
-
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.12);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    cursor:pointer;
-
-    font-weight:bold;
-    font-size:13px;
-
-    transition:.2s;
-}
-
-/* اصلاح */
-.edit-btn{
-    background:linear-gradient(
-        135deg,
-        rgba(56,189,248,.30),
-        rgba(37,99,235,.30)
-    );
-
-    color:#38bdf8;
-
-    box-shadow:
-        0 6px 18px rgba(56,189,248,.18);
-}
-
-.edit-btn:hover{
-    background:linear-gradient(
-        135deg,
-        #38bdf8,
-        #2563eb
-    );
-
-    color:white;
-
-    transform:translateY(-2px);
-}
-
-/* حذف */
-.del-btn{
-    background:linear-gradient(
-        135deg,
-        rgba(239,68,68,.25),
-        rgba(220,38,38,.25)
-    );
-
-    color:#ef4444;
-
-    box-shadow:
-        0 6px 18px rgba(239,68,68,.18);
-}
-
-.del-btn:hover{
-    background:linear-gradient(
-        135deg,
-        #ef4444,
-        #dc2626
-    );
-
-    color:white;
-
-    transform:translateY(-2px);
-}
-
-.edit-btn:active,
-.del-btn:active{
-    transform:scale(.97);
-}
-
-.bottom-nav button {
-    background: none;
-    border: none;
-    flex: 1;
-    padding: 10px;
-}
-
-.bottom-nav img {
-    width: 26px;
-    height: 26px;
-    opacity: 0.7;
-    transition: 0.2s;
-}
-
-.bottom-nav button.active img {
-    opacity: 1;
-    transform: scale(1.2);
-}
-
-.clock-box{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-}
-
-#clock{
-    background:
-        radial-gradient(circle,
-        #1e293b,
-        #0f172a);
-
-    border-radius:50%;
-
-    padding:8px;
-
-    box-shadow:
-        0 0 25px rgba(56,189,248,.25),
-        inset 0 0 20px rgba(255,255,255,.05);
-
-    border:2px solid rgba(255,255,255,.08);
-}
-
-#live-date{
-    color:white;
-    font-size:14px;
-}
-.card,
-.item,
-.staff-card {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* ================= GLASS BUTTONS ================= */
-.glass-btn{
-  background: rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
-  color:white;
-  padding:8px 10px;
-  border-radius:10px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.glass-btn:hover{
-  background: rgba(255,255,255,0.15);
-}
-
-/* file preview modal */
-.file-preview{
-  max-width:100%;
-  border-radius:12px;
-}
-main{
-    padding-bottom: 90px;
-    padding-top: 10px;
-}
-
-h2{
-    margin-top: 10px;
-}
-
-/* جلوگیری از قفل شدن محتوا زیر navbar */
-.page{
-    min-height: calc(100vh - 140px);
-    padding-bottom: 100px;
-}
-
-/* اسکرول درست */
-body{
-    overflow-x: hidden;
-}
-.glass-card {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  padding: 14px;
-  margin-bottom: 12px;
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.action-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.glass-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: 0.2s;
-}
-
-.glass-btn:hover {
-  transform: scale(1.05);
-  background: rgba(255,255,255,0.15);
-}
-
-.glass-btn.danger {
-  border-color: rgba(255,80,80,0.4);
-  background: rgba(255,0,0,0.1);
-}
-
-.glass-btn.success {
-  border-color: rgba(80,255,120,0.4);
-  background: rgba(0,255,100,0.1);
-}
-.user-profile-card {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: white;
-}
-
-.user-avatar {
-  font-size: 28px;
-}
-
-.user-info div {
-  font-weight: bold;
-}
-
-.user-info small {
-  opacity: 0.7;
-}
-
-/* ============ LOGOUT MODAL ============ */
-.logout-modal{
-    position:fixed;
-    inset:0;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.5);
-    backdrop-filter:blur(10px);
-    z-index:99999;
-    animation:fadeIn 0.2s ease;
-}
-
-.logout-box{
-    width:90%;
-    max-width:320px;
-
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.15);
-    backdrop-filter:blur(20px);
-
-    border-radius:18px;
-    padding:20px;
-
-    text-align:center;
-
-    animation:popIn 0.25s ease;
-}
-
-.logout-box h3{
-    margin:0;
-    color:#38bdf8;
-}
-
-.logout-box p{
-    font-size:13px;
-    opacity:0.8;
-    margin:10px 0 20px;
-}
-
-.logout-actions{
-    display:flex;
-    gap:10px;
-}
-
-.logout-actions button{
-    flex:1;
-    padding:10px;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-/* تایید */
-#confirm-logout{
-    background:#ef4444;
-    color:white;
-}
-
-/* لغو */
-#cancel-logout{
-    background:rgba(255,255,255,0.1);
-    color:white;
-}
-
-/* انیمیشن‌ها */
-@keyframes fadeIn{
-    from{opacity:0}
-    to{opacity:1}
-}
-
-@keyframes popIn{
-    from{transform:scale(0.9);opacity:0}
-    to{transform:scale(1);opacity:1}
-}
-
-/* ================= PREMIUM GLASS ================= */
-
-.card,
-.staff-card,
-.item,
-.glass-card,
-.user-profile-card{
-    background: rgba(255,255,255,0.08) !important;
-
-    border:1px solid rgba(255,255,255,0.15);
-
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 8px 32px rgba(0,0,0,.25),
-        inset 0 1px 1px rgba(255,255,255,.10);
-
-    position:relative;
-    overflow:hidden;
-}
-
-/* خط نور بالای کارت */
-.card::before,
-.staff-card::before,
-.item::before,
-.glass-card::before,
-.user-profile-card::before{
-    content:"";
-
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-
-    height:1px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.8),
-            transparent
-        );
-}
-
-/* Hover حرفه‌ای */
-.card:hover,
-.staff-card:hover,
-.item:hover,
-.glass-card:hover,
-.user-profile-card:hover{
-
-    transform:translateY(-4px);
-
-    box-shadow:
-        0 15px 40px rgba(56,189,248,.12),
-        0 10px 30px rgba(0,0,0,.30);
-}
-
-/* ================= TITLES ================= */
-
-h2{
-    font-size:22px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ffffff,
-            #38bdf8
-        );
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-
-    font-weight:bold;
-}
-
-/* ================= NUMBERS ================= */
-
-.card h3{
-    font-size:28px;
-
-    margin:0;
-
-    color:#38bdf8;
-
-    text-shadow:
-        0 0 15px rgba(56,189,248,.45);
-}
-
-/* ================= USER CARD ================= */
-
-.user-profile-card{
-    display:flex;
-    align-items:center;
-    gap:15px;
-
-    margin-top:20px;
-    padding:18px;
-
-    background:rgba(255,255,255,.08);
-    backdrop-filter:blur(20px);
-
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:18px;
-}
-.user-avatar{
-    width:60px;
-    height:60px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-radius:50%;
-
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.12);
-
-    font-size:28px;
-
-    flex-shrink:0;
-}
-
-/* ================= BUTTONS ================= */
-
-button,
-.glass-btn{
-
-    transition:.25s;
-}
-
-button:hover,
-.glass-btn:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:
-        0 8px 20px rgba(56,189,248,.25);
-}
-
-/* ================= NAVBAR ================= */
-
-.bottom-nav{
-
-    background:
-        rgba(17,24,39,.75);
-
-    backdrop-filter:blur(20px);
-
-    border-top:
-        1px solid rgba(255,255,255,.08);
-}
-
-/* ================= PAGE ANIMATION ================= */
-
-.page.active{
-    animation:fadePage .25s ease;
-}
-
-@keyframes fadePage{
-    from{
-        opacity:0;
-        transform:translateY(10px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-#reject-confirm-btn{
-    background:linear-gradient(
-        135deg,
-        #ef4444,
-        #dc2626
-    );
-
-    color:white;
-}
-
-#reject-cancel-btn{
-    background:rgba(255,255,255,.08);
-    color:white;
-    border:1px solid rgba(255,255,255,.12);
-}
-/* ================= PREMIUM TYPOGRAPHY SYSTEM ================= */
-
-/* کل بدنه - فونت پایه نرم و خوانا */
-body {
-    font-family: "Vazirmatn", "IRANSans", system-ui, sans-serif;
-    font-weight: 400;
-    letter-spacing: 0.2px;
-    line-height: 1.8;
-    -webkit-font-smoothing: antialiased;
-}
-
-/* تیترهای اصلی (داشبورد و سکشن‌ها) */
-h1, h2 {
-    font-family: "Vazirmatn", "IRANSans", sans-serif;
-    font-weight: 800;
-    letter-spacing: 0.4px;
-}
-
-/* تیترهای داخلی کارت‌ها */
-h3, h4 {
-    font-family: "Vazirmatn", "IRANSans", sans-serif;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-}
-
-/* کارت‌ها (پروژه، مالی، staff و ...) */
-.card,
-.item,
-.staff-card,
-.glass-card,
-.user-profile-card {
-    font-family: "Vazirmatn", "IRANSans", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.75;
-}
-
-/* متن‌های توضیحی داخل کارت */
-.card p,
-.item p,
-.staff-card small,
-.glass-card span {
-    font-weight: 400;
-    font-size: 12.5px;
-    opacity: 0.85;
-}
-
-/* اسم‌ها و آیتم‌های مهم */
-.card b,
-.item b,
-.staff-card b,
-.glass-card b {
-    font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 0.3px;
-}
-
-/* دکمه‌ها (حس حرفه‌ای و UI اپلیکیشن) */
-button,
-.glass-btn,
-.edit-btn,
-.del-btn,
-.call-btn {
-    font-family: "Vazirmatn", "IRANSans", sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-}
-
-/* ورودی‌ها (حس نرم و مدرن) */
-input,
-textarea {
-    font-family: "Vazirmatn", "IRANSans", sans-serif;
-    font-weight: 500;
-    font-size: 13.5px;
-}
-
-/* لیبل‌ها و متن‌های کوچک */
-small {
-    font-family: "Vazirmatn", "IRANSans", sans-serif;
-    font-weight: 400;
-    font-size: 11.5px;
-}
-
-/* نوار پایین (حس اپلیکیشن موبایل) */
-.bottom-nav button {
-    font-family: "Vazirmatn", "IRANSans", sans-serif;
-    font-weight: 600;
-}
-
-/* متن‌های وضعیت (finance / status) */
-span {
-    font-weight: 500;
-    letter-spacing: 0.2px;
-}
-.card h3, .staff-card b, .item b {
-    color: white;
-}
-/* ================= AURORA BACKGROUND ================= */
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:-30%;
-
-    background:
-        radial-gradient(circle,#00f5ff55 0%,transparent 35%),
-        radial-gradient(circle,#7c3aed55 0%,transparent 40%),
-        radial-gradient(circle,#38bdf855 0%,transparent 30%);
-
-    animation:aurora 20s linear infinite;
-
-    z-index:-2;
-}
-
-@keyframes aurora{
-
-    0%{
-        transform:translate(-10%,-10%) rotate(0deg);
-    }
-
-    100%{
-        transform:translate(10%,10%) rotate(360deg);
-    }
-}
-
-/* ================= PREMIUM GLASS ================= */
-
-.card,
-.staff-card,
-.item,
-.glass-card{
-    position:relative;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.12),
-            rgba(255,255,255,.04)
-        );
-
-    border:1px solid rgba(255,255,255,.15);
-
-    backdrop-filter:blur(30px);
-
-    overflow:hidden;
-}
-
-
-/* ================= FLOAT EFFECT ================= */
-
-.card:hover,
-.staff-card:hover,
-.item:hover,
-.glass-card:hover{
-
-    transform:
-        translateY(-8px)
-        scale(1.02);
-
-    box-shadow:
-        0 25px 60px rgba(0,0,0,.4),
-        0 0 35px rgba(56,189,248,.25);
-}
-
-/* ================= NAVBAR ================= */
-
-.bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    padding:12px;
-
-    background:rgba(15,23,42,.85);
-
-    backdrop-filter:blur(25px);
-    -webkit-backdrop-filter:blur(25px);
-
-    border-top:1px solid rgba(255,255,255,.08);
-
-    z-index:999;
-}
-
-.bottom-nav button{
-    flex:1;
-    background:none;
-    border:none;
-}
-
-.bottom-nav img{
-    width:26px;
-    height:26px;
-    opacity:.7;
-    transition:.25s;
-}
-
-.bottom-nav button.active img{
-    opacity:1;
-    transform:scale(1.18);
-}
-
-/* ================= BUTTONS ================= */
-
-button,
-.glass-btn{
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.12),
-            rgba(255,255,255,.05)
-        );
-
-    backdrop-filter:blur(20px);
-
-    border:
-        1px solid rgba(255,255,255,.15);
-}
-
-button:hover,
-.glass-btn:hover{
-
-    box-shadow:
-        0 0 25px rgba(56,189,248,.4);
-
-    transform:
-        translateY(-3px);
-}
-
-/* ================= TITLES ================= */
-
-h2{
-
-    font-size:28px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ffffff,
-            #eeaf02
-        );
-
-    background-size:300%;
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-
-    animation:titleGlow 12s linear infinite;
-}
-
-@keyframes titleGlow{
-
-    0%{
-        background-position:0%;
-    }
-
-    100%{
-        background-position:300%;
-    }
-}
-.action-buttons button,
-.logout-actions button{
-    flex:1 !important;
-    height:50px !important;
-    padding:0 !important;
-    margin:0 !important;
-    width: 70px;
-    font-size:13px !important;
-    line-height:44px !important;
-
-    display:flex !important;
-    align-items:center;
-    justify-content:center;
-
-    box-sizing:border-box;
-}
-#dashboard-page .card h3{
-    font-size:50px ant;
-}
-
-#dashboard-page .card p{
-    font-size:16px !important;
-}
-/* ================= TOAST ================= */
-.toast {
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(56,189,248,0.95);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 12px;
-  z-index: 999999;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  font-family: "Vazirmatn", "IRANSans", sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
-
-.toast.show {
-  opacity: 1;
-}
-
-.toast.error {
-  background: rgba(239,68,68,0.95);
-}
-
-.toast.success {
-  background: rgba(34,197,94,0.95);
-}
-
-/* ================= FORGOT BUTTON ================= */
-.forgot-btn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 14px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.2s;
-  background: transparent;
-  color: #94a3b8;
-  margin-top: -4px;
-}
-
-.forgot-btn:hover {
-  color: #38bdf8;
-}
-
-/* ================= SEARCH BOX ================= */
-.search-box {
-  display: flex;
-  gap: 8px;
-  margin: 12px 0;
-  align-items: center;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  color: white;
-  outline: none;
-  font-size: 13px;
-  backdrop-filter: blur(10px);
-  font-family: "Vazirmatn", "IRANSans", sans-serif;
-}
-
-.search-box input::placeholder {
-  color: #94a3b8;
-}
-
-.search-box input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
-}
-
-/* ================= FILTER SELECT ================= */
-.filter-select {
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  color: white;
-  outline: none;
-  font-size: 13px;
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  font-family: "Vazirmatn", "IRANSans", sans-serif;
-  min-width: 120px;
-}
-
-.filter-select option {
-  background: #1e293b;
-  color: white;
-}
-
-/* ================= PAGINATION ================= */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-
-.pagination button {
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  color: white;
-  cursor: pointer;
-  font-size: 12px;
-  backdrop-filter: blur(10px);
-  transition: 0.2s;
-  font-family: "Vazirmatn", "IRANSans", sans-serif;
-}
-
-.pagination button:hover {
-  background: rgba(56,189,248,0.3);
-  border-color: #38bdf8;
-}
-
-.pagination button.active-page {
-  background: #38bdf8;
-  color: #0b1220;
-  font-weight: bold;
-  border-color: #38bdf8;
-}
-
-.pagination button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* ================= ADMIN TABLE ================= */
-#users-table {
-  overflow-x: auto;
-}
-
-.user-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.user-row:last-child {
-  border-bottom: none;
-}
-
-.user-row span {
-  font-size: 13px;
-  flex: 1;
-  min-width: 140px;
-}
-
-.user-row select {
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  color: white;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: "Vazirmatn", "IRANSans", sans-serif;
-}
-
-.user-row select option {
-  background: #1e293b;
-}
-
-.role-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.role-badge.admin {
-  background: rgba(239,68,68,0.2);
-  color: #ef4444;
-}
-
-.role-badge.manager {
-  background: rgba(59,130,246,0.2);
-  color: #3b82f6;
-}
-
-.role-badge.finance {
-  background: rgba(34,197,94,0.2);
-  color: #22c55e;
-}
-
-.role-badge.user {
-  background: rgba(161,161,170,0.2);
-  color: #a1a1aa;
-}
-
-.save-role-btn {
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(56,189,248,0.2);
-  color: #38bdf8;
-  cursor: pointer;
-  font-size: 11px;
-  transition: 0.2s;
-  font-family: "Vazirmatn", "IRANSans", sans-serif;
-}
-
-.save-role-btn:hover {
-  background: #38bdf8;
-  color: #0b1220;
-}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <title>اسکان سازان پردیس</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+
+</head>
+
+<body>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- LOGIN -->
+  <div id="login-ui">
+    <div class="login-box">
+
+      <img src="logo.png" class="login-logo" alt="لوگو">
+
+      <h2>اسکان سازان پردیس</h2>
+      <p class="login-text">ورود به سامانه مدیریت</p>
+
+      <input id="email" type="email" placeholder="ایمیل">
+      <input id="password" type="password" placeholder="رمز عبور">
+
+      <button id="loginBtn">ورود</button>
+      <button id="signupBtn">ثبت نام</button>
+
+    </div>
+  </div>
+
+  <!-- SPLASH -->
+  <div id="splash">
+    <img src="logo.png" class="splash-logo" alt="لوگو">
+  </div>
+
+  <header class="header">
+    <img src="logo.png" class="logo" alt="لوگو">
+  </header>
+
+  <main>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard-page" class="page active">
+      <h2>داشبورد</h2>
+
+      <div class="cards">
+        <div class="card">
+          <h3 id="projects-count">0</h3>
+          <p>پروژه‌ها</p>
+        </div>
+
+        <div class="card">
+          <h3 id="missions-count">0</h3>
+          <p>ماموریت‌ها</p>
+        </div>
+
+        <div class="card">
+          <h3 id="staff-count">0</h3>
+          <p>پرسنل</p>
+        </div>
+
+        <div class="card clock-card">
+          <canvas id="clock" width="120" height="120"></canvas>
+          <p id="live-date">----</p>
+        </div>
+      </div>
+
+      <!-- 👤 USER CARD -->
+      <div id="user-profile-card" class="user-profile-card">
+        <div class="user-avatar">👤</div>
+
+        <div class="user-info">
+          <div id="user-role">Role</div>
+          <div id="user-email">email@example.com</div>
+          <small id="user-id">User ID</small>
+        </div>
+
+        <button id="logout-btn" class="logout-btn">خروج</button>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects-page" class="page">
+      <h2>پروژه‌ها</h2>
+
+      <button id="open-project">+ افزودن پروژه</button>
+
+      <div class="search-box">
+        <input id="project-search" type="text" placeholder="🔍 جستجوی پروژه...">
+      </div>
+
+      <div id="project-modal" class="modal">
+        <div class="modal-box">
+          <h3>پروژه جدید</h3>
+
+          <input id="p-name" placeholder="نام پروژه *">
+          <input id="p-supervisor" placeholder="سرپرست کارگاه">
+          <input id="p-progress" type="number" min="0" max="100" placeholder="درصد پیشرفت">
+          <input id="p-build-status" placeholder="وضعیت ساخت">
+          <input id="p-adjustment" placeholder="وضعیت تعدیل">
+          <textarea id="p-description" placeholder="توضیحات"></textarea>
+
+          <input id="p-lat" placeholder="latitude">
+          <input id="p-lng" placeholder="longitude">
+
+          <button id="add-project">ثبت</button>
+          <button id="close-project">بستن</button>
+        </div>
+      </div>
+
+      <div id="projects-list"></div>
+      <div id="projects-pagination" class="pagination"></div>
+    </section>
+
+    <!-- MISSIONS -->
+    <section id="missions-page" class="page">
+      <h2>ماموریت‌ها</h2>
+
+      <button id="open-mission">+ افزودن ماموریت</button>
+
+      <div class="search-box">
+        <input id="mission-search" type="text" placeholder="🔍 جستجوی ماموریت...">
+      </div>
+
+      <div id="mission-modal" class="modal">
+        <div class="modal-box">
+          <h3>ماموریت جدید</h3>
+
+          <input id="m-name" placeholder="نام ماموریت">
+          <input id="m-manager" placeholder="مسئول">
+          <input id="m-status" placeholder="وضعیت">
+
+          <button id="add-mission">ثبت</button>
+          <button id="close-mission">بستن</button>
+        </div>
+      </div>
+
+      <div id="missions-list"></div>
+      <div id="missions-pagination" class="pagination"></div>
+    </section>
+
+    <!-- STAFF -->
+    <section id="staff-page" class="page">
+      <h2>پرسنل</h2>
+
+      <div class="search-box">
+        <input id="staff-search" type="text" placeholder="🔍 جستجوی پرسنل...">
+      </div>
+
+      <div id="staff-list"></div>
+      <div id="staff-pagination" class="pagination"></div>
+    </section>
+
+    <!-- FINANCE -->
+    <section id="finance-page" class="page">
+      <h2>درخواست‌های مالی</h2>
+
+      <button id="open-finance">+ درخواست مالی</button>
+
+      <div class="search-box">
+        <input id="finance-search" type="text" placeholder="🔍 جستجوی درخواست...">
+        <select id="finance-filter" class="filter-select">
+          <option value="all">همه</option>
+          <option value="pending">در انتظار</option>
+          <option value="approved">تایید شده</option>
+          <option value="rejected">رد شده</option>
+          <option value="paid">پرداخت شده</option>
+          <option value="unpaid">پرداخت نشده</option>
+        </select>
+      </div>
+
+      <div id="finance-modal" class="modal">
+        <div class="modal-box">
+          <h3>درخواست مالی</h3>
+
+          <input id="f-title" placeholder="عنوان">
+          <input id="f-amount" type="text" placeholder="مبلغ">
+          <textarea id="f-desc" placeholder="توضیحات"></textarea>
+          <input id="f-file" type="file" accept="image/*,.pdf">
+
+          <button id="add-finance">ثبت</button>
+          <button id="close-finance">بستن</button>
+        </div>
+      </div>
+
+      <div id="finance-list"></div>
+      <div id="finance-pagination" class="pagination"></div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="admin-page" class="page">
+      <h2>پنل مدیریت</h2>
+
+      <div id="admin-users-list" class="glass-card" style="margin-bottom:16px;">
+        <h3>👥 کاربران سیستم</h3>
+        <div id="users-table"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- NAV -->
+  <nav class="bottom-nav">
+
+    <button data-page="dashboard-page">
+      <img src="home.png" alt="خانه">
+    </button>
+
+    <button data-page="projects-page">
+      <img src="building.png" alt="پروژه‌ها">
+    </button>
+
+    <button data-page="missions-page">
+      <img src="task.png" alt="ماموریت‌ها">
+    </button>
+
+    <button data-page="staff-page">
+      <img src="users.png" alt="پرسنل">
+    </button>
+    <button data-page="finance-page">
+      <img src="finance.png" alt="مالی">
+    </button>
+    <button data-page="admin-page" id="admin-nav-btn" style="display:none;">
+      <img src="settings.png" alt="مدیریت">
+    </button>
+
+  </nav>
+
+  <!-- LOGOUT MODAL -->
+  <div id="logout-modal" class="modal">
+    <div class="modal-box">
+
+      <h3>خروج از حساب</h3>
+
+      <p style="text-align:center">
+        آیا مطمئن هستید که می‌خواهید خارج شوید؟
+      </p>
+
+      <div class="action-buttons">
+        <button id="confirm-logout" class="glass-btn danger">
+          خروج
+        </button>
+
+        <button id="cancel-logout" class="glass-btn">
+          انصراف
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div id="delete-modal" class="modal">
+    <div class="modal-box">
+      <h3>⚠️ تایید حذف</h3>
+      <p style="text-align:center">آیا از حذف این آیتم مطمئن هستید؟</p>
+      <div class="action-buttons">
+        <button id="confirm-delete" class="glass-btn danger">🗑 حذف</button>
+        <button id="cancel-delete" class="glass-btn">انصراف</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REJECT MODAL -->
+  <div id="reject-modal" class="logout-modal">
+    <div class="logout-box">
+      <h3>رد درخواست مالی</h3>
+
+      <p>
+        آیا از رد کردن این درخواست مطمئن هستید؟
+      </p>
+
+      <div class="logout-actions">
+        <button id="reject-confirm-btn">
+          رد درخواست
+        </button>
+
+        <button id="reject-cancel-btn">
+          انصراف
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js" defer></script>
+
+</body>
+
+</html>
