@@ -99,6 +99,7 @@ body{
     position:relative;
     overflow:hidden;
     transition:0.25s;
+    border-radius: 22px;
 }
 .card::before,
 .staff-card::before,
@@ -116,7 +117,6 @@ body{
 .item:hover,
 .glass-card:hover,
 .user-profile-card:hover{
-    transform:translateY(-8px) scale(1.02);
     box-shadow:0 25px 60px rgba(0,0,0,.4),0 0 35px rgba(56,189,248,.25);
 }
 .card:active{transform:scale(0.97);}
@@ -127,7 +127,6 @@ body{
     color:#38bdf8;
     text-shadow:0 0 15px rgba(56,189,248,.45);
 }
-
 /* ================= ITEMS ================= */
 .item{
     background:rgba(255,255,255,0.06);
@@ -171,7 +170,7 @@ body{
 .staff-card:hover{transform:translateY(-4px);}
 .staff-card b{
     display:block;
-    color:#38bdf8;
+    color:#ffffff;
     font-size:13px;
     margin-bottom:4px;
 }
