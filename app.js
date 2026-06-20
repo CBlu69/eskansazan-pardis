@@ -881,7 +881,7 @@ function renderZonkens() {
             ${z.description ? `<small style="opacity:0.7;">📝 ${z.description}</small>` : ""}
             ${userRole === "admin" ? `
             <div class="action-buttons" style="margin-top:6px;">
-                <button class="edit-btn" onclick="editZonken('${z.id}')">✏️</button>
+                <button class="edit-btn" onclick="window.editZonken('${z.id}')">✏️</button>
                 <button class="del-btn" onclick="deleteZonken('${z.id}')">🗑</button>
             </div>` : ""}
         </div>`;
@@ -938,7 +938,7 @@ function renderContracts() {
             ${c.description ? `<small style="opacity:0.7;">📝 ${c.description}</small>` : ""}
             ${userRole === "admin" ? `
             <div class="action-buttons" style="margin-top:6px;">
-                <button class="edit-btn" onclick="editContract('${c.id}')">✏️</button>
+                <button class="edit-btn" onclick="window.editContract('${c.id}')">✏️</button>
                 <button class="del-btn" onclick="deleteContract('${c.id}')">🗑</button>
             </div>` : ""}
         </div>`;
