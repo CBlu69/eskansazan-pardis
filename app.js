@@ -893,9 +893,9 @@ window.editZonken = function(id) {
     const z = allZonkens.find(x => x.id === id);
     if (!z) return;
     editingZonkenId = id;
-    zNumber.value = z.number || "";
-    zName.value = z.name || "";
-    zDesc.value = z.description || "";
+    document.getElementById("z-number").value = z.number || "";
+    document.getElementById("z-name").value = z.name || "";
+    document.getElementById("z-desc").value = z.description || "";
     document.getElementById("add-zonken").textContent = "💾 ذخیره";
     document.getElementById("zonken-modal").style.display = "flex";
 };
@@ -950,9 +950,9 @@ window.editContract = function(id) {
     const c = allContracts.find(x => x.id === id);
     if (!c) return;
     editingContractId = id;
-    cNumber.value = c.number || "";
-    cName.value = c.name || "";
-    cDesc.value = c.description || "";
+    document.getElementById("c-number").value = c.number || "";
+    document.getElementById("c-name").value = c.name || "";
+    document.getElementById("c-desc").value = c.description || "";
     document.getElementById("add-contract").textContent = "💾 ذخیره";
     document.getElementById("contract-modal").style.display = "flex";
 };
@@ -963,7 +963,6 @@ window.deleteContract = function(id) {
     document.getElementById("delete-modal").style.display = "flex";
 };
 
-/* ================= DASH ================= */
 /* ================= DASH ================= */
 function update() {
     document.getElementById("projects-count").textContent = allProjects.length;
