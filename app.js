@@ -964,10 +964,14 @@ window.deleteContract = function(id) {
 };
 
 /* ================= DASH ================= */
+/* ================= DASH ================= */
 function update() {
     document.getElementById("projects-count").textContent = allProjects.length;
     document.getElementById("missions-count").textContent = allMissions.length;
     document.getElementById("staff-count").textContent = defaultStaff.length;
+    document.getElementById("finance-count").textContent = allFinance.length;
+    document.getElementById("zonken-count").textContent = allZonkens.length;
+    document.getElementById("contract-count").textContent = allContracts.length;
 }
 
 /* ================= AUTO REFRESH ================= */
