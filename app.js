@@ -56,7 +56,7 @@ function showToast(message, type = 'info') {
 let loginUI, loginBtn, signupBtn, emailInput, passInput;
 let pName, pSupervisor, pProgress, pBuildStatus, pAdjustment, pDescription;
 let mName, mManager, mStatus;
-let zNumber, zName, cNumber, cName;
+let zNumber, zName, zDesc, cNumber, cName, cDesc;
 
 /* ================= INIT DOM ================= */
 function initDOM() {
@@ -79,8 +79,10 @@ function initDOM() {
 
     zNumber = document.getElementById("z-number");
     zName = document.getElementById("z-name");
+    zDesc = document.getElementById("z-desc");
     cNumber = document.getElementById("c-number");
     cName = document.getElementById("c-name");
+    cDesc = document.getElementById("c-desc");
 }
 
 /* ================= SPLASH ================= */
@@ -326,11 +328,10 @@ async function startApp() {
     showUserInfo();
     if (userRole === "admin") await loadAllUsers();
     startAutoRefresh();
-    // مخفی کردن دکمه‌های افزودن برای غیر ادمین
-if (userRole !== "admin") {
-    const addBtns = document.querySelectorAll("#open-zonken, #open-contract");
-    addBtns.forEach(b => b.style.display = "none");
-}
+    if (userRole !== "admin") {
+        const addBtns = document.querySelectorAll("#open-zonken, #open-contract");
+        addBtns.forEach(b => b.style.display = "none");
+    }
 }
 
 /* ================= EVENTS ================= */
@@ -424,17 +425,18 @@ function bindEvents() {
     document.getElementById("add-zonken")?.addEventListener("click", async () => {
         const number = zNumber.value.trim();
         const name = zName.value.trim();
+        const desc = zDesc.value.trim();
         if (!number || !name) return showToast("شماره و نام زونکن لازم است", 'error');
         let error;
         if (editingZonkenId) {
-            ({ error } = await client.from("zonkens").update({ number, name }).eq("id", editingZonkenId));
+            ({ error } = await client.from("zonkens").update({ number, name, description: desc }).eq("id", editingZonkenId));
             editingZonkenId = null;
             document.getElementById("add-zonken").textContent = "ثبت";
         } else {
-            ({ error } = await client.from("zonkens").insert([{ number, name, owner_id: currentUser.id }]));
+            ({ error } = await client.from("zonkens").insert([{ number, name, description: desc, owner_id: currentUser.id }]));
         }
         if (error) return showToast(error.message, 'error');
-        zNumber.value = ""; zName.value = "";
+        zNumber.value = ""; zName.value = ""; zDesc.value = "";
         document.getElementById("zonken-modal").style.display = "none";
         await loadZonkens();
         showToast('زونکن ثبت شد 🗄', 'success');
@@ -444,17 +446,18 @@ function bindEvents() {
     document.getElementById("add-contract")?.addEventListener("click", async () => {
         const number = cNumber.value.trim();
         const name = cName.value.trim();
+        const desc = cDesc.value.trim();
         if (!number || !name) return showToast("شماره و نام قرارداد لازم است", 'error');
         let error;
         if (editingContractId) {
-            ({ error } = await client.from("contracts").update({ number, name }).eq("id", editingContractId));
+            ({ error } = await client.from("contracts").update({ number, name, description: desc }).eq("id", editingContractId));
             editingContractId = null;
             document.getElementById("add-contract").textContent = "ثبت";
         } else {
-            ({ error } = await client.from("contracts").insert([{ number, name, owner_id: currentUser.id }]));
+            ({ error } = await client.from("contracts").insert([{ number, name, description: desc, owner_id: currentUser.id }]));
         }
         if (error) return showToast(error.message, 'error');
-        cNumber.value = ""; cName.value = "";
+        cNumber.value = ""; cName.value = ""; cDesc.value = "";
         document.getElementById("contract-modal").style.display = "none";
         await loadContracts();
         showToast('قرارداد ثبت شد 📋', 'success');
@@ -493,7 +496,8 @@ function bindEvents() {
             await loadMissions();
             showToast('ماموریت حذف شد 🗑', 'info');
         } else if (type === "finance") {
-            await client.from("financial_requests").delete().eq("id", id);
+            await 
+                client.from("financial_requests").delete().eq("id", id);
             await loadFinance();
             showToast('درخواست حذف شد 🗑', 'info');
         } else if (type === "zonken") {
@@ -503,7 +507,7 @@ function bindEvents() {
         } else if (type === "contract") {
             await client.from("contracts").delete().eq("id", id);
             await loadContracts();
-       showToast('قرارداد حذف شد 🗑', 'info');
+            showToast('قرارداد حذف شد 🗑', 'info');
         }
     });
 
@@ -526,6 +530,8 @@ function bindEvents() {
     document.getElementById("staff-search")?.addEventListener("input", () => { renderStaff(); });
     document.getElementById("finance-search")?.addEventListener("input", () => { financePage = 1; renderFinance(); });
     document.getElementById("finance-filter")?.addEventListener("change", () => { financePage = 1; renderFinance(); });
+    document.getElementById("zonken-search")?.addEventListener("input", () => { zonkenPage = 1; renderZonkens(); });
+    document.getElementById("contract-search")?.addEventListener("input", () => { contractPage = 1; renderContracts(); });
 }
 
 /* ================= PAGINATION ================= */
@@ -853,9 +859,18 @@ async function loadZonkens() {
 }
 
 function renderZonkens() {
-    const total = allZonkens.length;
+    const searchTerm = document.getElementById("zonken-search")?.value.trim().toLowerCase() || "";
+    let filtered = allZonkens;
+    if (searchTerm) {
+        filtered = allZonkens.filter(z => 
+            z.name?.toLowerCase().includes(searchTerm) || 
+            z.number?.toLowerCase().includes(searchTerm) ||
+            z.description?.toLowerCase().includes(searchTerm)
+        );
+    }
+    const total = filtered.length;
     const start = (zonkenPage - 1) * PAGE_SIZE;
-    const pageItems = allZonkens.slice(start, start + PAGE_SIZE);
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("zonken-list");
     list.innerHTML = "";
     pageItems.forEach(z => {
@@ -863,6 +878,7 @@ function renderZonkens() {
         <div class="staff-card">
             <b>${z.name}</b>
             <small>🔢 شماره: ${z.number}</small>
+            ${z.description ? `<small style="opacity:0.7;">📝 ${z.description}</small>` : ""}
             ${userRole === "admin" ? `
             <div class="action-buttons" style="margin-top:6px;">
                 <button class="edit-btn" onclick="editZonken('${z.id}')">✏️</button>
@@ -877,8 +893,9 @@ window.editZonken = function(id) {
     const z = allZonkens.find(x => x.id === id);
     if (!z) return;
     editingZonkenId = id;
-    zNumber.value = z.number;
-    zName.value = z.name;
+    zNumber.value = z.number || "";
+    zName.value = z.name || "";
+    zDesc.value = z.description || "";
     document.getElementById("add-zonken").textContent = "💾 ذخیره";
     document.getElementById("zonken-modal").style.display = "flex";
 };
@@ -899,9 +916,18 @@ async function loadContracts() {
 }
 
 function renderContracts() {
-    const total = allContracts.length;
+    const searchTerm = document.getElementById("contract-search")?.value.trim().toLowerCase() || "";
+    let filtered = allContracts;
+    if (searchTerm) {
+        filtered = allContracts.filter(c => 
+            c.name?.toLowerCase().includes(searchTerm) || 
+            c.number?.toLowerCase().includes(searchTerm) ||
+            c.description?.toLowerCase().includes(searchTerm)
+        );
+    }
+    const total = filtered.length;
     const start = (contractPage - 1) * PAGE_SIZE;
-    const pageItems = allContracts.slice(start, start + PAGE_SIZE);
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("contract-list");
     list.innerHTML = "";
     pageItems.forEach(c => {
@@ -909,6 +935,7 @@ function renderContracts() {
         <div class="staff-card">
             <b>${c.name}</b>
             <small>🔢 شماره: ${c.number}</small>
+            ${c.description ? `<small style="opacity:0.7;">📝 ${c.description}</small>` : ""}
             ${userRole === "admin" ? `
             <div class="action-buttons" style="margin-top:6px;">
                 <button class="edit-btn" onclick="editContract('${c.id}')">✏️</button>
@@ -923,8 +950,9 @@ window.editContract = function(id) {
     const c = allContracts.find(x => x.id === id);
     if (!c) return;
     editingContractId = id;
-    cNumber.value = c.number;
-    cName.value = c.name;
+    cNumber.value = c.number || "";
+    cName.value = c.name || "";
+    cDesc.value = c.description || "";
     document.getElementById("add-contract").textContent = "💾 ذخیره";
     document.getElementById("contract-modal").style.display = "flex";
 };
