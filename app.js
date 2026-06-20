@@ -326,6 +326,11 @@ async function startApp() {
     showUserInfo();
     if (userRole === "admin") await loadAllUsers();
     startAutoRefresh();
+    // مخفی کردن دکمه‌های افزودن برای غیر ادمین
+if (userRole !== "admin") {
+    const addBtns = document.querySelectorAll("#open-zonken, #open-contract");
+    addBtns.forEach(b => b.style.display = "none");
+}
 }
 
 /* ================= EVENTS ================= */
