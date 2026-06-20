@@ -195,6 +195,43 @@
       <div id="finance-pagination" class="pagination"></div>
     </section>
 
+    <!-- ARCHIVE -->
+    <section id="archive-page" class="page">
+      <h2>بایگانی</h2>
+
+      <h3 style="color:#38bdf8;margin-top:10px;">🗄 زونکن‌ها</h3>
+      <button id="open-zonken">+ افزودن زونکن</button>
+
+      <div id="zonken-modal" class="modal">
+        <div class="modal-box">
+          <h3>زونکن جدید</h3>
+          <input id="z-number" placeholder="شماره زونکن *">
+          <input id="z-name" placeholder="نام زونکن *">
+          <button id="add-zonken">ثبت</button>
+          <button id="close-zonken">بستن</button>
+        </div>
+      </div>
+
+      <div id="zonken-list" class="archive-grid"></div>
+      <div id="zonken-pagination" class="pagination"></div>
+
+      <h3 style="color:#38bdf8;margin-top:20px;">📋 قراردادها</h3>
+      <button id="open-contract">+ افزودن قرارداد</button>
+
+      <div id="contract-modal" class="modal">
+        <div class="modal-box">
+          <h3>قرارداد جدید</h3>
+          <input id="c-number" placeholder="شماره قرارداد *">
+          <input id="c-name" placeholder="نام قرارداد *">
+          <button id="add-contract">ثبت</button>
+          <button id="close-contract">بستن</button>
+        </div>
+      </div>
+
+      <div id="contract-list" class="archive-grid"></div>
+      <div id="contract-pagination" class="pagination"></div>
+    </section>
+
     <!-- ADMIN PANEL -->
     <section id="admin-page" class="page">
       <h2>پنل مدیریت</h2>
@@ -227,6 +264,9 @@
     </button>
     <button data-page="finance-page">
       <img src="finance.png" alt="مالی">
+    </button>
+    <button data-page="archive-page">
+      <img src="archive.png" alt="بایگانی">
     </button>
     <button data-page="admin-page" id="admin-nav-btn" style="display:none;">
       <img src="settings.png" alt="مدیریت">
