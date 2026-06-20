@@ -874,18 +874,24 @@ function renderZonkens() {
     const list = document.getElementById("zonken-list");
     list.innerHTML = "";
     pageItems.forEach(z => {
-        list.innerHTML += `
-        <div class="staff-card">
-            <b>${z.name}</b>
-            <small>🔢 شماره: ${z.number}</small>
-            ${z.description ? `<small style="opacity:0.7;">📝 ${z.description}</small>` : ""}
-            ${userRole === "admin" ? `
-            <div class="action-buttons" style="margin-top:6px;">
-                <button class="edit-btn" onclick="window.editZonken('${z.id}')">✏️</button>
-                <button class="del-btn" onclick="deleteZonken('${z.id}')">🗑</button>
-            </div>` : ""}
-        </div>`;
-    });
+    const div = document.createElement("div");
+    div.className = "staff-card";
+    div.innerHTML = `
+        <b>${z.name}</b>
+        <small>🔢 شماره: ${z.number}</small>
+        ${z.description ? `<small style="opacity:0.7;">📝 ${z.description}</small>` : ""}
+        ${userRole === "admin" ? `
+        <div class="action-buttons" style="margin-top:6px;">
+            <button class="edit-btn" data-zonken-id="${z.id}">✏️</button>
+            <button class="del-btn" data-zonken-id="${z.id}">🗑</button>
+        </div>` : ""}
+    `;
+    
+    div.querySelector(".edit-btn")?.addEventListener("click", () => editZonken(z.id));
+    div.querySelector(".del-btn")?.addEventListener("click", () => deleteZonken(z.id));
+    
+    list.appendChild(div);
+});
     renderPagination("zonken-pagination", zonkenPage, total, (page) => { zonkenPage = page; renderZonkens(); });
 }
 
@@ -930,19 +936,25 @@ function renderContracts() {
     const pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("contract-list");
     list.innerHTML = "";
-    pageItems.forEach(c => {
-        list.innerHTML += `
-        <div class="staff-card">
-            <b>${c.name}</b>
-            <small>🔢 شماره: ${c.number}</small>
-            ${c.description ? `<small style="opacity:0.7;">📝 ${c.description}</small>` : ""}
-            ${userRole === "admin" ? `
-            <div class="action-buttons" style="margin-top:6px;">
-                <button class="edit-btn" onclick="window.editContract('${c.id}')">✏️</button>
-                <button class="del-btn" onclick="deleteContract('${c.id}')">🗑</button>
-            </div>` : ""}
-        </div>`;
-    });
+   pageItems.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "staff-card";
+    div.innerHTML = `
+        <b>${c.name}</b>
+        <small>🔢 شماره: ${c.number}</small>
+        ${c.description ? `<small style="opacity:0.7;">📝 ${c.description}</small>` : ""}
+        ${userRole === "admin" ? `
+        <div class="action-buttons" style="margin-top:6px;">
+            <button class="edit-btn" data-contract-id="${c.id}">✏️</button>
+            <button class="del-btn" data-contract-id="${c.id}">🗑</button>
+        </div>` : ""}
+    `;
+    
+    div.querySelector(".edit-btn")?.addEventListener("click", () => editContract(c.id));
+    div.querySelector(".del-btn")?.addEventListener("click", () => deleteContract(c.id));
+    
+    list.appendChild(div);
+});
     renderPagination("contract-pagination", contractPage, total, (page) => { contractPage = page; renderContracts(); });
 }
 
