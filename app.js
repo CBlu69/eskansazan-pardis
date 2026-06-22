@@ -36,7 +36,11 @@ const defaultStaff = [
     { name: "سید امین", lastname: "امینی", phone: "09122307045", nationalId: "0080434657" },
     { name: "سید صمد", lastname: "حسینی", phone: "09123350694", nationalId: "2141044855" },
     { name: "احمد", lastname: "نقیبی", phone: "09122110268", nationalId: "4989547047" },
-    { name: "نورمحمد", lastname: "اعرابی", phone: "09191075146", nationalId: "2249735875" }
+    { name: "نورمحمد", lastname: "اعرابی", phone: "09191075146", nationalId: "2249735875" },
+    { name: "علیرضا", lastname: "فرجی", phone: "09122250939", nationalId: "0072152796" },
+    { name: "علی", lastname: "پورعلی", phone: "09123960214", nationalId: "0410676411" },
+    { name: "محمد", lastname: "کیخسروی", phone: "09159715528", nationalId: "0795163045" },
+    { name: "وحید", lastname: "عزیزی", phone: "09902157573", nationalId: "4189899860" }
 ];
 
 /* ================= TOAST SYSTEM ================= */
