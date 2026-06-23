@@ -564,6 +564,14 @@ async function loadChatMessages() {
 }
 
 /* ================= DASH ================= */
+function update() {
+    document.getElementById("projects-count").textContent = allProjects.length;
+    document.getElementById("missions-count").textContent = allMissions.length;
+    document.getElementById("staff-count").textContent = defaultStaff.length;
+    document.getElementById("finance-count").textContent = allFinance.length;
+    document.getElementById("zonken-count").textContent = allZonkens.length;
+    document.getElementById("contract-count").textContent = allContracts.length;
+}
 async function loadPrivateChatList() {
     const { data: users } = await client.from("profiles").select("*");
     const list = document.getElementById("chat-private-list");
