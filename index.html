@@ -213,23 +213,21 @@
       <!-- صفحه چت خصوصی -->
       <div id="chat-private-view" style="display:none;">
         <button id="chat-back-btn" class="glass-btn" style="margin-bottom:10px;">⬅ بازگشت به لیست</button>
-        <div id="chat-messages" class="chat-box"
-          style="height:300px;overflow-y:auto;margin-bottom:10px;padding:10px;border-radius:12px;"></div>
-        <div style="display:flex;gap:8px;">
-          <input id="chat-input" type="text" placeholder="پیام..." style="flex:1;">
-          <button id="send-chat" class="glass-btn">📨 ارسال</button>
+        <div id="chat-messages" class="chat-box" style="padding:10px;border-radius:12px;">
+          <div style="display:flex;gap:8px;">
+            <input id="chat-input" type="text" placeholder="پیام..." style="flex:1;">
+            <button id="send-chat" class="glass-btn">📨 ارسال</button>
+          </div>
         </div>
-      </div>
 
-      <!-- پیام گروه -->
-      <div id="chat-group-view">
-        <div id="chat-group-messages" class="chat-box"
-          style="height:300px;overflow-y:auto;margin-bottom:10px;padding:10px;border-radius:12px;"></div>
-        <div style="display:flex;gap:8px;">
-          <input id="chat-group-input" type="text" placeholder="پیام گروه..." style="flex:1;">
-          <button id="send-group-chat" class="glass-btn">📨 ارسال</button>
-        </div>
-      </div>
+        <!-- پیام گروه -->
+        <div id="chat-group-view">
+          <div id="chat-group-messages" class="chat-box" style="padding:10px;border-radius:12px;">
+            <div style="display:flex;gap:8px;">
+              <input id="chat-group-input" type="text" placeholder="پیام گروه..." style="flex:1;">
+              <button id="send-group-chat" class="glass-btn">📨 ارسال</button>
+            </div>
+          </div>
     </section>
 
     <!-- ADMIN PANEL -->
@@ -283,6 +281,15 @@
       <p>آیا از رد کردن این درخواست مطمئن هستید؟</p>
       <div class="logout-actions"><button id="reject-confirm-btn">رد درخواست</button><button
           id="reject-cancel-btn">انصراف</button></div>
+    </div>
+  </div>
+  <!-- APPROVE MODAL -->
+  <div id="approve-modal" class="modal">
+    <div class="modal-box">
+      <h3>✔ تایید درخواست</h3>
+      <textarea id="approve-note" placeholder="یادداشت (اختیاری)" rows="3"></textarea>
+      <button onclick="confirmApprove()" class="glass-btn success">✔ تایید</button>
+      <button onclick="cancelApprove()" class="glass-btn">انصراف</button>
     </div>
   </div>
 
