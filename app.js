@@ -190,7 +190,7 @@ async function login() {
 
 async function signup() {
     const email = emailInput.value.trim(), password = passInput.value;
-    const { data: existing } = await client.from("profiles").select("id").eq("email", email).single();
+    const { data: existing } = await client.from("profiles").select("id").eq("email", email).maybeSingle();
     if (existing) { showToast('این ایمیل قبلاً ثبت شده ⚠️', 'error'); return; }
     const { data, error } = await client.auth.signUp({ email, password });
     if (error) { showToast(error.message, 'error'); return; }
