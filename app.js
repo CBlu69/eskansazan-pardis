@@ -339,7 +339,19 @@ function bindEvents() {
         document.getElementById("chat-input").value = "";
         loadChatMessages();
     });
-
+    document.getElementById("send-group-chat")?.addEventListener("click", async () => {
+        const msg = document.getElementById("chat-group-input").value.trim();
+        if (!msg) return;
+        const { error } = await client.from("chat_messages").insert([{
+            sender_id: currentUser.id,
+            sender_email: currentUser.email,
+            group_name: currentChatGroup,
+            message: msg
+        }]);
+        if (error) return showToast(error.message, "error");
+        document.getElementById("chat-group-input").value = "";
+        loadChatMessages();
+    });
     // Logout
     document.getElementById("logout-btn")?.addEventListener("click", () => document.getElementById("logout-modal").style.display = "flex");
     document.getElementById("cancel-logout")?.addEventListener("click", () => document.getElementById("logout-modal").style.display = "none");
@@ -577,7 +589,7 @@ async function loadPrivateChatList() {
     const list = document.getElementById("chat-private-list");
     list.innerHTML = "";
     if (!users) return;
-    
+
     for (const u of users) {
         if (u.id === currentUser.id) continue;
         const role = roleToFa(u.role || "user");
@@ -594,7 +606,7 @@ async function loadPrivateChatList() {
 
 function loadPrivateUsers() { loadPrivateChatList(); }
 
-window.openPrivateChat = function(userId, email, role) {
+window.openPrivateChat = function (userId, email, role) {
     chatPrivateUserId = userId;
     document.getElementById("chat-private-list").style.display = "none";
     document.getElementById("chat-private-view").style.display = "block";
