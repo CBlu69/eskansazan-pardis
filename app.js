@@ -29,6 +29,7 @@ let autoRefreshInterval = null;
 function isAdmin() { return userRole === "admin"; }
 function isManager() { return userRole === "manager"; }
 function isFinance() { return userRole === "finance"; }
+function isTech() { return userRole === "tech"; }
 
 const defaultStaff = [
     { name: "سید طاهر", lastname: "علوی", phone: "09121192271", nationalId: "5459703840" },
@@ -351,11 +352,11 @@ function renderProjects() {
     let filtered = allProjects; if (searchTerm) filtered = allProjects.filter(p => p.name?.toLowerCase().includes(searchTerm) || p.supervisor?.toLowerCase().includes(searchTerm));
     const total = filtered.length, start = (projectPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("projects-list"); list.innerHTML = "";
-    pageItems.forEach(p => list.innerHTML += `<div class="item"><b>${p.name}</b><br>👷 ${p.supervisor||"-"}<br>📈 ${p.progress||0}%<div class="action-buttons"><button class="edit-btn" onclick="editProject('${p.id}')">✏️ اصلاح</button><button class="del-btn" onclick="deleteProject('${p.id}')">🗑 حذف</button></div></div>`);
+    pageItems.forEach(p => list.innerHTML += `<div class="item"><b>${p.name}</b><br>👷 ${p.supervisor || "-"}<br>📈 ${p.progress || 0}%<div class="action-buttons"><button class="edit-btn" onclick="editProject('${p.id}')">✏️ اصلاح</button><button class="del-btn" onclick="deleteProject('${p.id}')">🗑 حذف</button></div></div>`);
     renderPagination("projects-pagination", projectPage, total, (page) => { projectPage = page; renderProjects(); }); update();
 }
-window.editProject = function(id) { const p = allProjects.find(x => x.id === id); if (!p) return; editingProjectId = id; pName.value = p.name||""; pSupervisor.value = p.supervisor||""; pProgress.value = p.progress||""; pBuildStatus.value = p.buildStatus||""; pAdjustment.value = p.adjustment||""; pDescription.value = p.description||""; document.getElementById("add-project").textContent = "💾 ذخیره"; document.getElementById("project-modal").style.display = "flex"; };
-window.deleteProject = function(id) { window._deleteId = id; window._deleteType = "project"; document.getElementById("delete-modal").style.display = "flex"; };
+window.editProject = function (id) { const p = allProjects.find(x => x.id === id); if (!p) return; editingProjectId = id; pName.value = p.name || ""; pSupervisor.value = p.supervisor || ""; pProgress.value = p.progress || ""; pBuildStatus.value = p.buildStatus || ""; pAdjustment.value = p.adjustment || ""; pDescription.value = p.description || ""; document.getElementById("add-project").textContent = "💾 ذخیره"; document.getElementById("project-modal").style.display = "flex"; };
+window.deleteProject = function (id) { window._deleteId = id; window._deleteType = "project"; document.getElementById("delete-modal").style.display = "flex"; };
 
 /* ================= MISSIONS ================= */
 async function loadMissions() { if (!currentUser) return; const { data } = await client.from("missions").select("*").eq("owner_id", currentUser.id).order("created_at", { ascending: false }); allMissions = data || []; missionPage = 1; renderMissions(); }
@@ -364,24 +365,24 @@ function renderMissions() {
     let filtered = allMissions; if (searchTerm) filtered = allMissions.filter(m => m.name?.toLowerCase().includes(searchTerm) || m.manager?.toLowerCase().includes(searchTerm));
     const total = filtered.length, start = (missionPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("missions-list"); list.innerHTML = "";
-    pageItems.forEach(m => list.innerHTML += `<div class="item"><b>${m.name}</b><br>👤 ${m.manager||"-"}<br>📌 ${m.status||"-"}<div class="action-buttons"><button class="edit-btn" onclick="editMission('${m.id}')">✏️ اصلاح</button><button class="del-btn" onclick="deleteMission('${m.id}')">🗑 حذف</button></div></div>`);
+    pageItems.forEach(m => list.innerHTML += `<div class="item"><b>${m.name}</b><br>👤 ${m.manager || "-"}<br>📌 ${m.status || "-"}<div class="action-buttons"><button class="edit-btn" onclick="editMission('${m.id}')">✏️ اصلاح</button><button class="del-btn" onclick="deleteMission('${m.id}')">🗑 حذف</button></div></div>`);
     renderPagination("missions-pagination", missionPage, total, (page) => { missionPage = page; renderMissions(); }); update();
 }
-window.editMission = function(id) { const m = allMissions.find(x => x.id === id); if (!m) return; editingMissionId = id; mName.value = m.name||""; mManager.value = m.manager||""; mStatus.value = m.status||""; document.getElementById("add-mission").textContent = "💾 ذخیره"; document.getElementById("mission-modal").style.display = "flex"; };
-window.deleteMission = function(id) { window._deleteId = id; window._deleteType = "mission"; document.getElementById("delete-modal").style.display = "flex"; };
+window.editMission = function (id) { const m = allMissions.find(x => x.id === id); if (!m) return; editingMissionId = id; mName.value = m.name || ""; mManager.value = m.manager || ""; mStatus.value = m.status || ""; document.getElementById("add-mission").textContent = "💾 ذخیره"; document.getElementById("mission-modal").style.display = "flex"; };
+window.deleteMission = function (id) { window._deleteId = id; window._deleteType = "mission"; document.getElementById("delete-modal").style.display = "flex"; };
 
 /* ================= STAFF ================= */
 function renderStaff() {
     const searchTerm = document.getElementById("staff-search")?.value.trim().toLowerCase() || "";
     let filtered = defaultStaff; if (searchTerm) filtered = defaultStaff.filter(s => s.name?.toLowerCase().includes(searchTerm) || s.lastname?.toLowerCase().includes(searchTerm) || s.phone?.includes(searchTerm) || s.nationalId?.includes(searchTerm));
     const list = document.getElementById("staff-list"); list.innerHTML = "";
-    filtered.forEach(s => list.innerHTML += `<div class="staff-card"><b>${s.name} ${s.lastname}</b><small>📱 ${s.phone}</small><small>🆔 ${s.nationalId||"-"}</small><a class="call-btn" href="tel:${s.phone}">📞 تماس مستقیم</a></div>`);
+    filtered.forEach(s => list.innerHTML += `<div class="staff-card"><b>${s.name} ${s.lastname}</b><small>📱 ${s.phone}</small><small>🆔 ${s.nationalId || "-"}</small><a class="call-btn" href="tel:${s.phone}">📞 تماس مستقیم</a></div>`);
     document.getElementById("staff-pagination").innerHTML = ""; update();
 }
 
-function statusText(s) { switch(s){case "pending":return "در انتظار";case "approved":return "تایید شده";case "rejected":return "رد شده";default:return "نامشخص";} }
-function paymentText(s) { switch(s){case "paid":return "پرداخت شده";case "unpaid":return "پرداخت نشده";default:return "نامشخص";} }
-function roleToFa(r) { switch(r){case "admin":return "مدیر سیستم";case "manager":return "مدیرعامل";case "finance":return "امور مالی";case "tech":return "فنی";case "user":return "کاربر عادی";default:return "نامشخص";} }
+function statusText(s) { switch (s) { case "pending": return "در انتظار"; case "approved": return "تایید شده"; case "rejected": return "رد شده"; default: return "نامشخص"; } }
+function paymentText(s) { switch (s) { case "paid": return "پرداخت شده"; case "unpaid": return "پرداخت نشده"; default: return "نامشخص"; } }
+function roleToFa(r) { switch (r) { case "admin": return "مدیر سیستم"; case "manager": return "مدیرعامل"; case "finance": return "امور مالی"; case "tech": return "فنی"; case "user": return "کاربر عادی"; default: return "نامشخص"; } }
 
 /* ================= FINANCE ================= */
 async function loadFinance() { if (!currentUser) return; const { data } = await client.from("financial_requests").select("*").order("id", { ascending: false }); allFinance = data || []; financePage = 1; renderFinance(); }
@@ -389,22 +390,22 @@ function renderFinance() {
     const searchTerm = document.getElementById("finance-search")?.value.trim().toLowerCase() || "";
     const filterValue = document.getElementById("finance-filter")?.value || "all";
     let filtered = allFinance; if (searchTerm) filtered = filtered.filter(f => f.title?.toLowerCase().includes(searchTerm) || f.description?.toLowerCase().includes(searchTerm));
-    if (filterValue==="pending") filtered = filtered.filter(f => f.status==="pending"); else if (filterValue==="approved") filtered = filtered.filter(f => f.status==="approved"); else if (filterValue==="rejected") filtered = filtered.filter(f => f.status==="rejected"); else if (filterValue==="paid") filtered = filtered.filter(f => f.payment_status==="paid"); else if (filterValue==="unpaid") filtered = filtered.filter(f => f.payment_status==="unpaid");
-    const total = filtered.length, start = (financePage-1)*PAGE_SIZE, pageItems = filtered.slice(start, start+PAGE_SIZE);
+    if (filterValue === "pending") filtered = filtered.filter(f => f.status === "pending"); else if (filterValue === "approved") filtered = filtered.filter(f => f.status === "approved"); else if (filterValue === "rejected") filtered = filtered.filter(f => f.status === "rejected"); else if (filterValue === "paid") filtered = filtered.filter(f => f.payment_status === "paid"); else if (filterValue === "unpaid") filtered = filtered.filter(f => f.payment_status === "unpaid");
+    const total = filtered.length, start = (financePage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("finance-list"); list.innerHTML = "";
     pageItems.forEach(f => {
         let actions = "";
-        if (!f.status || f.status==="pending") { if (userRole==="admin"||userRole==="manager") actions += `<button class="glass-btn" onclick="approveFinance('${f.id}')">✔ تایید</button><button class="glass-btn danger" onclick="openRejectModal('${f.id}')">✖ رد</button>`; }
-        if (f.status==="approved" && f.payment_status!=="paid") { if (userRole==="admin"||userRole==="finance") actions += `<button class="glass-btn success" onclick="confirmPayment('${f.id}')">💳 تایید پرداخت</button>`; }
-        if (f.payment_status==="paid" && userRole==="admin") actions += `<button class="glass-btn danger" onclick="deleteFinance('${f.id}')">🗑 حذف</button>`;
-        list.innerHTML += `<div class="glass-card"><b>${f.title||"-"}</b><br>💰 ${Number(f.amount||0).toLocaleString()} تومان<br>📌 ${f.description||""}${f.file_url?`<br><br><a href="${f.file_url}" target="_blank" class="glass-btn">📎 ضمیمه</a>`:""}<br><br><span>وضعیت: ${statusText(f.status)}</span><br><span>پرداخت: ${paymentText(f.payment_status)}</span><div class="action-buttons">${actions}</div></div>`;
+        if (!f.status || f.status === "pending") { if (userRole === "admin" || userRole === "manager") actions += `<button class="glass-btn" onclick="approveFinance('${f.id}')">✔ تایید</button><button class="glass-btn danger" onclick="openRejectModal('${f.id}')">✖ رد</button>`; }
+        if (f.status === "approved" && f.payment_status !== "paid") { if (userRole === "admin" || userRole === "finance") actions += `<button class="glass-btn success" onclick="confirmPayment('${f.id}')">💳 تایید پرداخت</button>`; }
+        if (f.payment_status === "paid" && userRole === "admin") actions += `<button class="glass-btn danger" onclick="deleteFinance('${f.id}')">🗑 حذف</button>`;
+        list.innerHTML += `<div class="glass-card"><b>${f.title || "-"}</b><br>💰 ${Number(f.amount || 0).toLocaleString()} تومان<br>📌 ${f.description || ""}${f.file_url ? `<br><br><a href="${f.file_url}" target="_blank" class="glass-btn">📎 ضمیمه</a>` : ""}<br><br><span>وضعیت: ${statusText(f.status)}</span><br><span>پرداخت: ${paymentText(f.payment_status)}</span><div class="action-buttons">${actions}</div></div>`;
     });
     renderPagination("finance-pagination", financePage, total, (page) => { financePage = page; renderFinance(); });
 }
 window.approveFinance = async (id) => { await client.from("financial_requests").update({ status: "approved" }).eq("id", id); await loadFinance(); showToast('تایید شد ✅', 'success'); };
 window.confirmPayment = async (id) => { await client.from("financial_requests").update({ payment_status: "paid" }).eq("id", id); await loadFinance(); showToast('پرداخت تایید شد 💳', 'success'); };
-window.deleteFinance = function(id) { window._deleteId = id; window._deleteType = "finance"; document.getElementById("delete-modal").style.display = "flex"; };
-window.openRejectModal = function(id) { rejectFinanceId = id; document.getElementById("reject-modal").style.display = "flex"; };
+window.deleteFinance = function (id) { window._deleteId = id; window._deleteType = "finance"; document.getElementById("delete-modal").style.display = "flex"; };
+window.openRejectModal = function (id) { rejectFinanceId = id; document.getElementById("reject-modal").style.display = "flex"; };
 
 /* ================= USER INFO ================= */
 function showUserInfo() {
@@ -412,7 +413,7 @@ function showUserInfo() {
     document.getElementById("user-email").textContent = currentUser.email;
     document.getElementById("user-id").textContent = currentUser.id;
     const roleEl = document.getElementById("user-role"); roleEl.textContent = roleToFa(userRole);
-    if (userRole==="admin") roleEl.style.color = "#ef4444"; else if (userRole==="manager") roleEl.style.color = "#3b82f6"; else if (userRole==="finance") roleEl.style.color = "#22c55e"; else if (userRole==="tech") roleEl.style.color = "#f59e0b"; else roleEl.style.color = "#a1a1aa";
+    if (userRole === "admin") roleEl.style.color = "#ef4444"; else if (userRole === "manager") roleEl.style.color = "#3b82f6"; else if (userRole === "finance") roleEl.style.color = "#22c55e"; else if (userRole === "tech") roleEl.style.color = "#f59e0b"; else roleEl.style.color = "#a1a1aa";
 }
 
 /* ================= ADMIN PANEL ================= */
@@ -422,16 +423,16 @@ async function loadAllUsers() {
     const table = document.getElementById("users-table"); if (!table) return;
     let html = '<div style="overflow-x:auto;">';
     profiles.forEach(profile => {
-        html += `<div class="user-row"><div style="flex:1;"><div style="font-weight:bold;color:white;">📧 ${profile.email||'بدون ایمیل'}</div><small style="opacity:0.5;">🆔 ${profile.id?.slice(0,12)}...</small></div><span class="role-badge ${profile.role||'user'}">${roleToFa(profile.role)}</span><select id="role-select-${profile.id}"><option value="user" ${profile.role==='user'?'selected':''}>کاربر عادی</option><option value="manager" ${profile.role==='manager'?'selected':''}>مدیرعامل</option><option value="finance" ${profile.role==='finance'?'selected':''}>امور مالی</option><option value="tech" ${profile.role==='tech'?'selected':''}>فنی</option><option value="admin" ${profile.role==='admin'?'selected':''}>مدیر سیستم</option></select><button class="save-role-btn" onclick="updateUserRole('${profile.id}')">💾 ذخیره</button></div>`;
+        html += `<div class="user-row"><div style="flex:1;"><div style="font-weight:bold;color:white;">📧 ${profile.email || 'بدون ایمیل'}</div><small style="opacity:0.5;">🆔 ${profile.id?.slice(0, 12)}...</small></div><span class="role-badge ${profile.role || 'user'}">${roleToFa(profile.role)}</span><select id="role-select-${profile.id}"><option value="user" ${profile.role === 'user' ? 'selected' : ''}>کاربر عادی</option><option value="manager" ${profile.role === 'manager' ? 'selected' : ''}>مدیرعامل</option><option value="finance" ${profile.role === 'finance' ? 'selected' : ''}>امور مالی</option><option value="tech" ${profile.role === 'tech' ? 'selected' : ''}>فنی</option><option value="admin" ${profile.role === 'admin' ? 'selected' : ''}>مدیر سیستم</option></select><button class="save-role-btn" onclick="updateUserRole('${profile.id}')">💾 ذخیره</button></div>`;
     });
     html += '</div>'; table.innerHTML = html;
 }
-window.updateUserRole = async function(userId) {
+window.updateUserRole = async function (userId) {
     const select = document.getElementById(`role-select-${userId}`); if (!select) return;
     const newRole = select.value;
     const { error } = await client.from("profiles").upsert({ id: userId, role: newRole });
     if (error) { showToast(error.message, 'error'); return; }
-    if (userId === currentUser.id) { userRole = newRole; showUserInfo(); const ab = document.getElementById("admin-nav-btn"); if (ab) ab.style.display = newRole==="admin"?"block":"none"; }
+    if (userId === currentUser.id) { userRole = newRole; showUserInfo(); const ab = document.getElementById("admin-nav-btn"); if (ab) ab.style.display = newRole === "admin" ? "block" : "none"; }
     showToast('نقش به‌روزرسانی شد ✅', 'success'); await loadAllUsers();
 };
 
@@ -439,53 +440,82 @@ window.updateUserRole = async function(userId) {
 async function loadZonkens() { if (!currentUser) return; const { data } = await client.from("zonkens").select("*").order("id", { ascending: false }); allZonkens = data || []; zonkenPage = 1; renderZonkens(); }
 function renderZonkens() {
     const searchTerm = document.getElementById("zonken-search")?.value.trim().toLowerCase() || "";
-    let filtered = allZonkens; if (searchTerm) filtered = allZonkens.filter(z => z.name?.toLowerCase().includes(searchTerm)||z.number?.toLowerCase().includes(searchTerm)||z.description?.toLowerCase().includes(searchTerm));
-    const total = filtered.length, start = (zonkenPage-1)*PAGE_SIZE, pageItems = filtered.slice(start, start+PAGE_SIZE);
+    let filtered = allZonkens; if (searchTerm) filtered = allZonkens.filter(z => z.name?.toLowerCase().includes(searchTerm) || z.number?.toLowerCase().includes(searchTerm) || z.description?.toLowerCase().includes(searchTerm));
+    const total = filtered.length, start = (zonkenPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("zonken-list"); list.innerHTML = "";
     pageItems.forEach(z => {
         const div = document.createElement("div"); div.className = "staff-card";
-        div.innerHTML = `<b>${z.name}</b><small>🔢 شماره: ${z.number}</small>${z.description?`<small style="opacity:0.7;">📝 ${z.description}</small>`:""}${userRole==="admin"?`<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>`:""}`;
+        div.innerHTML = `<b>${z.name}</b><small>🔢 شماره: ${z.number}</small>${z.description ? `<small style="opacity:0.7;">📝 ${z.description}</small>` : ""}${userRole === "admin" ? `<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>` : ""}`;
         div.querySelector(".edit-btn")?.addEventListener("click", () => editZonken(z.id));
         div.querySelector(".del-btn")?.addEventListener("click", () => deleteZonken(z.id));
         list.appendChild(div);
     });
     renderPagination("zonken-pagination", zonkenPage, total, (page) => { zonkenPage = page; renderZonkens(); });
 }
-window.editZonken = function(id) { const z = allZonkens.find(x => x.id===id); if (!z) return; editingZonkenId = id; document.getElementById("z-number").value = z.number||""; document.getElementById("z-name").value = z.name||""; document.getElementById("z-desc").value = z.description||""; document.getElementById("add-zonken").textContent = "💾 ذخیره"; document.getElementById("zonken-modal").style.display = "flex"; };
-window.deleteZonken = function(id) { window._deleteId = id; window._deleteType = "zonken"; document.getElementById("delete-modal").style.display = "flex"; };
+window.editZonken = function (id) { const z = allZonkens.find(x => x.id === id); if (!z) return; editingZonkenId = id; document.getElementById("z-number").value = z.number || ""; document.getElementById("z-name").value = z.name || ""; document.getElementById("z-desc").value = z.description || ""; document.getElementById("add-zonken").textContent = "💾 ذخیره"; document.getElementById("zonken-modal").style.display = "flex"; };
+window.deleteZonken = function (id) { window._deleteId = id; window._deleteType = "zonken"; document.getElementById("delete-modal").style.display = "flex"; };
 
 /* ================= CONTRACTS ================= */
 async function loadContracts() { if (!currentUser) return; const { data } = await client.from("contracts").select("*").order("id", { ascending: false }); allContracts = data || []; contractPage = 1; renderContracts(); }
 function renderContracts() {
     const searchTerm = document.getElementById("contract-search")?.value.trim().toLowerCase() || "";
-    let filtered = allContracts; if (searchTerm) filtered = allContracts.filter(c => c.name?.toLowerCase().includes(searchTerm)||c.number?.toLowerCase().includes(searchTerm)||c.description?.toLowerCase().includes(searchTerm));
-    const total = filtered.length, start = (contractPage-1)*PAGE_SIZE, pageItems = filtered.slice(start, start+PAGE_SIZE);
+    let filtered = allContracts; if (searchTerm) filtered = allContracts.filter(c => c.name?.toLowerCase().includes(searchTerm) || c.number?.toLowerCase().includes(searchTerm) || c.description?.toLowerCase().includes(searchTerm));
+    const total = filtered.length, start = (contractPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("contract-list"); list.innerHTML = "";
     pageItems.forEach(c => {
         const div = document.createElement("div"); div.className = "staff-card";
-        div.innerHTML = `<b>${c.name}</b><small>🔢 شماره: ${c.number}</small>${c.description?`<small style="opacity:0.7;">📝 ${c.description}</small>`:""}${userRole==="admin"?`<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>`:""}`;
+        div.innerHTML = `<b>${c.name}</b><small>🔢 شماره: ${c.number}</small>${c.description ? `<small style="opacity:0.7;">📝 ${c.description}</small>` : ""}${userRole === "admin" ? `<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>` : ""}`;
         div.querySelector(".edit-btn")?.addEventListener("click", () => editContract(c.id));
         div.querySelector(".del-btn")?.addEventListener("click", () => deleteContract(c.id));
         list.appendChild(div);
     });
     renderPagination("contract-pagination", contractPage, total, (page) => { contractPage = page; renderContracts(); });
 }
-window.editContract = function(id) { const c = allContracts.find(x => x.id===id); if (!c) return; editingContractId = id; document.getElementById("c-number").value = c.number||""; document.getElementById("c-name").value = c.name||""; document.getElementById("c-desc").value = c.description||""; document.getElementById("add-contract").textContent = "💾 ذخیره"; document.getElementById("contract-modal").style.display = "flex"; };
-window.deleteContract = function(id) { window._deleteId = id; window._deleteType = "contract"; document.getElementById("delete-modal").style.display = "flex"; };
+window.editContract = function (id) { const c = allContracts.find(x => x.id === id); if (!c) return; editingContractId = id; document.getElementById("c-number").value = c.number || ""; document.getElementById("c-name").value = c.name || ""; document.getElementById("c-desc").value = c.description || ""; document.getElementById("add-contract").textContent = "💾 ذخیره"; document.getElementById("contract-modal").style.display = "flex"; };
+window.deleteContract = function (id) { window._deleteId = id; window._deleteType = "contract"; document.getElementById("delete-modal").style.display = "flex"; };
 
 /* ================= CHAT ================= */
 async function loadChatMessages() {
     let query = client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(100);
+
     if (currentChatGroup === "private") {
-        if (!chatPrivateUserId) { document.getElementById("chat-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>یک کاربر انتخاب کنید</p>"; return; }
-        query = query.or(`(sender_id.eq.${currentUser.id},receiver_id.eq.${chatPrivateUserId}),(sender_id.eq.${chatPrivateUserId},receiver_id.eq.${currentUser.id})`);
-    } else { query = query.eq("group_name", currentChatGroup); }
+        if (!chatPrivateUserId) {
+            document.getElementById("chat-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>یک کاربر انتخاب کنید</p>";
+            return;
+        }
+        // کوئری ساده‌تر
+        query = query.or(`sender_id.eq.${currentUser.id},sender_id.eq.${chatPrivateUserId}`);
+    } else {
+        query = query.eq("group_name", currentChatGroup);
+    }
+
     const { data } = await query;
-    const box = document.getElementById("chat-messages"); box.innerHTML = "";
-    if (!data || data.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
-    data.forEach(m => {
+    const box = document.getElementById("chat-messages");
+    box.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>";
+        return;
+    }
+
+    // فیلتر کردن پیام‌های خصوصی
+    let filtered = data;
+    if (currentChatGroup === "private") {
+        filtered = data.filter(m =>
+            (m.sender_id === currentUser.id && m.receiver_id === chatPrivateUserId) ||
+            (m.sender_id === chatPrivateUserId && m.receiver_id === currentUser.id)
+        );
+    }
+
+    filtered.forEach(m => {
         const isMe = m.sender_id === currentUser.id;
-        box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe?'left':'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0]||'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe?'rgba(56,189,248,0.3)':'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
+        box.innerHTML += `
+        <div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};">
+            <small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small>
+            <div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">
+                ${m.message}
+            </div>
+        </div>`;
     });
     box.scrollTop = box.scrollHeight;
 }
@@ -507,7 +537,7 @@ function update() {
 }
 
 /* ================= AUTO REFRESH ================= */
-function startAutoRefresh() { stopAutoRefresh(); autoRefreshInterval = setInterval(async () => { if (!currentUser) return; await loadProjects(); await loadMissions(); await loadFinance(); loadChatMessages(); update(); if (userRole==="admin") await loadAllUsers(); }, 60000); }
+function startAutoRefresh() { stopAutoRefresh(); autoRefreshInterval = setInterval(async () => { if (!currentUser) return; await loadProjects(); await loadMissions(); await loadFinance(); loadChatMessages(); update(); if (userRole === "admin") await loadAllUsers(); }, 60000); }
 function stopAutoRefresh() { if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; } }
 
 /* ================= INIT ================= */
