@@ -286,17 +286,52 @@ function bindEvents() {
     });
 
     // Chat
-    document.getElementById("chat-group-finance")?.addEventListener("click", () => { currentChatGroup = "finance"; document.getElementById("chat-private-select").style.display = "none"; document.getElementById("chat-group-finance").classList.add("active-chat"); document.getElementById("chat-group-tech").classList.remove("active-chat"); document.getElementById("chat-private-btn").classList.remove("active-chat"); loadChatMessages(); });
-    document.getElementById("chat-group-tech")?.addEventListener("click", () => { currentChatGroup = "tech"; document.getElementById("chat-private-select").style.display = "none"; document.getElementById("chat-group-tech").classList.add("active-chat"); document.getElementById("chat-group-finance").classList.remove("active-chat"); document.getElementById("chat-private-btn").classList.remove("active-chat"); loadChatMessages(); });
-    document.getElementById("chat-private-btn")?.addEventListener("click", () => { currentChatGroup = "private"; document.getElementById("chat-private-select").style.display = "block"; document.getElementById("chat-private-btn").classList.add("active-chat"); document.getElementById("chat-group-finance").classList.remove("active-chat"); document.getElementById("chat-group-tech").classList.remove("active-chat"); loadChatMessages(); });
-    document.getElementById("private-user-select")?.addEventListener("change", (e) => { chatPrivateUserId = e.target.value; loadChatMessages(); });
+    document.getElementById("chat-group-finance")?.addEventListener("click", () => {
+        currentChatGroup = "finance"; chatPrivateUserId = null;
+        document.getElementById("chat-private-list").style.display = "none";
+        document.getElementById("chat-private-view").style.display = "none";
+        document.getElementById("chat-group-view").style.display = "block";
+        document.getElementById("chat-group-finance").classList.add("active-chat");
+        document.getElementById("chat-group-tech").classList.remove("active-chat");
+        document.getElementById("chat-private-btn").classList.remove("active-chat");
+        loadChatMessages();
+    });
+    document.getElementById("chat-group-tech")?.addEventListener("click", () => {
+        currentChatGroup = "tech"; chatPrivateUserId = null;
+        document.getElementById("chat-private-list").style.display = "none";
+        document.getElementById("chat-private-view").style.display = "none";
+        document.getElementById("chat-group-view").style.display = "block";
+        document.getElementById("chat-group-tech").classList.add("active-chat");
+        document.getElementById("chat-group-finance").classList.remove("active-chat");
+        document.getElementById("chat-private-btn").classList.remove("active-chat");
+        loadChatMessages();
+    });
+    document.getElementById("chat-private-btn")?.addEventListener("click", () => {
+        currentChatGroup = "private"; chatPrivateUserId = null;
+        document.getElementById("chat-private-list").style.display = "block";
+        document.getElementById("chat-private-view").style.display = "none";
+        document.getElementById("chat-group-view").style.display = "none";
+        document.getElementById("chat-private-btn").classList.add("active-chat");
+        document.getElementById("chat-group-finance").classList.remove("active-chat");
+        document.getElementById("chat-group-tech").classList.remove("active-chat");
+        loadChatMessages();
+    });
+    document.getElementById("chat-back-btn")?.addEventListener("click", () => {
+        chatPrivateUserId = null;
+        document.getElementById("chat-private-list").style.display = "block";
+        document.getElementById("chat-private-view").style.display = "none";
+        loadChatMessages();
+    });
     document.getElementById("send-chat")?.addEventListener("click", async () => {
-        const msg = document.getElementById("chat-input").value.trim(); if (!msg) return;
-        let group = currentChatGroup, receiver_id = null;
-        if (group === "private") { if (!chatPrivateUserId) return showToast("یک کاربر انتخاب کنید", "error"); receiver_id = chatPrivateUserId; group = "private"; }
-        const { error } = await client.from("chat_messages").insert([{ sender_id: currentUser.id, sender_email: currentUser.email, receiver_id, group_name: group !== "private" ? group : null, message: msg }]);
+        const msg = document.getElementById("chat-input").value.trim();
+        if (!msg || !chatPrivateUserId) return;
+        const { error } = await client.from("chat_messages").insert([{
+            sender_id: currentUser.id, sender_email: currentUser.email,
+            receiver_id: chatPrivateUserId, message: msg
+        }]);
         if (error) return showToast(error.message, "error");
-        document.getElementById("chat-input").value = ""; loadChatMessages();
+        document.getElementById("chat-input").value = "";
+        loadChatMessages();
     });
 
     // Logout
@@ -476,55 +511,89 @@ window.deleteContract = function (id) { window._deleteId = id; window._deleteTyp
 
 /* ================= CHAT ================= */
 async function loadChatMessages() {
-    let query = client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(100);
-
-    if (currentChatGroup === "private") {
-        if (!chatPrivateUserId) {
-            document.getElementById("chat-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>یک کاربر انتخاب کنید</p>";
-            return;
-        }
-        // کوئری ساده‌تر
-        query = query.or(`sender_id.eq.${currentUser.id},sender_id.eq.${chatPrivateUserId}`);
-    } else {
-        query = query.eq("group_name", currentChatGroup);
-    }
-
-    const { data } = await query;
-    const box = document.getElementById("chat-messages");
-    box.innerHTML = "";
-
-    if (!data || data.length === 0) {
-        box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>";
+    // گروه‌ها
+    if (currentChatGroup !== "private") {
+        const { data } = await client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(100).eq("group_name", currentChatGroup);
+        const box = document.getElementById("chat-group-messages");
+        box.innerHTML = "";
+        if (!data || data.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
+        data.forEach(m => {
+            const isMe = m.sender_id === currentUser.id;
+            box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
+        });
+        box.scrollTop = box.scrollHeight;
         return;
     }
 
-    // فیلتر کردن پیام‌های خصوصی
-    let filtered = data;
-    if (currentChatGroup === "private") {
-        filtered = data.filter(m =>
-            (m.sender_id === currentUser.id && m.receiver_id === chatPrivateUserId) ||
-            (m.sender_id === chatPrivateUserId && m.receiver_id === currentUser.id)
-        );
+    // لیست کاربران برای چت خصوصی
+    if (!chatPrivateUserId) {
+        loadPrivateChatList();
+        return;
     }
+
+    // پیام‌های خصوصی با کاربر انتخاب شده
+    const { data } = await client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(100)
+        .or(`(sender_id.eq.${currentUser.id},receiver_id.eq.${chatPrivateUserId}),(sender_id.eq.${chatPrivateUserId},receiver_id.eq.${currentUser.id})`);
+
+    const box = document.getElementById("chat-messages");
+    box.innerHTML = "";
+    if (!data || data.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
+
+    const filtered = data.filter(m =>
+        (m.sender_id === currentUser.id && m.receiver_id === chatPrivateUserId) ||
+        (m.sender_id === chatPrivateUserId && m.receiver_id === currentUser.id)
+    );
 
     filtered.forEach(m => {
         const isMe = m.sender_id === currentUser.id;
-        box.innerHTML += `
-        <div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};">
-            <small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small>
-            <div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">
-                ${m.message}
-            </div>
-        </div>`;
+        box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
     });
     box.scrollTop = box.scrollHeight;
 }
-async function loadPrivateUsers() {
-    const { data } = await client.from("profiles").select("*"); const select = document.getElementById("private-user-select");
-    if (!select || !data) return;
-    select.innerHTML = '<option value="">انتخاب کاربر...</option>';
-    data.forEach(u => { if (u.id !== currentUser.id) select.innerHTML += `<option value="${u.id}">${u.email}</option>`; });
+
+async function loadPrivateChatList() {
+    const { data: users } = await client.from("profiles").select("*");
+    const list = document.getElementById("chat-private-list");
+    list.innerHTML = "";
+    if (!users) return;
+
+    for (const u of users) {
+        if (u.id === currentUser.id) continue;
+        const role = roleToFa(u.role || "user");
+        list.innerHTML += `
+        <div onclick="openPrivateChat('${u.id}','${u.email}','${role}')" class="glass-card" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px;">
+            <div style="width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;">👤</div>
+            <div>
+                <div style="font-weight:bold;">${u.email}</div>
+                <small style="opacity:0.7;">${role}</small>
+            </div>
+        </div>`;
+    }
 }
+
+window.openPrivateChat = function (userId, email, role) {
+    chatPrivateUserId = userId;
+    document.getElementById("chat-private-list").style.display = "none";
+    document.getElementById("chat-private-view").style.display = "block";
+    document.getElementById("chat-group-view").style.display = "none";
+    document.getElementById("chat-back-btn").textContent = `⬅ بازگشت (${email} - ${role})`;
+    loadChatMessages();
+};
+
+function loadPrivateUsers() { loadPrivateChatList(); }
+
+// ارسال پیام گروه
+document.getElementById("send-group-chat")?.addEventListener("click", async () => {
+    const msg = document.getElementById("chat-group-input").value.trim();
+    if (!msg) return;
+    const { error } = await client.from("chat_messages").insert([{
+        sender_id: currentUser.id, sender_email: currentUser.email,
+        group_name: currentChatGroup, message: msg
+    }]);
+    if (error) return showToast(error.message, "error");
+    document.getElementById("chat-group-input").value = "";
+    loadChatMessages();
+});
 
 /* ================= DASH ================= */
 function update() {
