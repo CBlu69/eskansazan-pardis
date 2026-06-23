@@ -200,25 +200,33 @@ async function signup() {
 
 async function startApp() {
     if (loginUI) loginUI.style.display = "none";
+    await loadProjects();
+    await loadMissions();
+    renderStaff();
+    await loadFinance();
+    await loadZonkens();
+    await loadContracts();
+    loadChatMessages();
+    loadPrivateUsers();
+    update();
+    showUserInfo();
+    if (userRole === "admin") await loadAllUsers();
+    startAutoRefresh();
+
+    if (userRole !== "admin") {
+        document.querySelectorAll("#open-zonken, #open-contract").forEach(b => b.style.display = "none");
+    }
+    if (userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
+        document.getElementById("chat-group-finance").style.display = "none";
+    }
+    if (userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
+        document.getElementById("chat-group-tech").style.display = "none";
+    }
     if (userRole === "user" || userRole === "tech") {
         currentChatGroup = "private";
-        await loadProjects(); await loadMissions(); renderStaff();
-        await loadFinance(); await loadZonkens(); await loadContracts();
-        loadChatMessages(); loadPrivateUsers();
-        update(); showUserInfo();
-        if (userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
-            document.getElementById("chat-group-finance").style.display = "none";
-        }
-        if (userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
-            document.getElementById("chat-group-tech").style.display = "none";
-        }
-        if (userRole === "admin") await loadAllUsers();
-        startAutoRefresh();
-        if (userRole !== "admin") {
-            document.querySelectorAll("#open-zonken, #open-contract").forEach(b => b.style.display = "none");
-        }
     }
 }
+
 function bindEvents() {
     loginBtn?.addEventListener("click", login);
     signupBtn?.addEventListener("click", signup);
