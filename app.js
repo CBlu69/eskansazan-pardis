@@ -274,7 +274,12 @@ function bindEvents() {
             if (uploadError) { showToast(uploadError.message, 'error'); return; }
             const { data } = client.storage.from("finance-files").getPublicUrl(fileName); fileUrl = data.publicUrl;
         }
-        const { error } = await client.from("financial_requests").insert([{ title, amount: Number(amount), description, file_url: fileUrl, owner_id: currentUser.id, status: "pending", payment_status: "unpaid" }]);
+        const { error } = await client.from("financial_requests").insert([{
+            title, amount: Number(amount), description, file_url: fileUrl,
+            owner_id: currentUser.id,
+            owner_email: currentUser.email,
+            status: "pending", payment_status: "unpaid"
+        }]);
         if (error) return showToast(error.message, 'error');
         document.getElementById("finance-modal").style.display = "none";
         document.getElementById("f-title").value = ""; document.getElementById("f-amount").value = ""; document.getElementById("f-desc").value = ""; document.getElementById("f-file").value = "";
@@ -477,7 +482,7 @@ function renderFinance() {
         if (!f.status || f.status === "pending") { if (userRole === "admin" || userRole === "manager") actions += `<button class="glass-btn" onclick="approveFinance('${f.id}')">✔ تایید</button><button class="glass-btn danger" onclick="openRejectModal('${f.id}')">✖ رد</button>`; }
         if (f.status === "approved" && f.payment_status !== "paid") { if (userRole === "admin" || userRole === "finance") actions += `<button class="glass-btn success" onclick="confirmPayment('${f.id}')">💳 تایید پرداخت</button>`; }
         if (f.payment_status === "paid" && userRole === "admin") actions += `<button class="glass-btn danger" onclick="deleteFinance('${f.id}')">🗑 حذف</button>`;
-        list.innerHTML += `<div class="glass-card"><b>${f.title || "-"}</b><br>💰 ${Number(f.amount || 0).toLocaleString()} تومان<br>📌 ${f.description || ""}${f.file_url ? `<br><br><a href="${f.file_url}" target="_blank" class="glass-btn">📎 ضمیمه</a>` : ""}<br><br><span>وضعیت: ${statusText(f.status)}</span>${f.approve_note ? `<br><span style="opacity:0.8;">📝 یادداشت: ${f.approve_note}</span>` : ""}<br><span>پرداخت: ${paymentText(f.payment_status)}</span><div class="action-buttons">${actions}</div></div>`;
+        list.innerHTML += `<div class="glass-card"><b>${f.title || "-"}</b><br>💰 ${Number(f.amount || 0).toLocaleString()} تومان<br>📌 ${f.description || ""}${f.file_url ? `<br><br><a href="${f.file_url}" target="_blank" class="glass-btn">📎 ضمیمه</a>` : ""}<br><br>${f.owner_email ? `<small style="opacity:0.7;">👤 ثبت‌کننده: ${f.owner_email}</small><br>` : ""}<span>وضعیت: ${statusText(f.status)}</span>${f.approve_note ? `<br><span style="opacity:0.8;">📝 یادداشت: ${f.approve_note}</span>` : ""}<br><span>پرداخت: ${paymentText(f.payment_status)}</span><div class="action-buttons">${actions}</div></div>`;
     });
     renderPagination("finance-pagination", financePage, total, (page) => { financePage = page; renderFinance(); });
 }
