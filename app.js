@@ -487,18 +487,16 @@ window.openRejectModal = function (id) { rejectFinanceId = id; document.getEleme
 
 /* ================= USER INFO ================= */
 function showUserInfo() {
-    function showUserInfo() {
-        if (!currentUser) return;
-        document.getElementById("user-email").textContent = currentUser.email;
-        document.getElementById("user-id").textContent = currentUser.id;
-        const roleEl = document.getElementById("user-role");
-        roleEl.textContent = roleToFa(userRole);
-        if (userRole === "admin") roleEl.style.color = "#ef4444";
-        else if (userRole === "manager") roleEl.style.color = "#3b82f6";
-        else if (userRole === "finance") roleEl.style.color = "#22c55e";
-        else if (userRole === "tech") roleEl.style.color = "#f59e0b";
-        else roleEl.style.color = "#a1a1aa";
-    }
+    if (!currentUser) return;
+    document.getElementById("user-email").textContent = currentUser.email;
+    document.getElementById("user-id").textContent = currentUser.id;
+    const roleEl = document.getElementById("user-role");
+    roleEl.textContent = roleToFa(userRole);
+    if (userRole === "admin") roleEl.style.color = "#ef4444";
+    else if (userRole === "manager") roleEl.style.color = "#3b82f6";
+    else if (userRole === "finance") roleEl.style.color = "#22c55e";
+    else if (userRole === "tech") roleEl.style.color = "#f59e0b";
+    else roleEl.style.color = "#a1a1aa";
 }
 /* ================= ADMIN PANEL ================= */
 async function loadAllUsers() {
