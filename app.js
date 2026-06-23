@@ -189,10 +189,10 @@ async function startApp() {
     await loadFinance(); await loadZonkens(); await loadContracts();
     loadChatMessages(); loadPrivateUsers();
     update(); showUserInfo();
-    if (userRole !== "finance" && userRole !== "admin") {
+    if (userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
         document.getElementById("chat-group-finance").style.display = "none";
     }
-    if (userRole !== "tech" && userRole !== "admin") {
+    if (userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
         document.getElementById("chat-group-tech").style.display = "none";
     }
     if (userRole === "admin") await loadAllUsers();
@@ -531,12 +531,12 @@ window.deleteContract = function (id) { window._deleteId = id; window._deleteTyp
 async function loadChatMessages() {
     // گروه‌ها
     if (currentChatGroup !== "private") {
-        if (currentChatGroup === "finance" && userRole !== "finance" && userRole !== "admin") {
-            document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران مالی</p>";
+        if (currentChatGroup === "finance" && userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
+            document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران مالی و مدیرعامل</p>";
             return;
         }
-        if (currentChatGroup === "tech" && userRole !== "tech" && userRole !== "admin") {
-            document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران فنی</p>";
+        if (currentChatGroup === "tech" && userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
+            document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران فنی و مدیرعامل</p>";
             return;
         }
 
