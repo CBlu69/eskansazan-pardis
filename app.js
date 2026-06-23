@@ -152,6 +152,11 @@ function initModals() {
     document.getElementById("open-contract")?.addEventListener("click", () => document.getElementById("contract-modal").style.display = "flex");
     document.getElementById("close-contract")?.addEventListener("click", () => { document.getElementById("contract-modal").style.display = "none"; editingContractId = null; document.getElementById("add-contract").textContent = "ثبت"; });
     document.querySelectorAll(".modal").forEach(modal => modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; }));
+    document.querySelector('[data-page=chat-page]')?.addEventListener("click", () => {
+        if (userRole === "user" || userRole === "tech") {
+            document.getElementById("chat-private-btn")?.click();
+        }
+    });
 }
 
 async function checkSession() { const { data } = await client.auth.getSession(); if (!data.session?.user) { showLogin(); return; } currentUser = data.session.user; await loadUserRole(); await startApp(); }
@@ -185,23 +190,25 @@ async function signup() {
 
 async function startApp() {
     if (loginUI) loginUI.style.display = "none";
-    await loadProjects(); await loadMissions(); renderStaff();
-    await loadFinance(); await loadZonkens(); await loadContracts();
-    loadChatMessages(); loadPrivateUsers();
-    update(); showUserInfo();
-    if (userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
-        document.getElementById("chat-group-finance").style.display = "none";
-    }
-    if (userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
-        document.getElementById("chat-group-tech").style.display = "none";
-    }
-    if (userRole === "admin") await loadAllUsers();
-    startAutoRefresh();
-    if (userRole !== "admin") {
-        document.querySelectorAll("#open-zonken, #open-contract").forEach(b => b.style.display = "none");
+    if (userRole === "user" || userRole === "tech") {
+        currentChatGroup = "private";
+        await loadProjects(); await loadMissions(); renderStaff();
+        await loadFinance(); await loadZonkens(); await loadContracts();
+        loadChatMessages(); loadPrivateUsers();
+        update(); showUserInfo();
+        if (userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
+            document.getElementById("chat-group-finance").style.display = "none";
+        }
+        if (userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
+            document.getElementById("chat-group-tech").style.display = "none";
+        }
+        if (userRole === "admin") await loadAllUsers();
+        startAutoRefresh();
+        if (userRole !== "admin") {
+            document.querySelectorAll("#open-zonken, #open-contract").forEach(b => b.style.display = "none");
+        }
     }
 }
-
 function bindEvents() {
     loginBtn?.addEventListener("click", login);
     signupBtn?.addEventListener("click", signup);
@@ -474,132 +481,132 @@ function showUserInfo() {
         else if (userRole === "tech") roleEl.style.color = "#f59e0b";
         else roleEl.style.color = "#a1a1aa";
     }
+}
+/* ================= ADMIN PANEL ================= */
+async function loadAllUsers() {
+    const { data: profiles, error } = await client.from("profiles").select("*").order("created_at", { ascending: false });
+    if (error) { console.warn(error.message); return; }
+    const table = document.getElementById("users-table"); if (!table) return;
+    let html = '<div style="overflow-x:auto;">';
+    profiles.forEach(profile => {
+        html += `<div class="user-row"><div style="flex:1;"><div style="font-weight:bold;color:white;">📧 ${profile.email || 'بدون ایمیل'}</div><small style="opacity:0.5;">🆔 ${profile.id?.slice(0, 12)}...</small></div><span class="role-badge ${profile.role || 'user'}">${roleToFa(profile.role)}</span><select id="role-select-${profile.id}"><option value="user" ${profile.role === 'user' ? 'selected' : ''}>کاربر عادی</option><option value="manager" ${profile.role === 'manager' ? 'selected' : ''}>مدیرعامل</option><option value="finance" ${profile.role === 'finance' ? 'selected' : ''}>امور مالی</option><option value="tech" ${profile.role === 'tech' ? 'selected' : ''}>فنی</option><option value="admin" ${profile.role === 'admin' ? 'selected' : ''}>مدیر سیستم</option></select><button class="save-role-btn" onclick="updateUserRole('${profile.id}')">💾 ذخیره</button></div>`;
+    });
+    html += '</div>'; table.innerHTML = html;
+}
+window.updateUserRole = async function (userId) {
+    const select = document.getElementById(`role-select-${userId}`); if (!select) return;
+    const newRole = select.value;
+    const { error } = await client.from("profiles").upsert({ id: userId, role: newRole });
+    if (error) { showToast(error.message, 'error'); return; }
+    if (userId === currentUser.id) { userRole = newRole; showUserInfo(); const ab = document.getElementById("admin-nav-btn"); if (ab) ab.style.display = newRole === "admin" ? "block" : "none"; }
+    showToast('نقش به‌روزرسانی شد ✅', 'success'); await loadAllUsers();
+};
 
-    /* ================= ADMIN PANEL ================= */
-    async function loadAllUsers() {
-        const { data: profiles, error } = await client.from("profiles").select("*").order("created_at", { ascending: false });
-        if (error) { console.warn(error.message); return; }
-        const table = document.getElementById("users-table"); if (!table) return;
-        let html = '<div style="overflow-x:auto;">';
-        profiles.forEach(profile => {
-            html += `<div class="user-row"><div style="flex:1;"><div style="font-weight:bold;color:white;">📧 ${profile.email || 'بدون ایمیل'}</div><small style="opacity:0.5;">🆔 ${profile.id?.slice(0, 12)}...</small></div><span class="role-badge ${profile.role || 'user'}">${roleToFa(profile.role)}</span><select id="role-select-${profile.id}"><option value="user" ${profile.role === 'user' ? 'selected' : ''}>کاربر عادی</option><option value="manager" ${profile.role === 'manager' ? 'selected' : ''}>مدیرعامل</option><option value="finance" ${profile.role === 'finance' ? 'selected' : ''}>امور مالی</option><option value="tech" ${profile.role === 'tech' ? 'selected' : ''}>فنی</option><option value="admin" ${profile.role === 'admin' ? 'selected' : ''}>مدیر سیستم</option></select><button class="save-role-btn" onclick="updateUserRole('${profile.id}')">💾 ذخیره</button></div>`;
-        });
-        html += '</div>'; table.innerHTML = html;
-    }
-    window.updateUserRole = async function (userId) {
-        const select = document.getElementById(`role-select-${userId}`); if (!select) return;
-        const newRole = select.value;
-        const { error } = await client.from("profiles").upsert({ id: userId, role: newRole });
-        if (error) { showToast(error.message, 'error'); return; }
-        if (userId === currentUser.id) { userRole = newRole; showUserInfo(); const ab = document.getElementById("admin-nav-btn"); if (ab) ab.style.display = newRole === "admin" ? "block" : "none"; }
-        showToast('نقش به‌روزرسانی شد ✅', 'success'); await loadAllUsers();
-    };
+/* ================= ZONKENS ================= */
+async function loadZonkens() { if (!currentUser) return; const { data } = await client.from("zonkens").select("*").order("id", { ascending: false }); allZonkens = data || []; zonkenPage = 1; renderZonkens(); }
+function renderZonkens() {
+    const searchTerm = document.getElementById("zonken-search")?.value.trim().toLowerCase() || "";
+    let filtered = allZonkens; if (searchTerm) filtered = allZonkens.filter(z => z.name?.toLowerCase().includes(searchTerm) || z.number?.toLowerCase().includes(searchTerm) || z.description?.toLowerCase().includes(searchTerm));
+    const total = filtered.length, start = (zonkenPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
+    const list = document.getElementById("zonken-list"); list.innerHTML = "";
+    pageItems.forEach(z => {
+        const div = document.createElement("div"); div.className = "staff-card";
+        div.innerHTML = `<b>${z.name}</b><small>🔢 شماره: ${z.number}</small>${z.description ? `<small style="opacity:0.7;">📝 ${z.description}</small>` : ""}${userRole === "admin" ? `<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>` : ""}`;
+        div.querySelector(".edit-btn")?.addEventListener("click", () => editZonken(z.id));
+        div.querySelector(".del-btn")?.addEventListener("click", () => deleteZonken(z.id));
+        list.appendChild(div);
+    });
+    renderPagination("zonken-pagination", zonkenPage, total, (page) => { zonkenPage = page; renderZonkens(); });
+}
+window.editZonken = function (id) { const z = allZonkens.find(x => x.id === id); if (!z) return; editingZonkenId = id; document.getElementById("z-number").value = z.number || ""; document.getElementById("z-name").value = z.name || ""; document.getElementById("z-desc").value = z.description || ""; document.getElementById("add-zonken").textContent = "💾 ذخیره"; document.getElementById("zonken-modal").style.display = "flex"; };
+window.deleteZonken = function (id) { window._deleteId = id; window._deleteType = "zonken"; document.getElementById("delete-modal").style.display = "flex"; };
 
-    /* ================= ZONKENS ================= */
-    async function loadZonkens() { if (!currentUser) return; const { data } = await client.from("zonkens").select("*").order("id", { ascending: false }); allZonkens = data || []; zonkenPage = 1; renderZonkens(); }
-    function renderZonkens() {
-        const searchTerm = document.getElementById("zonken-search")?.value.trim().toLowerCase() || "";
-        let filtered = allZonkens; if (searchTerm) filtered = allZonkens.filter(z => z.name?.toLowerCase().includes(searchTerm) || z.number?.toLowerCase().includes(searchTerm) || z.description?.toLowerCase().includes(searchTerm));
-        const total = filtered.length, start = (zonkenPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
-        const list = document.getElementById("zonken-list"); list.innerHTML = "";
-        pageItems.forEach(z => {
-            const div = document.createElement("div"); div.className = "staff-card";
-            div.innerHTML = `<b>${z.name}</b><small>🔢 شماره: ${z.number}</small>${z.description ? `<small style="opacity:0.7;">📝 ${z.description}</small>` : ""}${userRole === "admin" ? `<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>` : ""}`;
-            div.querySelector(".edit-btn")?.addEventListener("click", () => editZonken(z.id));
-            div.querySelector(".del-btn")?.addEventListener("click", () => deleteZonken(z.id));
-            list.appendChild(div);
-        });
-        renderPagination("zonken-pagination", zonkenPage, total, (page) => { zonkenPage = page; renderZonkens(); });
-    }
-    window.editZonken = function (id) { const z = allZonkens.find(x => x.id === id); if (!z) return; editingZonkenId = id; document.getElementById("z-number").value = z.number || ""; document.getElementById("z-name").value = z.name || ""; document.getElementById("z-desc").value = z.description || ""; document.getElementById("add-zonken").textContent = "💾 ذخیره"; document.getElementById("zonken-modal").style.display = "flex"; };
-    window.deleteZonken = function (id) { window._deleteId = id; window._deleteType = "zonken"; document.getElementById("delete-modal").style.display = "flex"; };
+/* ================= CONTRACTS ================= */
+async function loadContracts() { if (!currentUser) return; const { data } = await client.from("contracts").select("*").order("id", { ascending: false }); allContracts = data || []; contractPage = 1; renderContracts(); }
+function renderContracts() {
+    const searchTerm = document.getElementById("contract-search")?.value.trim().toLowerCase() || "";
+    let filtered = allContracts; if (searchTerm) filtered = allContracts.filter(c => c.name?.toLowerCase().includes(searchTerm) || c.number?.toLowerCase().includes(searchTerm) || c.description?.toLowerCase().includes(searchTerm));
+    const total = filtered.length, start = (contractPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
+    const list = document.getElementById("contract-list"); list.innerHTML = "";
+    pageItems.forEach(c => {
+        const div = document.createElement("div"); div.className = "staff-card";
+        div.innerHTML = `<b>${c.name}</b><small>🔢 شماره: ${c.number}</small>${c.description ? `<small style="opacity:0.7;">📝 ${c.description}</small>` : ""}${userRole === "admin" ? `<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>` : ""}`;
+        div.querySelector(".edit-btn")?.addEventListener("click", () => editContract(c.id));
+        div.querySelector(".del-btn")?.addEventListener("click", () => deleteContract(c.id));
+        list.appendChild(div);
+    });
+    renderPagination("contract-pagination", contractPage, total, (page) => { contractPage = page; renderContracts(); });
+}
+window.editContract = function (id) { const c = allContracts.find(x => x.id === id); if (!c) return; editingContractId = id; document.getElementById("c-number").value = c.number || ""; document.getElementById("c-name").value = c.name || ""; document.getElementById("c-desc").value = c.description || ""; document.getElementById("add-contract").textContent = "💾 ذخیره"; document.getElementById("contract-modal").style.display = "flex"; };
+window.deleteContract = function (id) { window._deleteId = id; window._deleteType = "contract"; document.getElementById("delete-modal").style.display = "flex"; };
 
-    /* ================= CONTRACTS ================= */
-    async function loadContracts() { if (!currentUser) return; const { data } = await client.from("contracts").select("*").order("id", { ascending: false }); allContracts = data || []; contractPage = 1; renderContracts(); }
-    function renderContracts() {
-        const searchTerm = document.getElementById("contract-search")?.value.trim().toLowerCase() || "";
-        let filtered = allContracts; if (searchTerm) filtered = allContracts.filter(c => c.name?.toLowerCase().includes(searchTerm) || c.number?.toLowerCase().includes(searchTerm) || c.description?.toLowerCase().includes(searchTerm));
-        const total = filtered.length, start = (contractPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
-        const list = document.getElementById("contract-list"); list.innerHTML = "";
-        pageItems.forEach(c => {
-            const div = document.createElement("div"); div.className = "staff-card";
-            div.innerHTML = `<b>${c.name}</b><small>🔢 شماره: ${c.number}</small>${c.description ? `<small style="opacity:0.7;">📝 ${c.description}</small>` : ""}${userRole === "admin" ? `<div class="action-buttons" style="margin-top:6px;"><button class="edit-btn">✏️</button><button class="del-btn">🗑</button></div>` : ""}`;
-            div.querySelector(".edit-btn")?.addEventListener("click", () => editContract(c.id));
-            div.querySelector(".del-btn")?.addEventListener("click", () => deleteContract(c.id));
-            list.appendChild(div);
-        });
-        renderPagination("contract-pagination", contractPage, total, (page) => { contractPage = page; renderContracts(); });
-    }
-    window.editContract = function (id) { const c = allContracts.find(x => x.id === id); if (!c) return; editingContractId = id; document.getElementById("c-number").value = c.number || ""; document.getElementById("c-name").value = c.name || ""; document.getElementById("c-desc").value = c.description || ""; document.getElementById("add-contract").textContent = "💾 ذخیره"; document.getElementById("contract-modal").style.display = "flex"; };
-    window.deleteContract = function (id) { window._deleteId = id; window._deleteType = "contract"; document.getElementById("delete-modal").style.display = "flex"; };
-
-    /* ================= CHAT ================= */
-    async function loadChatMessages() {
-        // گروه‌ها
-        if (currentChatGroup !== "private") {
-            if (currentChatGroup === "finance" && userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
-                document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران مالی و مدیرعامل</p>";
-                return;
-            }
-            if (currentChatGroup === "tech" && userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
-                document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران فنی و مدیرعامل</p>";
-                return;
-            }
-
-            const { data } = await client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(100).eq("group_name", currentChatGroup);
-            const box = document.getElementById("chat-group-messages");
-            box.innerHTML = "";
-            if (!data || data.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
-            data.forEach(m => {
-                const isMe = m.sender_id === currentUser.id;
-                box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
-            });
-            box.scrollTop = box.scrollHeight;
+/* ================= CHAT ================= */
+async function loadChatMessages() {
+    // گروه‌ها
+    if (currentChatGroup !== "private") {
+        if (currentChatGroup === "finance" && userRole !== "finance" && userRole !== "admin" && userRole !== "manager") {
+            document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران مالی و مدیرعامل</p>";
+            return;
+        }
+        if (currentChatGroup === "tech" && userRole !== "tech" && userRole !== "admin" && userRole !== "manager") {
+            document.getElementById("chat-group-messages").innerHTML = "<p style='opacity:0.6;text-align:center;'>⛔ فقط کاربران فنی و مدیرعامل</p>";
             return;
         }
 
-        if (!chatPrivateUserId) { loadPrivateChatList(); return; }
-
-        // فیلتر دستی - بدون or
-        const { data } = await client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(200);
-        const box = document.getElementById("chat-messages");
+        const { data } = await client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(100).eq("group_name", currentChatGroup);
+        const box = document.getElementById("chat-group-messages");
         box.innerHTML = "";
         if (!data || data.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
-
-        const filtered = data.filter(m =>
-            !m.group_name &&
-            ((m.sender_id === currentUser.id && m.receiver_id === chatPrivateUserId) ||
-                (m.sender_id === chatPrivateUserId && m.receiver_id === currentUser.id))
-        );
-
-        if (filtered.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
-
-        filtered.forEach(m => {
+        data.forEach(m => {
             const isMe = m.sender_id === currentUser.id;
             box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
         });
         box.scrollTop = box.scrollHeight;
+        return;
     }
 
-    /* ================= DASH ================= */
-    function update() {
-        document.getElementById("projects-count").textContent = allProjects.length;
-        document.getElementById("missions-count").textContent = allMissions.length;
-        document.getElementById("staff-count").textContent = defaultStaff.length;
-        document.getElementById("finance-count").textContent = allFinance.length;
-        document.getElementById("zonken-count").textContent = allZonkens.length;
-        document.getElementById("contract-count").textContent = allContracts.length;
-    }
-    async function loadPrivateChatList() {
-        const { data: users } = await client.from("profiles").select("*");
-        const list = document.getElementById("chat-private-list");
-        list.innerHTML = "";
-        if (!users) return;
+    if (!chatPrivateUserId) { loadPrivateChatList(); return; }
 
-        for (const u of users) {
-            if (u.id === currentUser.id) continue;
-            const role = roleToFa(u.role || "user");
-            list.innerHTML += `
+    // فیلتر دستی - بدون or
+    const { data } = await client.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(200);
+    const box = document.getElementById("chat-messages");
+    box.innerHTML = "";
+    if (!data || data.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
+
+    const filtered = data.filter(m =>
+        !m.group_name &&
+        ((m.sender_id === currentUser.id && m.receiver_id === chatPrivateUserId) ||
+            (m.sender_id === chatPrivateUserId && m.receiver_id === currentUser.id))
+    );
+
+    if (filtered.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
+
+    filtered.forEach(m => {
+        const isMe = m.sender_id === currentUser.id;
+        box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
+    });
+    box.scrollTop = box.scrollHeight;
+}
+
+/* ================= DASH ================= */
+function update() {
+    document.getElementById("projects-count").textContent = allProjects.length;
+    document.getElementById("missions-count").textContent = allMissions.length;
+    document.getElementById("staff-count").textContent = defaultStaff.length;
+    document.getElementById("finance-count").textContent = allFinance.length;
+    document.getElementById("zonken-count").textContent = allZonkens.length;
+    document.getElementById("contract-count").textContent = allContracts.length;
+}
+async function loadPrivateChatList() {
+    const { data: users } = await client.from("profiles").select("*");
+    const list = document.getElementById("chat-private-list");
+    list.innerHTML = "";
+    if (!users) return;
+
+    for (const u of users) {
+        if (u.id === currentUser.id) continue;
+        const role = roleToFa(u.role || "user");
+        list.innerHTML += `
         <div onclick="openPrivateChat('${u.id}','${u.email}','${role}')" class="glass-card" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px;">
             <div style="width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;">👤</div>
             <div>
@@ -607,23 +614,23 @@ function showUserInfo() {
                 <small style="opacity:0.7;">${role}</small>
             </div>
         </div>`;
-        }
     }
+}
 
-    function loadPrivateUsers() { loadPrivateChatList(); }
+function loadPrivateUsers() { loadPrivateChatList(); }
 
-    window.openPrivateChat = function (userId, email, role) {
-        chatPrivateUserId = userId;
-        document.getElementById("chat-private-list").style.display = "none";
-        document.getElementById("chat-private-view").style.display = "block";
-        document.getElementById("chat-group-view").style.display = "none";
-        document.getElementById("chat-back-btn").textContent = `⬅ بازگشت (${email} - ${role})`;
-        loadChatMessages();
-    };
+window.openPrivateChat = function (userId, email, role) {
+    chatPrivateUserId = userId;
+    document.getElementById("chat-private-list").style.display = "none";
+    document.getElementById("chat-private-view").style.display = "block";
+    document.getElementById("chat-group-view").style.display = "none";
+    document.getElementById("chat-back-btn").textContent = `⬅ بازگشت (${email} - ${role})`;
+    loadChatMessages();
+};
 
-    /* ================= AUTO REFRESH ================= */
-    function startAutoRefresh() { stopAutoRefresh(); autoRefreshInterval = setInterval(async () => { if (!currentUser) return; await loadProjects(); await loadMissions(); await loadFinance(); loadChatMessages(); update(); if (userRole === "admin") await loadAllUsers(); }, 60000); }
-    function stopAutoRefresh() { if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; } }
+/* ================= AUTO REFRESH ================= */
+function startAutoRefresh() { stopAutoRefresh(); autoRefreshInterval = setInterval(async () => { if (!currentUser) return; await loadProjects(); await loadMissions(); await loadFinance(); loadChatMessages(); update(); if (userRole === "admin") await loadAllUsers(); }, 60000); }
+function stopAutoRefresh() { if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; } }
 
-    /* ================= INIT ================= */
-    window.addEventListener("DOMContentLoaded", async () => { initDOM(); bindEvents(); initNav(); initModals(); startClock(); hideSplash(); await checkSession(); });
+/* ================= INIT ================= */
+window.addEventListener("DOMContentLoaded", async () => { initDOM(); bindEvents(); initNav(); initModals(); startClock(); hideSplash(); await checkSession(); });
