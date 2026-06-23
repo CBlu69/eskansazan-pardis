@@ -163,9 +163,19 @@ async function checkSession() { const { data } = await client.auth.getSession();
 function showLogin() { if (loginUI) loginUI.style.display = "flex"; }
 
 async function loadUserRole() {
-    const { data, error } = await client.from("profiles").select("role").eq("id", currentUser.id).single();
-    if (error) { userRole = "user"; return; }
+    const { data, error } = await client
+        .from("profiles")
+        .select("role")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+    if (error || !data) {
+        console.warn("role error:", error?.message);
+        userRole = "user";
+        return;
+    }
     userRole = data.role || "user";
+
     const adminBtn = document.getElementById("admin-nav-btn");
     if (adminBtn && userRole === "admin") adminBtn.style.display = "block";
 }
