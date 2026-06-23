@@ -546,7 +546,20 @@ window.updateUserRole = async function (userId) {
 async function loadZonkens() { if (!currentUser) return; const { data } = await client.from("zonkens").select("*").order("id", { ascending: false }); allZonkens = data || []; zonkenPage = 1; renderZonkens(); }
 function renderZonkens() {
     const searchTerm = document.getElementById("zonken-search")?.value.trim().toLowerCase() || "";
-    let filtered = allZonkens; if (searchTerm) filtered = allZonkens.filter(z => z.name?.toLowerCase().includes(searchTerm) || z.number?.toLowerCase().includes(searchTerm) || z.description?.toLowerCase().includes(searchTerm));
+    const toFa = (s) => s?.replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    let filtered = allZonkens;
+    if (searchTerm) {
+        filtered = allZonkens.filter(z => {
+            const name = (z.name || '').toLowerCase();
+            const nameFa = toFa(name);
+            const number = (z.number || '').toLowerCase();
+            const numberFa = toFa(number);
+            const desc = (z.description || '').toLowerCase();
+            const descFa = toFa(desc);
+            const s = searchTerm.toLowerCase();
+            return name.includes(s) || nameFa.includes(s) || number.includes(s) || numberFa.includes(s) || desc.includes(s) || descFa.includes(s);
+        });
+    }
     const total = filtered.length, start = (zonkenPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("zonken-list"); list.innerHTML = "";
     pageItems.forEach(z => {
@@ -565,7 +578,20 @@ window.deleteZonken = function (id) { window._deleteId = id; window._deleteType 
 async function loadContracts() { if (!currentUser) return; const { data } = await client.from("contracts").select("*").order("id", { ascending: false }); allContracts = data || []; contractPage = 1; renderContracts(); }
 function renderContracts() {
     const searchTerm = document.getElementById("contract-search")?.value.trim().toLowerCase() || "";
-    let filtered = allContracts; if (searchTerm) filtered = allContracts.filter(c => c.name?.toLowerCase().includes(searchTerm) || c.number?.toLowerCase().includes(searchTerm) || c.description?.toLowerCase().includes(searchTerm));
+    const toFa = (s) => s?.replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    let filtered = allContracts;
+    if (searchTerm) {
+        filtered = allContracts.filter(c => {
+            const name = (c.name || '').toLowerCase();
+            const nameFa = toFa(name);
+            const number = (c.number || '').toLowerCase();
+            const numberFa = toFa(number);
+            const desc = (c.description || '').toLowerCase();
+            const descFa = toFa(desc);
+            const s = searchTerm.toLowerCase();
+            return name.includes(s) || nameFa.includes(s) || number.includes(s) || numberFa.includes(s) || desc.includes(s) || descFa.includes(s);
+        });
+    }
     const total = filtered.length, start = (contractPage - 1) * PAGE_SIZE, pageItems = filtered.slice(start, start + PAGE_SIZE);
     const list = document.getElementById("contract-list"); list.innerHTML = "";
     pageItems.forEach(c => {
