@@ -534,7 +534,7 @@ async function loadChatMessages() {
         if (!data || data.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
         data.forEach(m => {
             const isMe = m.sender_id === currentUser.id;
-            box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe?'left':'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0]||'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe?'rgba(56,189,248,0.3)':'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
+            box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
         });
         box.scrollTop = box.scrollHeight;
         return;
@@ -551,27 +551,49 @@ async function loadChatMessages() {
     const filtered = data.filter(m =>
         !m.group_name &&
         ((m.sender_id === currentUser.id && m.receiver_id === chatPrivateUserId) ||
-         (m.sender_id === chatPrivateUserId && m.receiver_id === currentUser.id))
+            (m.sender_id === chatPrivateUserId && m.receiver_id === currentUser.id))
     );
 
     if (filtered.length === 0) { box.innerHTML = "<p style='opacity:0.6;text-align:center;'>هنوز پیامی نیست</p>"; return; }
 
     filtered.forEach(m => {
         const isMe = m.sender_id === currentUser.id;
-        box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe?'left':'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0]||'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe?'rgba(56,189,248,0.3)':'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
+        box.innerHTML += `<div style="margin-bottom:8px;text-align:${isMe ? 'left' : 'right'};"><small style="opacity:0.6;">${m.sender_email?.split('@')[0] || 'ناشناس'}</small><div style="display:inline-block;padding:8px 12px;border-radius:12px;max-width:80%;background:${isMe ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.1)'};">${m.message}</div></div>`;
     });
     box.scrollTop = box.scrollHeight;
 }
 
 /* ================= DASH ================= */
-function update() {
-    document.getElementById("projects-count").textContent = allProjects.length;
-    document.getElementById("missions-count").textContent = allMissions.length;
-    document.getElementById("staff-count").textContent = defaultStaff.length;
-    document.getElementById("finance-count").textContent = allFinance.length;
-    document.getElementById("zonken-count").textContent = allZonkens.length;
-    document.getElementById("contract-count").textContent = allContracts.length;
+async function loadPrivateChatList() {
+    const { data: users } = await client.from("profiles").select("*");
+    const list = document.getElementById("chat-private-list");
+    list.innerHTML = "";
+    if (!users) return;
+    
+    for (const u of users) {
+        if (u.id === currentUser.id) continue;
+        const role = roleToFa(u.role || "user");
+        list.innerHTML += `
+        <div onclick="openPrivateChat('${u.id}','${u.email}','${role}')" class="glass-card" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px;">
+            <div style="width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;">👤</div>
+            <div>
+                <div style="font-weight:bold;">${u.email}</div>
+                <small style="opacity:0.7;">${role}</small>
+            </div>
+        </div>`;
+    }
 }
+
+function loadPrivateUsers() { loadPrivateChatList(); }
+
+window.openPrivateChat = function(userId, email, role) {
+    chatPrivateUserId = userId;
+    document.getElementById("chat-private-list").style.display = "none";
+    document.getElementById("chat-private-view").style.display = "block";
+    document.getElementById("chat-group-view").style.display = "none";
+    document.getElementById("chat-back-btn").textContent = `⬅ بازگشت (${email} - ${role})`;
+    loadChatMessages();
+};
 
 /* ================= AUTO REFRESH ================= */
 function startAutoRefresh() { stopAutoRefresh(); autoRefreshInterval = setInterval(async () => { if (!currentUser) return; await loadProjects(); await loadMissions(); await loadFinance(); loadChatMessages(); update(); if (userRole === "admin") await loadAllUsers(); }, 60000); }
