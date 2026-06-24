@@ -14,7 +14,7 @@ let editingContractId = null;
 let currentChatGroup = "finance";
 let chatPrivateUserId = null;
 let approveFinanceId = null;
-
+let unreadCounts = {};
 let projectPage = 1, missionPage = 1, staffPage = 1, financePage = 1;
 let zonkenPage = 1, contractPage = 1;
 const PAGE_SIZE = 5;
@@ -364,7 +364,7 @@ function bindEvents() {
         if (!msg || !chatPrivateUserId) return;
         const { error } = await client.from("chat_messages").insert([{
             sender_id: currentUser.id, sender_email: currentUser.email,
-            receiver_id: chatPrivateUserId, message: msg
+            receiver_id: chatPrivateUserId, message: msg, seen: null
         }]);
         if (error) return showToast(error.message, "error");
         document.getElementById("chat-input").value = "";
@@ -674,28 +674,58 @@ async function loadPrivateChatList() {
     list.innerHTML = "";
     if (!users) return;
 
+    // گرفتن تعداد پیام‌های نخونده از همه کاربرا
+    const { data: unread } = await client
+        .from("chat_messages")
+        .select("sender_id", { count: "exact" })
+        .eq("receiver_id", currentUser.id)
+        .is("group_name", null)
+        .is("seen", null);
+
+    // شمارش پیام‌های نخونده به تفکیک فرستنده
+    unreadCounts = {};
+    if (unread) {
+        unread.forEach(m => {
+            unreadCounts[m.sender_id] = (unreadCounts[m.sender_id] || 0) + 1;
+        });
+    }
+
     for (const u of users) {
         if (u.id === currentUser.id) continue;
         const role = roleToFa(u.role || "user");
+        const badge = unreadCounts[u.id] ? ` <span style="background:#ef4444;color:white;border-radius:50%;padding:2px 7px;font-size:11px;margin-right:4px;">${unreadCounts[u.id]}</span>` : "";
+
         list.innerHTML += `
         <div onclick="openPrivateChat('${u.id}','${u.email}','${role}')" class="glass-card" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px;">
-            <div style="width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;">👤</div>
-            <div>
-                <div style="font-weight:bold;">${u.email}</div>
+            <div style="width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;">
+                👤
+                ${unreadCounts[u.id] ? `<span style="position:absolute;top:-3px;right:-3px;width:12px;height:12px;background:#ef4444;border-radius:50%;border:2px solid #0f172a;"></span>` : ""}
+            </div>
+            <div style="flex:1;">
+                <div style="font-weight:bold;">${u.email}${badge}</div>
                 <small style="opacity:0.7;">${role}</small>
             </div>
+            ${unreadCounts[u.id] ? `<div style="font-size:18px;">🔵</div>` : ""}
         </div>`;
     }
 }
-
 function loadPrivateUsers() { loadPrivateChatList(); }
 
-window.openPrivateChat = function (userId, email, role) {
+window.openPrivateChat = async function (userId, email, role) {
     chatPrivateUserId = userId;
     document.getElementById("chat-private-list").style.display = "none";
     document.getElementById("chat-private-view").style.display = "block";
     document.getElementById("chat-group-view").style.display = "none";
     document.getElementById("chat-back-btn").textContent = `⬅ بازگشت (${email} - ${role})`;
+
+    // علامت‌گذاری به عنوان دیده شده
+    await client
+        .from("chat_messages")
+        .update({ seen: true })
+        .eq("sender_id", userId)
+        .eq("receiver_id", currentUser.id)
+        .is("seen", null);
+
     loadChatMessages();
 };
 
