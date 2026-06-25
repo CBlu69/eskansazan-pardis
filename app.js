@@ -225,7 +225,7 @@ async function startApp() {
     if (userRole === "user" || userRole === "tech") {
         currentChatGroup = "private";
     }
-   
+
 }
 
 function bindEvents() {
@@ -689,7 +689,25 @@ async function loadPrivateChatList() {
             unreadCounts[m.sender_id] = (unreadCounts[m.sender_id] || 0) + 1;
         });
     }
+    // گرفتن آخرین پیام از هر کاربر
+    for (const u of users) {
+        if (u.id === currentUser.id) continue;
+        const { data: lastMsg } = await client
+            .from("chat_messages")
+            .select("created_at")
+            .or(`(sender_id.eq.${currentUser.id},receiver_id.eq.${u.id}),(sender_id.eq.${u.id},receiver_id.eq.${currentUser.id})`)
+            .order("created_at", { ascending: false })
+            .limit(1);
 
+        u.lastMessageTime = lastMsg?.[0]?.created_at || null;
+    }
+
+    // مرتب‌سازی کاربران بر اساس آخرین پیام (جدیدترین بالا)
+    users.sort((a, b) => {
+        if (!a.lastMessageTime) return 1;
+        if (!b.lastMessageTime) return -1;
+        return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+    });
     for (const u of users) {
         if (u.id === currentUser.id) continue;
         const role = roleToFa(u.role || "user");
