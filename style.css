@@ -933,11 +933,8 @@ h2 {
     font-weight: 800;
     letter-spacing: 0.4px;
     font-size: 28px;
-    background: linear-gradient(90deg, #ffffff, #ffd900);
-    background-size: 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: titleGlow 12s linear infinite;
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.2);
     margin-top: 10px;
 }
 
@@ -1034,10 +1031,14 @@ main {
 /* ================= DASHBOARD CARD ================= */
 #dashboard-page .card h3 {
     font-size: 50px;
+    font-weight: 900;
 }
 
 #dashboard-page .card p {
-    font-size: 16px !important;
+    font-size: 20px !important;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+
 }
 
 .chat-box {
@@ -1127,4 +1128,14 @@ main {
 #chat-group-input:focus {
     border-color: #38bdf8;
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+#chat-messages {
+    max-height: none !important;
+    height: auto !important;
+    overflow-y: visible !important;
+}
+#chat-private-list {
+    max-height: none !important;
+    height: auto !important;
+    overflow-y: visible !important;
 }
