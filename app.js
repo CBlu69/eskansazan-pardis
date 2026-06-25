@@ -11,7 +11,7 @@ let editingMissionId = null;
 let rejectFinanceId = null;
 let editingZonkenId = null;
 let editingContractId = null;
-let currentChatGroup = "finance";
+let currentChatGroup = "private";
 let chatPrivateUserId = null;
 let approveFinanceId = null;
 let unreadCounts = {};
@@ -226,6 +226,10 @@ async function startApp() {
     if (userRole === "user" || userRole === "tech") {
         currentChatGroup = "private";
     }
+    // فعال کردن دکمه پیام خصوصی
+    setTimeout(() => {
+        document.getElementById("chat-private-btn")?.click();
+    }, 500);
 }
 
 function bindEvents() {
