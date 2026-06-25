@@ -207,7 +207,6 @@ async function startApp() {
     await loadFinance();
     await loadZonkens();
     await loadContracts();
-    loadChatMessages();
     loadPrivateUsers();
     update();
     showUserInfo();
@@ -226,10 +225,7 @@ async function startApp() {
     if (userRole === "user" || userRole === "tech") {
         currentChatGroup = "private";
     }
-    // فعال کردن دکمه پیام خصوصی
-    setTimeout(() => {
-        document.getElementById("chat-private-btn")?.click();
-    }, 500);
+   
 }
 
 function bindEvents() {
