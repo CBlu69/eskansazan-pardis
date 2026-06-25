@@ -207,7 +207,7 @@ async function startApp() {
     await loadFinance();
     await loadZonkens();
     await loadContracts();
-    loadPrivateUsers();
+    loadPrivateChatList();
     update();
     showUserInfo();
     if (userRole === "admin") await loadAllUsers();
@@ -674,42 +674,41 @@ async function loadPrivateChatList() {
     list.innerHTML = "";
     if (!users) return;
 
-    // گرفتن تعداد پیام‌های نخونده از همه کاربرا
-    const { data: unread } = await client
+    // گرفتن همه پیام‌های خصوصی یکجا
+    const { data: allMsgs } = await client
         .from("chat_messages")
-        .select("sender_id", { count: "exact" })
-        .eq("receiver_id", currentUser.id)
+        .select("sender_id, receiver_id, created_at")
         .is("group_name", null)
-        .is("seen", null);
+        .order("created_at", { ascending: false })
+        .limit(500);
 
-    // شمارش پیام‌های نخونده به تفکیک فرستنده
+    // آخرین زمان پیام برای هر کاربر
+    const lastMsgMap = {};
+    if (allMsgs) {
+        allMsgs.forEach(m => {
+            const other = m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
+            if (other && !lastMsgMap[other]) {
+                lastMsgMap[other] = m.created_at;
+            }
+        });
+    }
+
+    // گرفتن پیام‌های نخونده
     unreadCounts = {};
-    if (unread) {
-        unread.forEach(m => {
+    if (allMsgs) {
+        allMsgs.filter(m => m.receiver_id === currentUser.id && m.seen === null).forEach(m => {
             unreadCounts[m.sender_id] = (unreadCounts[m.sender_id] || 0) + 1;
         });
     }
-    // گرفتن آخرین پیام از هر کاربر
-    for (const u of users) {
-        if (u.id === currentUser.id) continue;
-        const { data: lastMsg } = await client
-            .from("chat_messages")
-            .select("created_at")
-            .or(`(sender_id.eq.${currentUser.id},receiver_id.eq.${u.id}),(sender_id.eq.${u.id},receiver_id.eq.${currentUser.id})`)
-            .order("created_at", { ascending: false })
-            .limit(1);
 
-        u.lastMessageTime = lastMsg?.[0]?.created_at || null;
-    }
-
-    // مرتب‌سازی کاربران بر اساس آخرین پیام (جدیدترین بالا)
-    users.sort((a, b) => {
-        if (!a.lastMessageTime) return 1;
-        if (!b.lastMessageTime) return -1;
-        return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+    // مرتب‌سازی کاربران
+    const sortedUsers = users.filter(u => u.id !== currentUser.id).sort((a, b) => {
+        const ta = lastMsgMap[a.id] || 0;
+        const tb = lastMsgMap[b.id] || 0;
+        return new Date(tb) - new Date(ta);
     });
-    for (const u of users) {
-        if (u.id === currentUser.id) continue;
+
+    for (const u of sortedUsers) {
         const role = roleToFa(u.role || "user");
         const badge = unreadCounts[u.id] ? ` <span style="background:#ef4444;color:white;border-radius:50%;padding:2px 7px;font-size:11px;margin-right:4px;">${unreadCounts[u.id]}</span>` : "";
 
@@ -727,25 +726,6 @@ async function loadPrivateChatList() {
         </div>`;
     }
 }
-function loadPrivateUsers() { loadPrivateChatList(); }
-
-window.openPrivateChat = async function (userId, email, role) {
-    chatPrivateUserId = userId;
-    document.getElementById("chat-private-list").style.display = "none";
-    document.getElementById("chat-private-view").style.display = "block";
-    document.getElementById("chat-group-view").style.display = "none";
-    document.getElementById("chat-back-btn").textContent = `⬅ بازگشت (${email} - ${role})`;
-
-    // علامت‌گذاری به عنوان دیده شده
-    await client
-        .from("chat_messages")
-        .update({ seen: true })
-        .eq("sender_id", userId)
-        .eq("receiver_id", currentUser.id)
-        .is("seen", null);
-
-    loadChatMessages();
-};
 
 /* ================= AUTO REFRESH ================= */
 function startAutoRefresh() { stopAutoRefresh(); autoRefreshInterval = setInterval(async () => { if (!currentUser) return; await loadProjects(); await loadMissions(); await loadFinance(); loadChatMessages(); update(); if (userRole === "admin") await loadAllUsers(); }, 60000); }
