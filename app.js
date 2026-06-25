@@ -677,8 +677,7 @@ async function loadPrivateChatList() {
     // گرفتن همه پیام‌های خصوصی یکجا
     const { data: allMsgs } = await client
         .from("chat_messages")
-        .select("sender_id, receiver_id, created_at")
-        .is("group_name", null)
+        .select("sender_id, receiver_id, created_at, seen")
         .order("created_at", { ascending: false })
         .limit(500);
 
