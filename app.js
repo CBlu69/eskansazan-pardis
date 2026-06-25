@@ -727,6 +727,23 @@ async function loadPrivateChatList() {
     }
 }
 
+window.openPrivateChat = async function (userId, email, role) {
+    chatPrivateUserId = userId;
+    document.getElementById("chat-private-list").style.display = "none";
+    document.getElementById("chat-private-view").style.display = "block";
+    document.getElementById("chat-group-view").style.display = "none";
+    document.getElementById("chat-back-btn").textContent = `⬅ بازگشت (${email} - ${role})`;
+
+    await client
+        .from("chat_messages")
+        .update({ seen: true })
+        .eq("sender_id", userId)
+        .eq("receiver_id", currentUser.id)
+        .is("seen", null);
+
+    loadChatMessages();
+};
+
 /* ================= AUTO REFRESH ================= */
 function startAutoRefresh() { stopAutoRefresh(); autoRefreshInterval = setInterval(async () => { if (!currentUser) return; await loadProjects(); await loadMissions(); await loadFinance(); loadChatMessages(); update(); if (userRole === "admin") await loadAllUsers(); }, 60000); }
 function stopAutoRefresh() { if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; } }
