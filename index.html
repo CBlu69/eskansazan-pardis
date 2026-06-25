@@ -202,18 +202,19 @@
       <h2>پیام‌رسان</h2>
 
       <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <button id="chat-group-finance" class="glass-btn active-chat">💰 گروه مالی</button>
+        <button id="chat-group-finance" class="glass-btn">💰 گروه مالی</button>
         <button id="chat-group-tech" class="glass-btn">🔧 گروه فنی</button>
-        <button id="chat-private-btn" class="glass-btn">👤 پیام خصوصی</button>
+        <button id="chat-private-btn" class="glass-btn active-chat">👤 پیام خصوصی</button>
       </div>
 
       <!-- لیست چت‌های خصوصی -->
-      <div id="chat-private-list" style="display:none;max-height:400px;overflow-y:auto;"></div>
+      <div id="chat-private-list"></div>
 
       <!-- صفحه چت خصوصی -->
       <div id="chat-private-view" style="display:none;">
         <button id="chat-back-btn" class="glass-btn" style="margin-bottom:10px;">⬅ بازگشت به لیست</button>
-        <div id="chat-messages" class="chat-box" style="padding:10px;border-radius:12px;"></div>
+        <div id="chat-messages" class="chat-box"
+          style="min-height:200px;margin-bottom:10px;padding:10px;border-radius:12px;"></div>
         <div style="display:flex;gap:8px;margin-top:8px;">
           <input id="chat-input" type="text" placeholder="پیام..." style="flex:1;">
           <button id="send-chat" class="glass-btn">📨 ارسال</button>
