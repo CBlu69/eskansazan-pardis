@@ -207,8 +207,8 @@
         <button id="chat-private-btn" class="glass-btn active-chat">👤 پیام خصوصی</button>
       </div>
 
-      <!-- لیست چت‌های خصوصی -->
-      <div id="chat-private-list"></div>
+      <!-- لیست چت‌های خصوصی (پیش‌فرض باز) -->
+      <div id="chat-private-list" style="display:block;"></div>
 
       <!-- صفحه چت خصوصی -->
       <div id="chat-private-view" style="display:none;">
@@ -221,9 +221,10 @@
         </div>
       </div>
 
-      <!-- پیام گروه -->
-      <div id="chat-group-view">
-        <div id="chat-group-messages" class="chat-box" style="padding:10px;border-radius:12px;"></div>
+      <!-- پیام گروه (پیش‌فرض مخفی) -->
+      <div id="chat-group-view" style="display:none;">
+        <div id="chat-group-messages" class="chat-box"
+          style="padding:10px;border-radius:12px;min-height:200px;margin-bottom:10px;"></div>
         <div style="display:flex;gap:8px;margin-top:8px;">
           <input id="chat-group-input" type="text" placeholder="پیام گروه..." style="flex:1;">
           <button id="send-group-chat" class="glass-btn">📨 ارسال</button>
